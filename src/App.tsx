@@ -34,7 +34,7 @@ function App() {
   };
 
   useEffect(() => {
-    fetch("../metadata.json")
+    fetch("../public/metadata.json")
       .then((res) => res.json())
       .then((metadata) => setMetadata(metadata));
   }, []);
