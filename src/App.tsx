@@ -139,8 +139,8 @@ function App() {
             onClick={handleRandomId}
             mb={16}
             rounded={"16px"}
-            // isDisabled={imageLoading || placeNameLoading}
             disabled={placeNameLoading}
+            // isDisabled={imageLoading || placeNameLoading}
           >
             Carica un altro ricordo
           </Button>
