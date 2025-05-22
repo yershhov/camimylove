@@ -8,10 +8,10 @@ import {
   Spacer,
   VStack,
   Text,
-  Spinner,
 } from "@chakra-ui/react";
 import { getPlaceName } from "./utils";
 import { format } from "date-fns";
+import Loader from "./components/app/Loader";
 
 function App() {
   const [metadata, setMetadata] = useState<PhotoMetadata[] | null>(null);
@@ -30,7 +30,7 @@ function App() {
   const handleDelayedLoadingEnd = () => {
     setTimeout(() => {
       setPlaceNameLoading(false);
-    }, 1000);
+    }, 1500);
   };
 
   useEffect(() => {
@@ -88,7 +88,7 @@ function App() {
           minH={"500px"}
           h={placeNameLoading ? "625px" : "initial"}
         >
-          {placeNameLoading && <Spinner />}
+          {placeNameLoading && <Loader />}
 
           {!placeNameLoading && (
             <>
