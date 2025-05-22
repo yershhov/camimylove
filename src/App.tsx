@@ -8,7 +8,6 @@ import {
   Spacer,
   VStack,
   Text,
-  AspectRatio,
   Spinner,
 } from "@chakra-ui/react";
 import { getPlaceName } from "./utils";
@@ -140,7 +139,7 @@ function App() {
             onClick={handleRandomId}
             mb={16}
             rounded={"16px"}
-            isDisabled={placeNameLoading}
+            disabled={placeNameLoading}
             // isDisabled={imageLoading || placeNameLoading}
           >
             Carica un altro ricordo
