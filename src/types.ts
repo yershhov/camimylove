@@ -1,4 +1,4 @@
-export type PhotoMetadata = {
+export type Memory = {
   id: number;
   date: string | null; // ISO date string
   place: {

@@ -1,6 +1,7 @@
 import { Center, Image } from "@chakra-ui/react";
+import { memo } from "react";
 
-const Loader = () => {
+const Loader = memo(() => {
   const loaders = [
     "https://media.tenor.com/aMOxt0o16TQAAAAi/bubu-bubu-dudu.gif",
     "https://media.tenor.com/PXKZhCEfEfsAAAAi/bubu-bubu-dudu.gif",
@@ -11,12 +12,9 @@ const Loader = () => {
 
   return (
     <Center h="300px" aspectRatio={1}>
-      <Image
-        src={loaders[Math.floor(Math.random() * loaders.length)]}
-        // objectFit={"contain"}
-      />
+      <Image src={loaders[Math.floor(Math.random() * loaders.length)]} />
     </Center>
   );
-};
+});
 
 export default Loader;
