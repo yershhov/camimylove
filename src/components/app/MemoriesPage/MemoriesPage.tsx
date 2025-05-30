@@ -106,8 +106,8 @@ const MemoriesPage = () => {
       <VStack
         h="100%"
         w="100%"
-        pb={36}
-        gap={16}
+        pb={20}
+        gap={12}
         justifyContent={"center"}
         data-state="open"
         _open={{
