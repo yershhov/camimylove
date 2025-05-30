@@ -13,7 +13,8 @@ function App() {
       value={{ handlePage: () => setPage((page) => page + 1) }}
     >
       <Center
-        h="100dvh"
+        h="100%"
+        minH={"100vh"}
         w="100%"
         bg="pink.100"
         color="pink.800"

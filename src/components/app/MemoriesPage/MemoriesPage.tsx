@@ -106,7 +106,7 @@ const MemoriesPage = () => {
       <VStack
         h="100%"
         w="100%"
-        pt={12}
+        // pt={12}
         pb={20}
         gap={10}
         data-state="open"
