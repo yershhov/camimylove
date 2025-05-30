@@ -1,4 +1,4 @@
-import { VStack, Center, Spacer, Button } from "@chakra-ui/react";
+import { VStack, Center, Button } from "@chakra-ui/react";
 import Loader from "../Loader";
 import { useState, useEffect } from "react";
 import { getPlaceName } from "../../../utils";
@@ -12,7 +12,8 @@ const MemoriesPage = () => {
   const [memory, setMemory] = useState<Memory | null>(null);
   const [placeName, setPlaceName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [isFirstLoad, setIsFirstLoad] = useState(false);
+  const [firstLoadDone, setFirstLoadDone] = useState(false);
 
   const getRandomMemory = (givenMemories?: Memory[]) => {
     const memoriesList = givenMemories ?? memories;
@@ -22,13 +23,17 @@ const MemoriesPage = () => {
   };
 
   const handleDelayedLoadingEnd = (first?: boolean) => {
-    setTimeout(() => {
-      if (first) {
-        setIsFirstLoad(false);
-      } else {
-        setIsLoading(false);
-      }
-    }, 2000);
+    setTimeout(
+      () => {
+        if (first) {
+          setIsFirstLoad(false);
+          setFirstLoadDone(true);
+        } else {
+          setIsLoading(false);
+        }
+      },
+      first ? 5000 : 2000
+    );
   };
 
   const getMemoryData = async (memory: Memory) => {
@@ -63,8 +68,14 @@ const MemoriesPage = () => {
       }
     };
 
-    fetchInitialData();
+    if (isFirstLoad) fetchInitialData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFirstLoad]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsFirstLoad(true);
+    }, 1000);
   }, []);
 
   const loadNewMemory = async () => {
@@ -79,34 +90,53 @@ const MemoriesPage = () => {
   };
 
   useEffect(() => {
-    if (!isFirstLoad) loadNewMemory();
-  }, [isFirstLoad]);
+    if (!isFirstLoad && firstLoadDone) loadNewMemory();
+  }, [isFirstLoad, firstLoadDone]);
 
   if (isFirstLoad) {
     return (
       <Center h="100%" w="100%">
-        <Loader />
+        <Loader animate />
       </Center>
     );
   }
 
-  return (
-    <VStack h="100%" w="100%" pb={36} gap={10} justifyContent={"center"}>
-      <MemoryCard memory={memory} placeName={placeName} isLoading={isLoading} />
-
-      <Button
-        colorPalette={"pink"}
-        size={"2xl"}
+  if (firstLoadDone) {
+    return (
+      <VStack
+        h="100%"
         w="100%"
-        onClick={loadNewMemory}
-        rounded={"16px"}
-        disabled={isLoading}
+        pb={36}
+        gap={16}
+        justifyContent={"center"}
+        data-state="open"
+        _open={{
+          animationName: "fade-in, scale-in",
+          animationDuration: "1200ms",
+        }}
       >
-        <FaHeart />
-        Carica un altro ricordo
-      </Button>
-    </VStack>
-  );
+        <MemoryCard
+          memory={memory}
+          placeName={placeName}
+          isLoading={isLoading}
+        />
+
+        <Button
+          colorPalette={"pink"}
+          size={"2xl"}
+          w="100%"
+          onClick={loadNewMemory}
+          rounded={"16px"}
+          disabled={isLoading}
+        >
+          <FaHeart />
+          Carica un altro ricordo
+        </Button>
+      </VStack>
+    );
+  }
+
+  return null;
 };
 
 export default MemoriesPage;
