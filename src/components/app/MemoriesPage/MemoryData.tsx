@@ -17,7 +17,7 @@ const MemoryData = (props: any) => {
       {!hasData && <Box h="64px" />}
 
       {hasData && (
-        <VStack w="100%" alignItems={"start"} fontSize={"2xl"}>
+        <VStack w="100%" alignItems={"start"} fontSize={"xl"}>
           <>
             {memory?.date && (
               <Text>📅 {format(memory?.date, "dd/MM/yyyy, HH:mm")}</Text>

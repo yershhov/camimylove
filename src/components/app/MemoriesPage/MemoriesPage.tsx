@@ -106,9 +106,9 @@ const MemoriesPage = () => {
       <VStack
         h="100%"
         w="100%"
+        pt={12}
         pb={20}
-        gap={12}
-        justifyContent={"center"}
+        gap={10}
         data-state="open"
         _open={{
           animationName: "fade-in, scale-in",
@@ -123,7 +123,7 @@ const MemoriesPage = () => {
 
         <Button
           colorPalette={"pink"}
-          size={"2xl"}
+          size={"xl"}
           w="100%"
           onClick={loadNewMemory}
           rounded={"16px"}

@@ -1,12 +1,11 @@
 import { Button } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
 import { FiArrowRight } from "react-icons/fi";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AppContext } from "../../App";
 
 const WelcomePage = () => {
-  const navigate = useNavigate();
-
   const [clicked, setClicked] = useState(false);
+  const { handlePage } = useContext(AppContext);
 
   return (
     <Button
@@ -14,7 +13,7 @@ const WelcomePage = () => {
         if (clicked) return;
         setClicked(true);
         setTimeout(() => {
-          navigate("/memories");
+          handlePage();
         }, 600);
       }}
       colorPalette={"pink"}

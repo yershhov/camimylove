@@ -1,26 +1,29 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MemoriesPage from "./components/app/MemoriesPage/MemoriesPage";
 import WelcomePage from "./components/app/WelcomePage";
 import { Center } from "@chakra-ui/react";
+import { createContext, useState } from "react";
+
+export const AppContext = createContext<any>({});
 
 function App() {
+  const [page, setPage] = useState(0);
+
   return (
-    <Center
-      h="100vh"
-      w="100%"
-      bg="pink.100"
-      color="pink.800"
-      fontWeight="bold"
-      p={{ base: 6, md: 24 }}
+    <AppContext.Provider
+      value={{ handlePage: () => setPage((page) => page + 1) }}
     >
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<WelcomePage />} />
-          <Route path="/memories" element={<MemoriesPage />} />
-          <Route path="*" element={<span>404 page not found</span>} />
-        </Routes>
-      </BrowserRouter>
-    </Center>
+      <Center
+        h="100dvh"
+        w="100%"
+        bg="pink.100"
+        color="pink.800"
+        fontWeight="bold"
+        p={{ base: 6, md: 24 }}
+      >
+        {page === 0 && <WelcomePage />}
+        {page === 1 && <MemoriesPage />}
+      </Center>
+    </AppContext.Provider>
   );
 }
 
