@@ -21,9 +21,13 @@ const MemoriesPage = () => {
     return memoriesList![id];
   };
 
-  const handleDelayedLoadingEnd = () => {
+  const handleDelayedLoadingEnd = (first?: boolean) => {
     setTimeout(() => {
-      setIsLoading(false);
+      if (first) {
+        setIsFirstLoad(false);
+      } else {
+        setIsLoading(false);
+      }
     }, 2000);
   };
 
@@ -49,7 +53,7 @@ const MemoriesPage = () => {
 
         const memory = getRandomMemory(memories);
         await getMemoryData(memory);
-        setIsFirstLoad(false);
+        handleDelayedLoadingEnd(true);
       } catch (error: any) {
         console.error(error);
         toaster.create({
@@ -87,31 +91,20 @@ const MemoriesPage = () => {
   }
 
   return (
-    <VStack h="100%" w="100%">
-      <Center h="100%" mb={24}>
-        <MemoryCard
-          memory={memory}
-          placeName={placeName}
-          isLoading={isLoading}
-        />
-      </Center>
+    <VStack h="100%" w="100%" pb={36} gap={10} justifyContent={"center"}>
+      <MemoryCard memory={memory} placeName={placeName} isLoading={isLoading} />
 
-      <Spacer />
-
-      <Center w="100%">
-        <Button
-          colorPalette={"pink"}
-          size={"2xl"}
-          w="100%"
-          onClick={loadNewMemory}
-          mb={16}
-          rounded={"16px"}
-          disabled={isLoading}
-        >
-          <FaHeart />
-          Carica un altro ricordo
-        </Button>
-      </Center>
+      <Button
+        colorPalette={"pink"}
+        size={"2xl"}
+        w="100%"
+        onClick={loadNewMemory}
+        rounded={"16px"}
+        disabled={isLoading}
+      >
+        <FaHeart />
+        Carica un altro ricordo
+      </Button>
     </VStack>
   );
 };

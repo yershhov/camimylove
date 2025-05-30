@@ -7,15 +7,17 @@ const MemoryData = (props: any) => {
   const hasData = memory?.date || placeName;
 
   if (isLoading) {
-    return <SkeletonText noOfLines={3} gap={4} background={"pink.200"} />;
+    return (
+      <SkeletonText noOfLines={3} gap={4} background={"pink.200"} height={5} />
+    );
   }
 
   return (
-    <>
+    <Box w="100%" ml={1} pt={4} minH={"64px"}>
       {!hasData && <Box h="64px" />}
 
       {hasData && (
-        <VStack w="100%" alignItems={"start"} fontSize={"2xl"} ml={1}>
+        <VStack w="100%" alignItems={"start"} fontSize={"2xl"}>
           <>
             {memory?.date && (
               <Text>📅 {format(memory?.date, "dd/MM/yyyy, HH:mm")}</Text>
@@ -25,7 +27,7 @@ const MemoryData = (props: any) => {
           </>
         </VStack>
       )}
-    </>
+    </Box>
   );
 };
 
