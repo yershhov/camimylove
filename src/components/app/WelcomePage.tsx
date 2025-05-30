@@ -17,6 +17,7 @@ const WelcomePage = () => {
         }, 600);
       }}
       colorPalette={"pink"}
+      size={"xl"}
       data-state={clicked ? "closed" : ""}
       _closed={{
         animationName: "fade-out, scale-out",

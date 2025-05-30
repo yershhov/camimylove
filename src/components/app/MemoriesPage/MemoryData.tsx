@@ -13,7 +13,7 @@ const MemoryData = (props: any) => {
   }
 
   return (
-    <Box w="100%" ml={1} pt={4} minH={"64px"}>
+    <Box w="100%" ml={2} pt={4} minH={"64px"}>
       {!hasData && <Box h="64px" />}
 
       {hasData && (
