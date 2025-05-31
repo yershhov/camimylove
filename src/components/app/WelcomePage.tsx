@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Spacer, Text, VStack } from "@chakra-ui/react";
+import { Button, Spacer, VStack } from "@chakra-ui/react";
 import { FiArrowRight } from "react-icons/fi";
 import { useContext, useState } from "react";
 import { AppContext } from "../../App";
