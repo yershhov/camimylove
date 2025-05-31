@@ -14,7 +14,10 @@ function App() {
 
   return (
     <AppContext.Provider
-      value={{ handlePage: () => setPage((page) => page + 1) }}
+      value={{
+        handlePage: (newPage?: number) =>
+          setPage((page) => (newPage ? newPage : page + 1)),
+      }}
     >
       <Center
         h="100%"
