@@ -11,7 +11,8 @@ const MemoriesPage = () => {
   const [memories, setMemories] = useState<Memory[] | null>(null);
   const [memory, setMemory] = useState<Memory | null>(null);
   const [placeName, setPlaceName] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+
+  const [isLoadingMemory, setIsLoadingMemory] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
 
@@ -22,21 +23,7 @@ const MemoriesPage = () => {
     return memoriesList![id];
   };
 
-  const handleDelayedLoadingEnd = (first?: boolean) => {
-    setTimeout(
-      () => {
-        if (first) {
-          setIsFirstLoad(false);
-          setFirstLoadDone(true);
-        } else {
-          setIsLoading(false);
-        }
-      },
-      first ? 5000 : 2000
-    );
-  };
-
-  const getMemoryData = async (memory: Memory) => {
+  const getMemoryPlaceName = async (memory: Memory) => {
     // return new Promise((resolve) => setTimeout(resolve, 2000));
     if (memory?.place.latitude && memory?.place.longitude) {
       const placeName = await getPlaceName(
@@ -49,6 +36,36 @@ const MemoriesPage = () => {
     }
   };
 
+  const handleDelayedLoadingEnd = (first?: boolean) => {
+    setTimeout(
+      () => {
+        if (first) {
+          setIsFirstLoad(false);
+          setFirstLoadDone(true);
+        } else {
+          setIsLoadingMemory(false);
+        }
+      },
+      first ? 5000 : 2000
+    );
+  };
+
+  const loadNewMemory = async () => {
+    const memory = getRandomMemory();
+    try {
+      setIsLoadingMemory(true);
+      await getMemoryPlaceName(memory);
+    } finally {
+      handleDelayedLoadingEnd();
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsFirstLoad(true);
+    }, 1000);
+  }, []);
+
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
@@ -57,7 +74,7 @@ const MemoriesPage = () => {
         setMemories(memories);
 
         const memory = getRandomMemory(memories);
-        await getMemoryData(memory);
+        await getMemoryPlaceName(memory);
         handleDelayedLoadingEnd(true);
       } catch (error: any) {
         console.error(error);
@@ -69,28 +86,13 @@ const MemoriesPage = () => {
     };
 
     if (isFirstLoad) fetchInitialData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFirstLoad]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsFirstLoad(true);
-    }, 1000);
-  }, []);
-
-  const loadNewMemory = async () => {
-    const memory = getRandomMemory();
-
-    try {
-      setIsLoading(true);
-      await getMemoryData(memory);
-    } finally {
+    if (!isFirstLoad && firstLoadDone) {
+      setIsLoadingMemory(true);
       handleDelayedLoadingEnd();
     }
-  };
-
-  useEffect(() => {
-    if (!isFirstLoad && firstLoadDone) loadNewMemory();
   }, [isFirstLoad, firstLoadDone]);
 
   if (isFirstLoad) {
@@ -106,7 +108,6 @@ const MemoriesPage = () => {
       <VStack
         h="100%"
         w="100%"
-        // pt={12}
         pb={20}
         gap={10}
         data-state="open"
@@ -118,7 +119,7 @@ const MemoriesPage = () => {
         <MemoryCard
           memory={memory}
           placeName={placeName}
-          isLoading={isLoading}
+          isLoading={isLoadingMemory}
         />
 
         <Button
@@ -127,7 +128,7 @@ const MemoriesPage = () => {
           w="100%"
           onClick={loadNewMemory}
           rounded={"16px"}
-          disabled={isLoading}
+          disabled={isLoadingMemory}
         >
           <FaHeart />
           Carica un altro ricordo

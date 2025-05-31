@@ -1,12 +1,16 @@
 import MemoriesPage from "./components/app/MemoriesPage/MemoriesPage";
 import WelcomePage from "./components/app/WelcomePage";
 import { Center } from "@chakra-ui/react";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const AppContext = createContext<any>({});
 
 function App() {
   const [page, setPage] = useState(0);
+
+  useEffect(() => {
+    sessionStorage.removeItem("image_container_mounted");
+  }, []);
 
   return (
     <AppContext.Provider

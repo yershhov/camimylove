@@ -1,20 +1,29 @@
 import { Center, Image } from "@chakra-ui/react";
 import Loader from "../Loader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ImageContainer = (props: any) => {
   const { memory, isLoading } = props;
 
-  const [iamgeLoaded, setImageLoaded] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const [hasAlreadyMounted] = useState(
+    sessionStorage.getItem("image_container_mounted")
+  );
+
+  useEffect(() => {
+    sessionStorage.setItem("image_container_mounted", "true");
+  }, []);
 
   return (
     <Center
       roundedTop={"16px"}
       w="100%"
       overflow={"hidden"}
+      minH={!hasAlreadyMounted ? "240px" : "unset"}
       position="relative"
     >
-      {(isLoading || !iamgeLoaded) && (
+      {(isLoading || !imageLoaded) && (
         <Center
           bg="white"
           position={"absolute"}
@@ -34,8 +43,9 @@ const ImageContainer = (props: any) => {
         objectFit={"cover"}
         onLoad={() => setImageLoaded(true)}
         w="100%"
+        h="100%"
         style={{
-          visibility: iamgeLoaded ? "visible" : "hidden",
+          visibility: imageLoaded ? "visible" : "hidden",
         }}
       />
     </Center>
