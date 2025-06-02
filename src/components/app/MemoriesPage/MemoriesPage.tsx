@@ -1,5 +1,5 @@
 import { VStack, Center, Button } from "@chakra-ui/react";
-import Loader from "../Loader";
+import Loader from "../../ui/Loader";
 import { useState, useEffect } from "react";
 import { getPlaceName } from "../../../utils";
 import { FaHeart } from "react-icons/fa";

@@ -1,5 +1,5 @@
 import MemoriesPage from "./components/app/MemoriesPage/MemoriesPage";
-import WelcomePage from "./components/app/WelcomePage";
+import WelcomePage from "./components/app/WelcomePage/WelcomePage";
 import { Center } from "@chakra-ui/react";
 import { createContext, useEffect, useState } from "react";
 

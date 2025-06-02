@@ -1,7 +1,7 @@
 import { Button, Spacer, VStack } from "@chakra-ui/react";
 import { FiArrowRight } from "react-icons/fi";
 import { useContext, useState } from "react";
-import { AppContext } from "../../App";
+import { AppContext } from "../../../App";
 import { TypeAnimation } from "react-type-animation";
 
 const WelcomePage = () => {

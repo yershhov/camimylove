@@ -1,5 +1,5 @@
 import { Center, Image } from "@chakra-ui/react";
-import Loader from "../Loader";
+import Loader from "../../ui/Loader";
 import { useEffect, useState } from "react";
 
 const ImageContainer = (props: any) => {
