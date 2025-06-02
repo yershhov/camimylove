@@ -2,6 +2,8 @@ import MemoriesPage from "./components/app/MemoriesPage/MemoriesPage";
 import WelcomePage from "./components/app/WelcomePage/WelcomePage";
 import { Center } from "@chakra-ui/react";
 import { createContext, useEffect, useState } from "react";
+import "./App.css";
+import QuizPage from "./components/app/QuizPage/QuizPage";
 
 export const AppContext = createContext<any>({});
 
@@ -29,7 +31,8 @@ function App() {
         p={{ base: 6, md: 24 }}
       >
         {page === 0 && <WelcomePage />}
-        {page === 1 && <MemoriesPage />}
+        {page === 1 && <QuizPage />}
+        {page === 2 && <MemoriesPage />}
       </Center>
     </AppContext.Provider>
   );

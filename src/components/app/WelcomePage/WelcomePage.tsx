@@ -2,14 +2,14 @@ import { Button, Spacer, VStack } from "@chakra-ui/react";
 import { FiArrowRight } from "react-icons/fi";
 import { useContext, useState } from "react";
 import { AppContext } from "../../../App";
-import { TypeAnimation } from "react-type-animation";
+import WelcomePageTypewriter from "./WelcomePageTypeWriter";
+import IndependentContainer from "../../ui/independent-container";
 
 const WelcomePage = () => {
   const [clicked, setClicked] = useState(false);
   const { handlePage } = useContext(AppContext);
 
-  const [finishedTyping, setFinishedTyping] = useState(false);
-  const [finishedStep, setFinishedStep] = useState(-1);
+  const [finishedTypingRows, setFinishedTypingRows] = useState(0);
 
   const goAhead = (page?: number) => {
     if (clicked) return;
@@ -20,65 +20,22 @@ const WelcomePage = () => {
   };
 
   return (
-    <VStack
-      w="100%"
-      h="100%"
+    <IndependentContainer
       data-state={clicked ? "closed" : ""}
       _closed={{
         animationName: "fade-out, scale-out",
         animationDuration: "600ms",
         animationFillMode: "forwards",
       }}
-      position="absolute"
-      p={{ base: 6, md: 24 }}
-      py={24}
     >
-      <VStack
-        fontSize={"4xl"}
-        lineHeight={1}
-        textAlign={"start"}
-        w="100%"
-        mt={24}
-      >
-        {finishedTyping && (
-          <style>
-            {`
-      span.index-module_type__E-SaG::after {
-        display: none !important;
-      }
-    `}
-          </style>
-        )}
-
-        <TypeAnimation
-          sequence={["Hola, mi amor!", 1000, () => setFinishedStep(0)]}
-          speed={1}
-          cursor={!finishedTyping}
-          repeat={0}
-        />
-
-        {finishedStep > -1 && (
-          <TypeAnimation
-            sequence={["Feliz aniversario 😘", 1000, () => setFinishedStep(1)]}
-            speed={1}
-            cursor={finishedStep === 0}
-            repeat={0}
-          />
-        )}
-
-        {finishedStep > 0 && (
-          <TypeAnimation
-            sequence={["Te amo mucho <3", 1000, () => setFinishedTyping(true)]}
-            speed={1}
-            cursor={!finishedTyping}
-            repeat={0}
-          />
-        )}
-      </VStack>
+      <WelcomePageTypewriter
+        finishedRows={finishedTypingRows}
+        setFinishedRows={setFinishedTypingRows}
+      />
 
       <Spacer />
 
-      {finishedTyping && (
+      {finishedTypingRows === 3 && (
         <>
           <Button
             onClick={() => goAhead()}
@@ -107,7 +64,7 @@ const WelcomePage = () => {
             <span>Sei un ospite (non Camila)?</span>
 
             <Button
-              onClick={() => goAhead(1)}
+              onClick={() => goAhead(2)}
               color="pink.800"
               variant={"plain"}
               fontWeight={"bold"}
@@ -121,7 +78,7 @@ const WelcomePage = () => {
           </VStack>
         </>
       )}
-    </VStack>
+    </IndependentContainer>
   );
 };
 

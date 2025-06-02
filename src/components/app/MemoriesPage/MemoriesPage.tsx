@@ -1,11 +1,11 @@
 import { VStack, Center, Button } from "@chakra-ui/react";
-import Loader from "../../ui/Loader";
 import { useState, useEffect } from "react";
 import { getPlaceName } from "../../../utils";
 import { FaHeart } from "react-icons/fa";
 import type { Memory } from "../../../types";
 import MemoryCard from "./MemoryCard";
 import { toaster } from "../../ui/toaster";
+import Loader from "../../ui/Loader";
 
 const MemoriesPage = () => {
   const [memories, setMemories] = useState<Memory[] | null>(null);

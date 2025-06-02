@@ -1,0 +1,9 @@
+.remove-after-pseudo::after {
+  content: none !important;
+  display: none !important;
+}
+
+.add-after-pseudo::after {
+  content: "|" !important;
+  display: inline !important;
+}
