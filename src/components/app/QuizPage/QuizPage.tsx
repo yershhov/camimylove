@@ -1,4 +1,4 @@
-import { Box, Button, Spacer, VStack } from "@chakra-ui/react";
+import { Button, Spacer, VStack } from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import { AppContext } from "../../../App";
 import { MdDone } from "react-icons/md";

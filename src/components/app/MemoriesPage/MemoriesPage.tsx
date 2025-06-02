@@ -1,13 +1,16 @@
 import { VStack, Center, Button } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { getPlaceName } from "../../../utils";
 import { FaHeart } from "react-icons/fa";
 import type { Memory } from "../../../types";
 import MemoryCard from "./MemoryCard";
 import { toaster } from "../../ui/toaster";
-import Loader from "../../ui/Loader";
+import Loader from "../../ui/loader";
+import { AppContext } from "../../../App";
 
 const MemoriesPage = () => {
+  const { setShowSettings } = useContext(AppContext);
+
   const [memories, setMemories] = useState<Memory[] | null>(null);
   const [memory, setMemory] = useState<Memory | null>(null);
   const [placeName, setPlaceName] = useState<string | null>(null);
@@ -43,6 +46,9 @@ const MemoriesPage = () => {
           setIsFirstLoad(false);
           setFirstLoadDone(true);
         } else {
+          setShowSettings(true);
+          localStorage.setItem("show_settings", "true");
+
           setIsLoadingMemory(false);
         }
       },

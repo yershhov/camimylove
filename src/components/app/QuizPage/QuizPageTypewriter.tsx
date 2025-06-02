@@ -27,7 +27,7 @@ const QuizPageTypewriter = ({ finishedRows, setFinishedRows }: any) => {
       ref={containerRef}
       fontSize={"3xl"}
       lineHeight={1.1}
-      textAlign={"start"}
+      textAlign={"center"}
       w="100%"
       mt={24}
     >
