@@ -5,7 +5,7 @@ import { FaHeart } from "react-icons/fa";
 import type { Memory } from "../../../types";
 import MemoryCard from "./MemoryCard";
 import { toaster } from "../../ui/toaster";
-import Loader from "../../ui/loader";
+import Loader from "../../ui/Loader";
 import { AppContext } from "../../../App";
 
 const MemoriesPage = () => {

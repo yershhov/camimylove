@@ -1,21 +1,103 @@
-import { Button, Spacer, VStack } from "@chakra-ui/react";
-import { useContext, useState } from "react";
+import { Button, VStack, Text, Flex } from "@chakra-ui/react";
+import { useContext, useRef, useState } from "react";
 import { AppContext } from "../../../App";
 import { MdDone } from "react-icons/md";
 import QuizPageTypewriter from "./QuizPageTypewriter";
 import IndependentContainer from "../../ui/independent-container";
+import { toaster } from "../../ui/toaster";
+import PinField from "./PinField";
+import AppleStyleConfetti from "../../ui/AppleStyleConfetti";
+
+const responses = {
+  nickname: "POLITOS",
+  nickname2: "GATITOS",
+  love: "TANTO",
+  where: "TRESESSANTA",
+  plush: "PELUCHITA",
+  coffee: "DOSCAPPUCCINOS",
+};
+
+const randomToasters = [
+  {
+    title: "Sappaaaa",
+    description: "Come fai a non rispondere",
+  },
+  {
+    title: "Aha, well played!",
+    description: 'Say "home"',
+  },
+  {
+    title: "Nope!",
+    description: "Tieni 🧠",
+  },
+  {
+    title: "😭😭😭",
+    description: "Un po' di sforzo daiii",
+  },
+];
 
 const QuizPage = () => {
   const { handlePage } = useContext(AppContext);
 
   const [finishedTypingRows, setFinishedTypingRows] = useState(0);
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
+  const [formData, setFormData] = useState<any>({});
+  const [formErrors, setFormErrors] = useState<any>({});
+  const [quizEnd, setQuizEnd] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  const isSubmitted = useRef(false);
+  const lastToastId = useRef<string>("");
+
+  const handleChange = (e: any) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value.toUpperCase() });
   };
 
+  const handleSubmit = (e: any) => {
+    isSubmitted.current = true;
+    e.preventDefault();
+
+    const newErrors = {};
+
+    for (const [key, expected] of Object.entries(responses)) {
+      //@ts-ignore
+      const actual = formData[key] || "";
+      if (actual.trim() !== expected) {
+        //@ts-ignore
+        newErrors[key] = true;
+      }
+    }
+
+    setFormErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      setShowConfetti(true);
+      setTimeout(() => {
+        setQuizEnd(true);
+        setTimeout(handlePage, 1000);
+      }, 4000);
+    } else {
+      toaster.remove(lastToastId.current);
+      lastToastId.current = toaster.create({
+        ...randomToasters[Math.floor(Math.random() * randomToasters!.length)],
+        type: "error",
+      });
+    }
+  };
+
+  const sharedProps = { isSubmitted: isSubmitted.current, handleChange };
+
   return (
-    <IndependentContainer>
+    <IndependentContainer
+      gap={6}
+      data-state={quizEnd ? "closed" : ""}
+      _closed={{
+        animationName: "fade-out",
+        animationDuration: "1200ms",
+      }}
+    >
+      {showConfetti && <AppleStyleConfetti />}
+
       <QuizPageTypewriter
         finishedRows={finishedTypingRows}
         setFinishedRows={setFinishedTypingRows}
@@ -23,25 +105,113 @@ const QuizPage = () => {
 
       {finishedTypingRows === 1 && (
         <>
-          ...
-          <Spacer />
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={handleSubmit}
+            style={{ height: "100%", width: "100%" }}
+          >
             <VStack
-              data-state="open"
+              h="100%"
+              w="100%"
+              data-state={"open"}
               _open={{
                 animationName: "fade-in",
-                // , scale-in",
                 animationDuration: "1200ms",
               }}
+              gap={8}
             >
-              <Button
-                onClick={() => handlePage()}
-                colorPalette={"pink"}
-                size={"xl"}
-                mb={12}
-              >
-                <MdDone /> Invia
-              </Button>
+              <VStack alignItems={"start"} w="100%">
+                <PinField
+                  label="Il primo nomignolo che abbiamo usato:"
+                  name="nickname"
+                  error={formErrors.nickname}
+                  value={formData.nickname}
+                  numCells={7}
+                  emoji="🐣🐥"
+                  {...sharedProps}
+                />
+
+                <PinField
+                  label="Il secondo invece?"
+                  name="nickname2"
+                  error={formErrors.nickname2}
+                  value={formData.nickname2}
+                  numCells={7}
+                  emoji="😽😻"
+                  {...sharedProps}
+                />
+
+                <PinField
+                  label="Dove ci siamo messi insieme?"
+                  name="where"
+                  error={formErrors.where}
+                  value={formData.where}
+                  numCells={11}
+                  emoji="3️⃣6️⃣0️⃣"
+                  {...sharedProps}
+                />
+
+                <PinField
+                  label="Tu eres mi ..."
+                  name="plush"
+                  error={formErrors.plush}
+                  value={formData.plush}
+                  numCells={9}
+                  emoji="🧸"
+                  {...sharedProps}
+                />
+
+                <PinField
+                  label="Ti amo quanto?"
+                  name="love"
+                  error={formErrors.love}
+                  value={formData.love}
+                  numCells={5}
+                  emoji={
+                    <Flex gap={44} display={"inline-flex"}>
+                      <span>🫲🏼</span> <span>🫱🏼</span>
+                    </Flex>
+                  }
+                  {...sharedProps}
+                />
+
+                <PinField
+                  label="Nell'ora del pranzo si ordina:"
+                  name="coffee"
+                  error={formErrors.coffee}
+                  value={formData.coffee}
+                  numCells={15}
+                  emoji="☕️☕️"
+                  disabledCells={[3]}
+                  {...sharedProps}
+                />
+              </VStack>
+
+              <VStack mb={12} w="100%">
+                {showConfetti ? (
+                  <Text fontSize={"4xl"}>🥳🥳🥳🥳🥳🥳🥳</Text>
+                ) : (
+                  <Button
+                    type="submit"
+                    colorPalette={"pink"}
+                    size={"xl"}
+                    w="100%"
+                    disabled={showConfetti}
+                  >
+                    <MdDone /> Invia
+                  </Button>
+                )}
+
+                <Button
+                  onClick={() => handlePage(3)}
+                  color="pink.800"
+                  variant={"plain"}
+                  fontWeight={"bold"}
+                  textDecoration={"underline"}
+                  size="sm"
+                >
+                  Sono un ospite
+                </Button>
+              </VStack>
             </VStack>
           </form>
         </>

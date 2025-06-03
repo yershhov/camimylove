@@ -2,8 +2,8 @@ import { Button, Spacer, VStack } from "@chakra-ui/react";
 import { FiArrowRight } from "react-icons/fi";
 import { useContext, useState } from "react";
 import { AppContext } from "../../../App";
-import WelcomePageTypewriter from "./WelcomePageTypeWriter";
 import IndependentContainer from "../../ui/independent-container";
+import WelcomePageTypewriter from "./WelcomePageTypewriter";
 
 const WelcomePage = () => {
   const [clicked, setClicked] = useState(false);
@@ -61,10 +61,10 @@ const WelcomePage = () => {
               animationDuration: "1200ms",
             }}
           >
-            <span>Sei un ospite (non Camila)?</span>
+            <span>Non sei Camila?</span>
 
             <Button
-              onClick={() => goAhead(2)}
+              onClick={() => goAhead(3)}
               color="pink.800"
               variant={"plain"}
               fontWeight={"bold"}

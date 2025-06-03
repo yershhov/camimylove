@@ -38,15 +38,15 @@ const WelcomePageTypewriter = ({ finishedRows, setFinishedRows }: any) => {
     >
       <TypeAnimation
         sequence={[
-          3000,
+          2500,
           "Hola!👋",
-          2000,
+          1500,
           "Hola, mi amor🥰",
-          2000,
+          1500,
           () => setFinishedRows(1),
         ]}
         speed={1}
-        deletionSpeed={{ type: "keyStrokeDelayInMs", value: 250 }}
+        deletionSpeed={{ type: "keyStrokeDelayInMs", value: 150 }}
         repeat={0}
         className="remove-after-pseudo"
       />
@@ -57,7 +57,7 @@ const WelcomePageTypewriter = ({ finishedRows, setFinishedRows }: any) => {
             "Feliz mesivers",
             500,
             "Feliz aniversario🥳",
-            2000,
+            1500,
             () => setFinishedRows(2),
           ]}
           speed={1}
@@ -69,7 +69,7 @@ const WelcomePageTypewriter = ({ finishedRows, setFinishedRows }: any) => {
 
       {finishedRows > 1 && (
         <TypeAnimation
-          sequence={["Te amo mucho <3", 1000, () => setFinishedRows(3)]}
+          sequence={["Te amo mucho <3", 500, () => setFinishedRows(3)]}
           speed={1}
           repeat={0}
           className="remove-after-pseudo"

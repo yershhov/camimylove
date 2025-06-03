@@ -29,19 +29,21 @@ const QuizPageTypewriter = ({ finishedRows, setFinishedRows }: any) => {
       lineHeight={1.1}
       textAlign={"center"}
       w="100%"
-      mt={24}
+      mt={16}
     >
       <TypeAnimation
         sequence={[
-          2000,
-          "Che sorpresa sarebbe senza alcuna sfida?)",
+          500,
+          "Che sorpresa sarebbe stata senza alcuna sfida?))",
+          1500,
+          "Che sorpresa sarebbe stata senza alcuna sfida?)) I regali si incarta bene, giusto?🎁",
           2500,
-          "Per procedere rispondi allo quiz😜🧠",
-          2000,
+          "Per procedere, completa il quiz😜🧠",
+          500,
           () => setFinishedRows(1),
         ]}
         speed={45}
-        deletionSpeed={75}
+        deletionSpeed={83}
         repeat={0}
         className="remove-after-pseudo"
       />
