@@ -2,7 +2,7 @@ import { VStack } from "@chakra-ui/react";
 import { useEffect, useRef } from "react";
 import { TypeAnimation } from "react-type-animation";
 
-const WelcomePageTypewriter = ({ finishedRows, setFinishedRows }: any) => {
+const WelcomePageTypeWriter = ({ finishedRows, setFinishedRows }: any) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -79,4 +79,4 @@ const WelcomePageTypewriter = ({ finishedRows, setFinishedRows }: any) => {
   );
 };
 
-export default WelcomePageTypewriter;
+export default WelcomePageTypeWriter;

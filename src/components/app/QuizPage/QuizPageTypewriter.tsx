@@ -2,7 +2,7 @@ import { VStack } from "@chakra-ui/react";
 import { useEffect, useRef } from "react";
 import { TypeAnimation } from "react-type-animation";
 
-const QuizPageTypewriter = ({ finishedRows, setFinishedRows }: any) => {
+const QuizPageTypeWriter = ({ finishedRows, setFinishedRows }: any) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -51,4 +51,4 @@ const QuizPageTypewriter = ({ finishedRows, setFinishedRows }: any) => {
   );
 };
 
-export default QuizPageTypewriter;
+export default QuizPageTypeWriter;

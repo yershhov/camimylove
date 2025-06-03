@@ -3,7 +3,7 @@ import { FiArrowRight } from "react-icons/fi";
 import { useContext, useState } from "react";
 import { AppContext } from "../../../App";
 import IndependentContainer from "../../ui/independent-container";
-import WelcomePageTypewriter from "./WelcomePageTypewriter";
+import WelcomePageTypeWriter from "./WelcomePageTypeWriter";
 
 const WelcomePage = () => {
   const [clicked, setClicked] = useState(false);
@@ -28,7 +28,7 @@ const WelcomePage = () => {
         animationFillMode: "forwards",
       }}
     >
-      <WelcomePageTypewriter
+      <WelcomePageTypeWriter
         finishedRows={finishedTypingRows}
         setFinishedRows={setFinishedTypingRows}
       />
