@@ -2,11 +2,11 @@ import { Button, VStack, Text, Flex } from "@chakra-ui/react";
 import { useContext, useRef, useState } from "react";
 import { AppContext } from "../../../App";
 import { MdDone } from "react-icons/md";
-import QuizPageTypeWriter from "./QuizPageTypeWriter";
 import IndependentContainer from "../../ui/independent-container";
 import { toaster } from "../../ui/toaster";
 import PinField from "./PinField";
 import AppleStyleConfetti from "../../ui/AppleStyleConfetti";
+import QuizPageTypeWriter from "./QuizPageTypeWriter";
 
 const responses = {
   nickname: "POLITOS",
