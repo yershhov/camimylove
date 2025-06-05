@@ -17,6 +17,10 @@ function App() {
     sessionStorage.removeItem("image_container_mounted");
   }, []);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [page]);
+
   return (
     <AppContext.Provider
       value={{
@@ -26,21 +30,26 @@ function App() {
       }}
     >
       <Flex
-        flexDirection="column"
-        minH={"100vh"}
-        h="100%"
-        w="100%"
         bg="pink.100"
         color="pink.800"
         fontWeight="bold"
-        p={{ base: 6, md: 24 }}
+        justifyContent={"center"}
       >
-        {/* {showSettings && <Settings />} */}
+        <Flex
+          flexDirection="column"
+          minH={"100vh"}
+          h="100%"
+          w="100%"
+          maxW={{ md: "800px" }}
+          p={{ base: 6, md: 24 }}
+        >
+          {/* {showSettings && <Settings />} */}
 
-        {page === 0 && <WelcomePage />}
-        {page === 1 && <QuizPage />}
-        {page === 2 && <PrepPage />}
-        {page === 3 && <MemoriesPage />}
+          {page === 0 && <WelcomePage />}
+          {page === 1 && <QuizPage />}
+          {page === 2 && <PrepPage />}
+          {page === 3 && <MemoriesPage />}
+        </Flex>
       </Flex>
     </AppContext.Provider>
   );

@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const folder = "../nosotros_jpeg";
-const metadataPath = "../metadata.json";
+const metadataPath = "./public/metadata.json";
 let metadata = JSON.parse(fs.readFileSync(metadataPath, "utf-8"));
 
 // Get a list of files that match your metadata order (by id)

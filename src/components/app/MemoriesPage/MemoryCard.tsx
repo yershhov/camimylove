@@ -8,9 +8,10 @@ const MemoryCard = (props: any) => {
       w="100%"
       rounded={"32px"}
       bg="white"
-      maxH="600px"
+      maxH={{ base: "600px", md: "1200px" }}
       p={6}
-      boxShadow="4px 9px 20px rgba(213, 63, 140, 0.3)"
+      boxShadow="4px 7px 15px rgba(213, 63, 140, 0.3)"
+      className={true ? "jump" : ""}
     >
       <ImageContainer {...props} />
       <MemoryData {...props} />
