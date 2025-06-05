@@ -19,28 +19,30 @@ const MemoriesPage = () => {
   const [isFirstLoad, setIsFirstLoad] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
 
-  const [recentIds, setRecentIds] = useState<number[]>([]);
+  // const [recentIds, setRecentIds] = useState<number[]>([]);
 
   const getRandomMemory = (givenMemories?: Memory[]) => {
+    // const memoriesList = givenMemories ?? memories;
+
+    // const available = memoriesList!.filter((m) => !recentIds.includes(m.id));
+    // const pickFrom = available.length > 0 ? available : memoriesList!;
+
+    // const index = Math.floor(Math.random() * pickFrom.length);
+    // const picked = pickFrom[index];
+    // setMemory(picked);
+    // setRecentIds((prev) => {
+    //   const next = [...prev, picked.id];
+    //   return next.length > 30 ? next.slice(next.length - 30) : next;
+    // });
+
+    // return picked;
     const memoriesList = givenMemories ?? memories;
-
-    const available = memoriesList!.filter((m) => !recentIds.includes(m.id));
-    const pickFrom = available.length > 0 ? available : memoriesList!;
-
-    // Pick random memory
-    const index = Math.floor(Math.random() * pickFrom.length);
-    const picked = pickFrom[index];
-    setMemory(picked);
-    setRecentIds((prev) => {
-      const next = [...prev, picked.id];
-      return next.length > 30 ? next.slice(next.length - 30) : next;
-    });
-
-    return picked;
+    const index = Math.floor(Math.random() * memoriesList!.length);
+    setMemory(memoriesList![index]);
+    return memoriesList![index];
   };
 
   const getMemoryPlaceName = async (memory: Memory) => {
-    // return new Promise((resolve) => setTimeout(resolve, 2000));
     if (!memory?.place.latitude || !memory?.place.longitude) {
       setPlaceName(null);
       return;
