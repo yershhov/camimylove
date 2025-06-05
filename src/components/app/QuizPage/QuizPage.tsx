@@ -217,7 +217,7 @@ const QuizPage = () => {
                   error={formErrors.switzerland}
                   value={formData.switzerland}
                   numCells={8}
-                  emoji="U+1F1E8🌄"
+                  emoji="💶⛰🌄"
                   {...sharedProps}
                 />
               </VStack>
