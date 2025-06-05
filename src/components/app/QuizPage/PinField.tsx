@@ -24,7 +24,7 @@ const PinField = ({
       placeholder=""
       colorPalette="pink"
       invalid={!!error}
-      size={"sm"}
+      size={"md"}
       {...rootProps}
     >
       <PinInput.HiddenInput onChange={handleChange} name={name} value={value} />

@@ -2,7 +2,7 @@ import { Button, VStack, Text, Flex } from "@chakra-ui/react";
 import { useContext, useRef, useState } from "react";
 import { AppContext } from "../../../App";
 import { MdDone } from "react-icons/md";
-import IndependentContainer from "../../ui/independent-container";
+import PageContainer from "../../ui/PageContainer";
 import { toaster } from "../../ui/toaster";
 import PinField from "./PinField";
 import AppleStyleConfetti from "../../ui/AppleStyleConfetti";
@@ -11,13 +11,16 @@ import QuizPageTypeWriter from "./QuizPageTypeWriter";
 const responses = {
   nickname: "POLITOS",
   nickname2: "GATITOS",
-  love: "TANTO",
   where: "TRESESSANTA",
   plush: "PELUCHITA",
+  love: "TANTO",
   coffee: "DOSCAPPUCCINOS",
+  kids: "TRE",
+  miau: "BAUR",
+  switzerland: "SVIZZERA",
 };
 
-const randomToasters = [
+const randomErrorToasters = [
   {
     title: "Sappaaaa",
     description: "Come fai a non rispondere",
@@ -28,7 +31,7 @@ const randomToasters = [
   },
   {
     title: "Nope!",
-    description: "Tieni 🧠",
+    description: "Tieni🧠",
   },
   {
     title: "😭😭😭",
@@ -39,7 +42,7 @@ const randomToasters = [
 const QuizPage = () => {
   const { handlePage } = useContext(AppContext);
 
-  const [finishedTypingRows, setFinishedTypingRows] = useState(0);
+  const [finishedTypingRows, setFinishedTypingRows] = useState(1);
 
   const [formData, setFormData] = useState<any>({});
   const [formErrors, setFormErrors] = useState<any>({});
@@ -59,16 +62,16 @@ const QuizPage = () => {
 
     const newErrors = {};
 
-    for (const [key, expected] of Object.entries(responses)) {
-      //@ts-ignore
-      const actual = formData[key] || "";
-      if (actual.trim() !== expected) {
-        //@ts-ignore
-        newErrors[key] = true;
-      }
-    }
+    // for (const [key, expected] of Object.entries(responses)) {
+    //   //@ts-ignore
+    //   const actual = formData[key] || "";
+    //   if (actual.trim() !== expected) {
+    //     //@ts-ignore
+    //     newErrors[key] = true;
+    //   }
+    // }
 
-    setFormErrors(newErrors);
+    // setFormErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
       setShowConfetti(true);
@@ -79,7 +82,9 @@ const QuizPage = () => {
     } else {
       toaster.remove(lastToastId.current);
       lastToastId.current = toaster.create({
-        ...randomToasters[Math.floor(Math.random() * randomToasters!.length)],
+        ...randomErrorToasters[
+          Math.floor(Math.random() * randomErrorToasters!.length)
+        ],
         type: "error",
       });
     }
@@ -88,7 +93,7 @@ const QuizPage = () => {
   const sharedProps = { isSubmitted: isSubmitted.current, handleChange };
 
   return (
-    <IndependentContainer
+    <PageContainer
       gap={6}
       data-state={quizEnd ? "closed" : ""}
       _closed={{
@@ -175,13 +180,43 @@ const QuizPage = () => {
                 />
 
                 <PinField
-                  label="Nell'ora del pranzo si ordina:"
+                  label="Nell'ora del pranzo si ordina..."
                   name="coffee"
                   error={formErrors.coffee}
                   value={formData.coffee}
                   numCells={15}
                   emoji="☕️☕️"
                   disabledCells={[3]}
+                  {...sharedProps}
+                />
+
+                <PinField
+                  label="Quanti figli avremo in futuro?)"
+                  name="kids"
+                  error={formErrors.kids}
+                  value={formData.kids}
+                  numCells={3}
+                  emoji="👼👼👼"
+                  {...sharedProps}
+                />
+
+                <PinField
+                  label="Miau"
+                  name="miau"
+                  error={formErrors.miau}
+                  value={formData.miau}
+                  numCells={4}
+                  emoji="🐶"
+                  {...sharedProps}
+                />
+
+                <PinField
+                  label="Da ricchi avremo la casa in..."
+                  name="switzerland"
+                  error={formErrors.switzerland}
+                  value={formData.switzerland}
+                  numCells={8}
+                  emoji="U+1F1E8🌄"
                   {...sharedProps}
                 />
               </VStack>
@@ -216,7 +251,7 @@ const QuizPage = () => {
           </form>
         </>
       )}
-    </IndependentContainer>
+    </PageContainer>
   );
 };
 

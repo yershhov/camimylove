@@ -1,6 +1,6 @@
 import MemoriesPage from "./components/app/MemoriesPage/MemoriesPage";
 import WelcomePage from "./components/app/WelcomePage/WelcomePage";
-import { Center } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { createContext, useEffect, useState } from "react";
 import "./App.css";
 import QuizPage from "./components/app/QuizPage/QuizPage";
@@ -25,15 +25,15 @@ function App() {
         setShowSettings,
       }}
     >
-      <Center
-        h="100%"
+      <Flex
+        flexDirection="column"
         minH={"100vh"}
+        h="100%"
         w="100%"
         bg="pink.100"
         color="pink.800"
         fontWeight="bold"
         p={{ base: 6, md: 24 }}
-        position={"relative"}
       >
         {/* {showSettings && <Settings />} */}
 
@@ -41,7 +41,7 @@ function App() {
         {page === 1 && <QuizPage />}
         {page === 2 && <PrepPage />}
         {page === 3 && <MemoriesPage />}
-      </Center>
+      </Flex>
     </AppContext.Provider>
   );
 }

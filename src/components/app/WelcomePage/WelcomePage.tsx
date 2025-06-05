@@ -2,7 +2,7 @@ import { Button, Spacer, VStack } from "@chakra-ui/react";
 import { FiArrowRight } from "react-icons/fi";
 import { useContext, useState } from "react";
 import { AppContext } from "../../../App";
-import IndependentContainer from "../../ui/independent-container";
+import PageContainer from "../../ui/PageContainer";
 import WelcomePageTypeWriter from "./WelcomePageTypeWriter";
 
 const WelcomePage = () => {
@@ -20,7 +20,7 @@ const WelcomePage = () => {
   };
 
   return (
-    <IndependentContainer
+    <PageContainer
       data-state={clicked ? "closed" : ""}
       _closed={{
         animationName: "fade-out, scale-out",
@@ -78,7 +78,7 @@ const WelcomePage = () => {
           </VStack>
         </>
       )}
-    </IndependentContainer>
+    </PageContainer>
   );
 };
 

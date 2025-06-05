@@ -1,28 +1,87 @@
-import { Button, VStack } from "@chakra-ui/react";
-import { useContext } from "react";
+import { Button, VStack, Image, Spacer, Box } from "@chakra-ui/react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FiArrowRight } from "react-icons/fi";
 import { AppContext } from "../../../App";
+import { TypeAnimation } from "react-type-animation";
+import PageContainer from "../../ui/PageContainer";
 
 const PrepPage = () => {
   const { handlePage } = useContext(AppContext);
 
+  const [finishedTyping, setFinishedTyping] = useState(false);
+  const [letAhead, setLetAhead] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef?.current) return;
+
+    const spans = containerRef.current.querySelectorAll("span");
+
+    if (finishedTyping) spans[0]?.classList.add("remove-after-pseudo");
+  }, [finishedTyping]);
+
+  useEffect(() => {
+    if (!finishedTyping) return;
+
+    const timeout = setTimeout(() => {
+      setLetAhead(true);
+    }, 1500);
+
+    return () => clearTimeout(timeout);
+  }, [finishedTyping]);
+
   return (
-    <VStack textAlign={"center"}>
-      Extra step in develop, skip for now with the button below
-      <Button
-        onClick={() => handlePage()}
-        colorPalette={"pink"}
-        size={"xl"}
-        data-state={"open"}
-        _open={{
-          animationName: "fade-in",
-          animationDuration: "1200ms",
-        }}
-        mb={12}
+    <PageContainer>
+      <Box
+        ref={containerRef}
+        fontSize={"2xl"}
+        lineHeight={1.1}
+        w="100%"
+        textAlign={"center"}
+        mt={24}
       >
-        <FiArrowRight /> Avanti
-      </Button>
-    </VStack>
+        <TypeAnimation
+          sequence={[
+            500,
+            "Muy bien!",
+            1000,
+            "Muy bien! Hai avuto pazienza e ora finalmente puoi scoprire cosa ho preparato per te, mi amor!🥰",
+            1000,
+            "Muy bien! Hai avuto pazienza e ora finalmente puoi scoprire cosa ho preparato per te, mi amor!🥰 Ci ho messo tanto amore e sforzo, anche se penso che non raggiungerà mai lo sforzo che tu hai messo tante volte per me, però spero comunque che ti piacerà🙈",
+            1000,
+            "Muy bien! Hai avuto pazienza e ora finalmente puoi scoprire cosa ho preparato per te, mi amor!🥰 Ci ho messo tanto amore e sforzo, anche se penso che non raggiungerà mai lo sforzo che tu hai messo tante volte per me, però spero comunque che ti piacerà🙈 Ti amo tanto tanto <3",
+            1000,
+            () => setFinishedTyping(true),
+          ]}
+          speed={45}
+          deletionSpeed={83}
+          repeat={0}
+        />
+      </Box>
+
+      <Spacer />
+
+      <VStack mb={12} h="400px" justifyContent={"start"} w="100%">
+        {finishedTyping && <Image src="/christmas-excitement.gif" />}
+
+        <Spacer />
+
+        {letAhead && (
+          <Button
+            onClick={() => handlePage()}
+            colorPalette={"pink"}
+            size={"xl"}
+            data-state={"open"}
+            _open={{
+              animationName: "fade-in",
+              animationDuration: "1200ms",
+            }}
+          >
+            <FiArrowRight /> Avanti
+          </Button>
+        )}
+      </VStack>
+    </PageContainer>
   );
 };
 

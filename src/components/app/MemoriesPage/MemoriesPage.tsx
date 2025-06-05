@@ -1,4 +1,4 @@
-import { VStack, Center, Button } from "@chakra-ui/react";
+import { VStack, Center, Button, Text } from "@chakra-ui/react";
 import { useState, useEffect, useContext } from "react";
 import { getPlaceName } from "../../../utils";
 import { FaHeart } from "react-icons/fa";
@@ -101,49 +101,47 @@ const MemoriesPage = () => {
     }
   }, [isFirstLoad, firstLoadDone]);
 
-  if (isFirstLoad) {
-    return (
-      <Center h="100%" w="100%">
-        <Loader animate />
-      </Center>
-    );
-  }
+  return (
+    <Center h="100%" w="100%" flex={1}>
+      {isFirstLoad && <Loader animate />}
 
-  if (firstLoadDone) {
-    return (
-      <VStack
-        h="100%"
-        w="100%"
-        pb={20}
-        gap={10}
-        data-state="open"
-        _open={{
-          animationName: "fade-in, scale-in",
-          animationDuration: "1200ms",
-        }}
-      >
-        <MemoryCard
-          memory={memory}
-          placeName={placeName}
-          isLoading={isLoadingMemory}
-        />
-
-        <Button
-          colorPalette={"pink"}
-          size={"xl"}
+      {firstLoadDone && (
+        <VStack
+          h="100%"
           w="100%"
-          onClick={loadNewMemory}
-          rounded={"16px"}
-          disabled={isLoadingMemory}
+          pb={20}
+          data-state="open"
+          _open={{
+            animationName: "fade-in, scale-in",
+            animationDuration: "1200ms",
+          }}
         >
-          <FaHeart />
-          Carica un altro ricordo
-        </Button>
-      </VStack>
-    );
-  }
+          <Text fontFamily="'Dancing Script', cursive" fontSize={"4xl"}>
+            Nostri ricordi
+          </Text>
 
-  return null;
+          <MemoryCard
+            memory={memory}
+            placeName={placeName}
+            isLoading={isLoadingMemory}
+          />
+
+          <Button
+            colorPalette={"pink"}
+            size={"xl"}
+            w="100%"
+            onClick={loadNewMemory}
+            rounded={"16px"}
+            disabled={isLoadingMemory}
+            mt={10}
+          >
+            <FaHeart />
+            Carica un altro ricordo
+          </Button>
+        </VStack>
+      )}
+    </Center>
+  );
 };
 
 export default MemoriesPage;
