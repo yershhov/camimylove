@@ -7,6 +7,7 @@ import { toaster } from "../../ui/toaster";
 import PinField from "./PinField";
 import AppleStyleConfetti from "../../ui/AppleStyleConfetti";
 import QuizPageTypeWriter from "./QuizPageTypeWriter";
+import { FiArrowRight } from "react-icons/fi";
 
 // const responses = {
 //   nickname: "POLITOS",
@@ -245,7 +246,7 @@ const QuizPage = () => {
                   textDecoration={"underline"}
                   size="sm"
                 >
-                  Sono un ospite
+                  Salta quiz <FiArrowRight />
                 </Button>
               </VStack>
             </VStack>

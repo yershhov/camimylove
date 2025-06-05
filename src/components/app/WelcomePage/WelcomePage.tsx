@@ -35,8 +35,8 @@ const WelcomePage = () => {
 
       <Spacer />
 
-      {finishedTypingRows === 3 && (
-        <>
+      <VStack mb={16} gap={4}>
+        {finishedTypingRows === 3 && (
           <Button
             onClick={() => goAhead()}
             colorPalette={"pink"}
@@ -46,38 +46,24 @@ const WelcomePage = () => {
               animationName: "fade-in",
               animationDuration: "1200ms",
             }}
-            mb={12}
           >
             <FiArrowRight /> Avanti
           </Button>
+        )}
 
-          <VStack
-            fontSize="sm"
-            alignItems={"center"}
-            fontWeight={"semibold"}
-            data-state={"open"}
-            _open={{
-              animationName: "fade-in",
-              animationDuration: "1200ms",
-            }}
-          >
-            <span>Non sei Camila?</span>
-
-            <Button
-              onClick={() => goAhead(3)}
-              color="pink.800"
-              variant={"plain"}
-              fontWeight={"bold"}
-              textDecoration={"underline"}
-              size="sm"
-              position={"relative"}
-              bottom={3}
-            >
-              Clicca qui per procedere
-            </Button>
-          </VStack>
-        </>
-      )}
+        <Button
+          onClick={() => goAhead(3)}
+          color="pink.800"
+          variant={"plain"}
+          fontWeight={"bold"}
+          textDecoration={"underline"}
+          size="sm"
+          position={"relative"}
+          bottom={3}
+        >
+          Vai alla fine
+        </Button>
+      </VStack>
     </PageContainer>
   );
 };
