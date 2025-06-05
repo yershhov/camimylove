@@ -8,7 +8,7 @@ const MemoryCard = (props: any) => {
       w="100%"
       rounded={"32px"}
       bg="white"
-      maxH="640px"
+      maxH="600px"
       p={6}
       boxShadow="4px 9px 20px rgba(213, 63, 140, 0.3)"
     >
