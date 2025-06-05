@@ -8,17 +8,17 @@ import PinField from "./PinField";
 import AppleStyleConfetti from "../../ui/AppleStyleConfetti";
 import QuizPageTypeWriter from "./QuizPageTypeWriter";
 
-const responses = {
-  nickname: "POLITOS",
-  nickname2: "GATITOS",
-  where: "TRESESSANTA",
-  plush: "PELUCHITA",
-  love: "TANTO",
-  coffee: "DOSCAPPUCCINOS",
-  kids: "TRE",
-  miau: "BAUR",
-  switzerland: "SVIZZERA",
-};
+// const responses = {
+//   nickname: "POLITOS",
+//   nickname2: "GATITOS",
+//   where: "TRESESSANTA",
+//   plush: "PELUCHITA",
+//   love: "TANTO",
+//   coffee: "DOSCAPPUCCINOS",
+//   kids: "TRE",
+//   miau: "BAUR",
+//   switzerland: "SVIZZERA",
+// };
 
 const randomErrorToasters = [
   {
@@ -45,7 +45,8 @@ const QuizPage = () => {
   const [finishedTypingRows, setFinishedTypingRows] = useState(1);
 
   const [formData, setFormData] = useState<any>({});
-  const [formErrors, setFormErrors] = useState<any>({});
+  const [formErrors] = useState<any>({});
+  // setFormErrors
   const [quizEnd, setQuizEnd] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
