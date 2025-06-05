@@ -31,14 +31,14 @@ const PrepPage = () => {
   }, [finishedTyping]);
 
   return (
-    <PageContainer>
+    <PageContainer pb={8}>
       <Box
         ref={containerRef}
         fontSize={"2xl"}
         lineHeight={1.1}
         w="100%"
         textAlign={"center"}
-        mt={24}
+        mt={4}
       >
         <TypeAnimation
           sequence={[

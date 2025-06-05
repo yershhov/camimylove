@@ -13,6 +13,13 @@ const QuizPageTypeWriter = ({ finishedRows, setFinishedRows }: any) => {
     if (finishedRows > 0) {
       spans[finishedRows - 1]?.classList.add("remove-after-pseudo");
     }
+
+    if (finishedRows === 0) {
+      spans[0]?.classList.add("add-after-pseudo");
+    } else if (finishedRows === 1) {
+      spans[1]?.classList.add("add-after-pseudo");
+      spans[0]?.classList.remove("add-after-pseudo");
+    }
   }, [finishedRows]);
 
   return (
@@ -38,6 +45,7 @@ const QuizPageTypeWriter = ({ finishedRows, setFinishedRows }: any) => {
         speed={45}
         deletionSpeed={83}
         repeat={0}
+        className="remove-after-pseudo"
       />
     </VStack>
   );

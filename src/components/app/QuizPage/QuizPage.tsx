@@ -42,7 +42,7 @@ const randomErrorToasters = [
 const QuizPage = () => {
   const { handlePage } = useContext(AppContext);
 
-  const [finishedTypingRows, setFinishedTypingRows] = useState(1);
+  const [finishedTypingRows, setFinishedTypingRows] = useState(0);
 
   const [formData, setFormData] = useState<any>({});
   const [formErrors] = useState<any>({});
