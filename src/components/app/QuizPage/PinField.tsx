@@ -41,6 +41,7 @@ const PinField = ({
             key={idx}
             index={idx}
             bg="white"
+            fontSize="16px"
             style={{
               textTransform: "uppercase",
               ...(isSubmitted && !error

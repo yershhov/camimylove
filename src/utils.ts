@@ -11,14 +11,13 @@ export async function getPlaceName(lat: number, lon: number): Promise<string> {
     if (typeof value === "string" && cyrillicRegex.test(value)) {
       delete data.address[key];
     }
+    if (value === "Isola") delete data.address[key];
   }
 
   if (data.address.village?.includes(data.address.town))
     delete data.address.town;
   if (data.address.village?.includes(data.address.city))
     delete data.address.city;
-  if (data.address.road?.includes(data.address.village))
-    delete data.address.village;
 
   const {
     road,
@@ -32,8 +31,6 @@ export async function getPlaceName(lat: number, lon: number): Promise<string> {
     city,
   } = data.address;
 
-  console.log(data.address);
-
   if (man_made) return `${man_made}, ${city}`;
   if (shop) return [shop, town, road].filter((e) => Boolean(e)).join(", ");
   if (tourism && (village ?? town)) return `${tourism}, ${village ?? town}`;
@@ -45,7 +42,13 @@ export async function getPlaceName(lat: number, lon: number): Promise<string> {
 
   return data.display_name
     .split(",")
-    .filter((s: string) => isNaN(Number(s)) && s !== "Tempini")
+    .filter(
+      (s: string) =>
+        isNaN(Number(s)) &&
+        s !== "Tempini" &&
+        s !== "Isola" &&
+        !cyrillicRegex.test(s)
+    )
     .slice(0, 2)
     .join(", ");
 }
