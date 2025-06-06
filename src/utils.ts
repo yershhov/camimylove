@@ -1,6 +1,10 @@
 export async function getPlaceName(lat: number, lon: number): Promise<string> {
   const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    headers: {
+      "Accept-Language": "it",
+    },
+  });
   const data = await res.json();
 
   const cyrillicRegex = /[\u0400-\u04FF]/;
