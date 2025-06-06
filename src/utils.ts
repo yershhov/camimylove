@@ -38,18 +38,10 @@ export async function getPlaceName(lat: number, lon: number): Promise<string> {
     city,
   } = data.address;
 
-  const bestTownName = village ?? county ?? town;
+  const pl = "Via Dante Alighieri, Jesolo";
+  const papaLuciani = "Via Papa Luciani, Ca' Gamba, Jesolo";
 
-  if (man_made) return `${man_made}, ${city}`;
-  if (shop) return [shop, town, road].filter((e) => Boolean(e)).join(", ");
-  if (tourism && bestTownName) return `${tourism}, ${bestTownName}`;
-  if (railway && county) return `${railway}, ${county}`;
-  if (highway && bestTownName) return `${highway}, ${bestTownName}`;
-  if (road && bestTownName) return `${road}, ${bestTownName}`;
-  if (village && !city) return village;
-  if (city && !village && !town && !road) return city;
-
-  return data.display_name
+  const displayName = data.display_name
     .split(",")
     .filter(
       (s: string) =>
@@ -57,7 +49,24 @@ export async function getPlaceName(lat: number, lon: number): Promise<string> {
         s !== "Tempini" &&
         s !== "Isola" &&
         !cyrillicRegex.test(s)
-    )
-    .slice(0, 2)
-    .join(", ");
+    );
+
+  if (displayName.stratsWith(pl)) return pl;
+  if (displayName.stratsWith(papaLuciani)) return papaLuciani;
+
+  const bestTownName = village ?? county ?? town;
+
+  if (man_made) return `${man_made}, ${city}`;
+  if (shop) return [shop, town, road].filter((e) => Boolean(e)).join(", ");
+  if (tourism && bestTownName) return `${tourism}, ${bestTownName}`;
+  if (railway && county) return `${railway}, ${county}`;
+
+  if (highway && (town ?? village ?? county))
+    return `${highway}, ${town ?? village ?? county}`;
+
+  if (road && bestTownName) return `${road}, ${bestTownName}`;
+  if (village && !city) return village;
+  if (city && !village && !town && !road) return city;
+
+  return displayName.slice(0, 2).join(", ");
 }
