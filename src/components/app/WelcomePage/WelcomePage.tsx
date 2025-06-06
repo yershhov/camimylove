@@ -61,7 +61,7 @@ const WelcomePage = () => {
           position={"relative"}
           bottom={3}
         >
-          Vai alla fine
+          Vai ai ricordi
         </Button>
       </VStack>
     </PageContainer>

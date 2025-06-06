@@ -1,5 +1,5 @@
 import { VStack, Center, Button, Text } from "@chakra-ui/react";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef, useCallback } from "react";
 import { getPlaceName } from "../../../utils";
 import { FaHeart } from "react-icons/fa";
 import type { Memory } from "../../../types";
@@ -7,6 +7,8 @@ import MemoryCard from "./MemoryCard";
 import { toaster } from "../../ui/toaster";
 import Loader from "../../ui/Loader";
 import { AppContext } from "../../../App";
+
+const RECENTS_LIMIT = 50;
 
 const MemoriesPage = () => {
   const { setShowSettings } = useContext(AppContext);
@@ -19,32 +21,64 @@ const MemoriesPage = () => {
   const [isFirstLoad, setIsFirstLoad] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
 
-  // const [recentIds, setRecentIds] = useState<number[]>([]);
+  function getInitialRecents() {
+    try {
+      const data = localStorage.getItem("recents");
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  }
 
-  const getRandomMemory = (givenMemories?: Memory[]) => {
-    // const memoriesList = givenMemories ?? memories;
+  const recentsRef = useRef<number[]>(getInitialRecents());
 
-    // const available = memoriesList!.filter((m) => !recentIds.includes(m.id));
-    // const pickFrom = available.length > 0 ? available : memoriesList!;
+  const getRandomMemory = useCallback(
+    (givenMemories?: Memory[]) => {
+      const memoriesList = givenMemories ?? memories!;
+      const limit = Math.min(RECENTS_LIMIT, memoriesList.length);
 
-    // const index = Math.floor(Math.random() * pickFrom.length);
-    // const picked = pickFrom[index];
-    // setMemory(picked);
-    // setRecentIds((prev) => {
-    //   const next = [...prev, picked.id];
-    //   return next.length > 30 ? next.slice(next.length - 30) : next;
-    // });
+      const recent = recentsRef.current.slice(-limit);
+      const recentSet = new Set(recent);
 
-    // return picked;
-    const memoriesList = givenMemories ?? memories;
-    const index = Math.floor(Math.random() * memoriesList!.length);
-    setMemory(memoriesList![index]);
-    return memoriesList![index];
-  };
+      const available: number[] = [];
+      for (let i = 0; i < memoriesList.length; i++) {
+        if (!recentSet.has(i)) available.push(i);
+      }
+
+      const pickFrom =
+        available.length > 0
+          ? available
+          : Array.from({ length: memoriesList.length }, (_, i) => i);
+
+      const idx = pickFrom[Math.floor(Math.random() * pickFrom.length)];
+      recentsRef.current.push(idx);
+
+      if (recentsRef.current.length > RECENTS_LIMIT) {
+        recentsRef.current.splice(0, recentsRef.current.length - RECENTS_LIMIT);
+      }
+
+      localStorage.setItem("recents", JSON.stringify(recentsRef.current));
+
+      console.log(recentsRef.current);
+      setMemory(memoriesList[idx]);
+      return memoriesList[idx];
+    },
+    [memories]
+  );
+
+  // const getRandomMemory = (givenMemories?: Memory[]) => {
+  //   const memoriesList = givenMemories ?? memories!;
+  //   console.log(memoriesList.map((m) => m.id));
+  //   const index = Math.floor(Math.random() * memoriesList.length);
+  //   setMemory(memoriesList[index]);
+  //   return memoriesList[index];
+  // };
 
   const getMemoryPlaceName = async (memory: Memory) => {
+    console.log(memory.id);
     if (!memory?.place.latitude || !memory?.place.longitude) {
       setPlaceName(null);
+      console.log("---");
       return;
     }
 
@@ -139,7 +173,7 @@ const MemoriesPage = () => {
           }}
         >
           <Text fontFamily="'Dancing Script', cursive" fontSize={"4xl"}>
-            Nostri ricordi
+            Nostri ricordi [{memory!.id}]
           </Text>
 
           <MemoryCard
