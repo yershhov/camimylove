@@ -227,7 +227,7 @@ const QuizPage = () => {
                 />
               </VStack>
 
-              <VStack mb={12} w="100%">
+              <VStack w="100%">
                 {showConfetti ? (
                   <Text fontSize={"4xl"}>🥳🥳🥳🥳🥳🥳🥳</Text>
                 ) : (
