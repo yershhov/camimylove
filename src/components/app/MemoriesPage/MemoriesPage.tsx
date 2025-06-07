@@ -182,7 +182,7 @@ const MemoriesPage = () => {
             onClick={loadNewMemory}
             rounded={"16px"}
             disabled={isLoadingMemory}
-            mt={10}
+            mt={6}
           >
             <FaHeart />
             Carica un altro ricordo
