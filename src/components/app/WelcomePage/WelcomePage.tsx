@@ -9,7 +9,7 @@ const WelcomePage = () => {
   const [clicked, setClicked] = useState(false);
   const { handlePage } = useContext(AppContext);
 
-  const [finishedTypingRows, setFinishedTypingRows] = useState(0);
+  const [finishedTypingRows, setFinishedTypingRows] = useState(3);
 
   const goAhead = (page?: number) => {
     if (clicked) return;
@@ -51,7 +51,7 @@ const WelcomePage = () => {
           </Button>
         )}
 
-        {/* <Button
+        <Button
           onClick={() => goAhead(3)}
           color="pink.800"
           variant={"plain"}
@@ -60,9 +60,10 @@ const WelcomePage = () => {
           size="sm"
           position={"relative"}
           bottom={3}
+          visibility={"hidden"}
         >
           Vai ai ricordi
-        </Button> */}
+        </Button>
       </VStack>
     </PageContainer>
   );

@@ -7,7 +7,7 @@ import { toaster } from "../../ui/toaster";
 import PinField from "./PinField";
 import AppleStyleConfetti from "../../ui/AppleStyleConfetti";
 import QuizPageTypeWriter from "./QuizPageTypeWriter";
-// import { FiArrowRight } from "react-icons/fi";
+import { FiArrowRight } from "react-icons/fi";
 
 const responses = {
   nickname: "POLITOS",
@@ -242,16 +242,17 @@ const QuizPage = () => {
                   </Button>
                 )}
 
-                {/* <Button
+                <Button
                   onClick={() => handlePage(3)}
                   color="pink.800"
                   variant={"plain"}
                   fontWeight={"bold"}
                   textDecoration={"underline"}
                   size="sm"
+                  visibility={"hidden"}
                 >
                   Salta <FiArrowRight />
-                </Button> */}
+                </Button>
               </VStack>
             </VStack>
           </form>
