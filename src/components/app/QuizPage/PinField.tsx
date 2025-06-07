@@ -42,6 +42,7 @@ const PinField = ({
             index={idx}
             bg="white"
             fontSize="16px"
+            onBlur={() => window.dispatchEvent(new Event("resize"))}
             style={{
               textTransform: "uppercase",
               ...(isSubmitted && !error
