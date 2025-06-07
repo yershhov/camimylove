@@ -10,7 +10,7 @@ import PrepPage from "./components/app/PrepPage/PrepPage";
 export const AppContext = createContext<any>({});
 
 function App() {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [_, setShowSettings] = useState(localStorage.getItem("show_settings"));
 
   useEffect(() => {
