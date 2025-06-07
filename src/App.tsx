@@ -37,7 +37,7 @@ function App() {
       >
         <Flex
           flexDirection="column"
-          minH={"100vh"}
+          minH={"100dvh"}
           h="100%"
           w="100%"
           maxW={{ md: "800px" }}
