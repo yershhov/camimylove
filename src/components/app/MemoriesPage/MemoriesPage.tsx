@@ -59,7 +59,7 @@ const MemoriesPage = () => {
 
       localStorage.setItem("recents", JSON.stringify(recentsRef.current));
 
-      console.log(recentsRef.current);
+      // console.log(recentsRef.current);
       setMemory(memoriesList[idx]);
       return memoriesList[idx];
     },
@@ -67,10 +67,10 @@ const MemoriesPage = () => {
   );
 
   const getMemoryPlaceName = async (memory: Memory) => {
-    console.log(memory.id);
+    // console.log(memory.id);
     if (!memory?.place.latitude || !memory?.place.longitude) {
       setPlaceName(null);
-      console.log("---");
+      // console.log("---");
       return;
     }
 

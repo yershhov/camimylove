@@ -7,7 +7,7 @@ import { toaster } from "../../ui/toaster";
 import PinField from "./PinField";
 import AppleStyleConfetti from "../../ui/AppleStyleConfetti";
 import QuizPageTypeWriter from "./QuizPageTypeWriter";
-import { FiArrowRight } from "react-icons/fi";
+// import { FiArrowRight } from "react-icons/fi";
 
 const responses = {
   nickname: "POLITOS",
@@ -38,7 +38,7 @@ const randomErrorToasters = [
     title: "😭😭😭",
     description: "Un po' di sforzo daiii",
   },
-];
+].map((t) => ({ ...t, type: "error" }));
 
 const QuizPage = () => {
   const { handlePage } = useContext(AppContext);
@@ -52,6 +52,7 @@ const QuizPage = () => {
 
   const isSubmitted = useRef(false);
   const lastToastId = useRef<string>("");
+  const firstTimeError = useRef(false);
 
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value.toUpperCase() });
@@ -82,12 +83,16 @@ const QuizPage = () => {
       }, 4000);
     } else {
       toaster.remove(lastToastId.current);
-      lastToastId.current = toaster.create({
-        ...randomErrorToasters[
-          Math.floor(Math.random() * randomErrorToasters!.length)
-        ],
-        type: "error",
-      });
+      if (!firstTimeError.current) {
+        firstTimeError.current = true;
+        lastToastId.current = toaster.create(randomErrorToasters[1]);
+      } else {
+        lastToastId.current = toaster.create({
+          ...randomErrorToasters[
+            Math.floor(Math.random() * randomErrorToasters!.length)
+          ],
+        });
+      }
     }
   };
 

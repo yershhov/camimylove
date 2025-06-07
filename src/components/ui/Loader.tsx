@@ -42,7 +42,7 @@ function getRandomIndex(animate?: boolean) {
   const idx = pickFrom[Math.floor(Math.random() * pickFrom.length)];
   recentLoaders.push(idx);
   if (recentLoaders.length > LIMIT) recentLoaders.shift();
-  console.log(recentLoaders);
+  // console.log(recentLoaders);
   return idx;
 }
 

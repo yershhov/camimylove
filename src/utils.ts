@@ -23,7 +23,7 @@ export async function getPlaceName(lat: number, lon: number): Promise<string> {
   if (data.address.village?.includes(data.address.city))
     delete data.address.city;
 
-  console.log(data.address, data.display_name);
+  // console.log(data.address, data.display_name);
 
   const {
     road,
