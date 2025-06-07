@@ -12,6 +12,16 @@ const PrepPage = () => {
   const [letAhead, setLetAhead] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const [clicked, setClicked] = useState(false);
+
+  const goAhead = () => {
+    if (clicked) return;
+    setClicked(true);
+    setTimeout(() => {
+      handlePage();
+    }, 600);
+  };
+
   useEffect(() => {
     if (!containerRef?.current) return;
 
@@ -31,7 +41,15 @@ const PrepPage = () => {
   }, [finishedTyping]);
 
   return (
-    <PageContainer pb={8}>
+    <PageContainer
+      pb={8}
+      data-state={clicked ? "closed" : ""}
+      _closed={{
+        animationName: "fade-out, scale-out",
+        animationDuration: "600ms",
+        animationFillMode: "forwards",
+      }}
+    >
       <Box
         ref={containerRef}
         fontSize={"2xl"}
@@ -68,7 +86,7 @@ const PrepPage = () => {
 
         {letAhead && (
           <Button
-            onClick={() => handlePage()}
+            onClick={goAhead}
             colorPalette={"pink"}
             size={"xl"}
             data-state={"open"}
