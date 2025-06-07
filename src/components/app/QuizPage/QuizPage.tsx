@@ -237,7 +237,7 @@ const QuizPage = () => {
                   </Button>
                 )}
 
-                <Button
+                {/* <Button
                   onClick={() => handlePage(3)}
                   color="pink.800"
                   variant={"plain"}
@@ -246,7 +246,7 @@ const QuizPage = () => {
                   size="sm"
                 >
                   Salta <FiArrowRight />
-                </Button>
+                </Button> */}
               </VStack>
             </VStack>
           </form>

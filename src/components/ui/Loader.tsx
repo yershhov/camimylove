@@ -1,7 +1,7 @@
 import { Center, Image } from "@chakra-ui/react";
 import { memo, useEffect, useState } from "react";
 
-const loaders = [
+const transparentBackgroundLoaders = [
   "https://media.tenor.com/aMOxt0o16TQAAAAi/bubu-bubu-dudu.gif",
   "https://media.tenor.com/PXKZhCEfEfsAAAAi/bubu-bubu-dudu.gif",
   "https://media.tenor.com/r0VCmLiA3mEAAAAi/sseeyall-bubu-dudu.gif",
@@ -10,8 +10,6 @@ const loaders = [
   "https://media.tenor.com/16JLRwPfDfAAAAAj/dudu-bubu-dancing-so-cute.gif",
   "https://media.tenor.com/I_rw0vcOXJYAAAAi/dudu-bubu-cute-kiss.gif",
   "https://media.tenor.com/uRyi-tc_AdAAAAAi/bubu-dudu.gif",
-  "https://media1.tenor.com/m/ZgEwD09MywgAAAAC/dudu-kissing-bubu-hearts.gif",
-  "https://media1.tenor.com/m/FfkBxAXCo1cAAAAC/bubu.gif",
   "https://media.tenor.com/lqkhyQhifNcAAAAi/jump-bubu-dudu.gif",
   "https://media.tenor.com/wKP-p_HtfOoAAAAi/bubu-dudu.gif",
   "https://media.tenor.com/F9Q3thp6tzUAAAAj/bubu-bubu-dudu.gif",
@@ -19,18 +17,27 @@ const loaders = [
   "https://media.tenor.com/DBImicQnTG0AAAAi/bubu-dudu-eat.gif",
 ];
 
-let recentLoaders: number[] = [];
-const LIMIT = 8;
+const loaders = [
+  ...transparentBackgroundLoaders,
+  "https://media1.tenor.com/m/ZgEwD09MywgAAAAC/dudu-kissing-bubu-hearts.gif",
+  "https://media1.tenor.com/m/FfkBxAXCo1cAAAAC/bubu.gif",
+];
 
-function getRandomIndex() {
-  const availableIndexes = loaders
+let recentLoaders: number[] = [];
+
+const LIMIT = 6;
+
+function getRandomIndex(animate?: boolean) {
+  const considerableLoaders = animate ? transparentBackgroundLoaders : loaders;
+
+  const availableIndexes = considerableLoaders
     .map((_, idx) => idx)
     .filter((idx) => !recentLoaders.includes(idx));
 
   const pickFrom =
     availableIndexes.length > 0
       ? availableIndexes
-      : loaders.map((_, idx) => idx);
+      : considerableLoaders.map((_, idx) => idx);
 
   const idx = pickFrom[Math.floor(Math.random() * pickFrom.length)];
   recentLoaders.push(idx);
@@ -40,7 +47,7 @@ function getRandomIndex() {
 }
 
 const Loader = memo(({ animate }: { animate?: boolean }) => {
-  const [src] = useState(() => loaders[getRandomIndex()]);
+  const [src] = useState(() => loaders[getRandomIndex(animate)]);
 
   const [animateFinished, setAnimateFinished] = useState(false);
 

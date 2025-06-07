@@ -51,7 +51,7 @@ const WelcomePage = () => {
           </Button>
         )}
 
-        <Button
+        {/* <Button
           onClick={() => goAhead(3)}
           color="pink.800"
           variant={"plain"}
@@ -62,7 +62,7 @@ const WelcomePage = () => {
           bottom={3}
         >
           Vai ai ricordi
-        </Button>
+        </Button> */}
       </VStack>
     </PageContainer>
   );

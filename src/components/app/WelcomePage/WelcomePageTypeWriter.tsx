@@ -61,7 +61,6 @@ const WelcomePageTypeWriter = ({ finishedRows, setFinishedRows }: any) => {
             () => setFinishedRows(2),
           ]}
           speed={1}
-          //   deletionSpeed={{ type: "keyStrokeDelayInMs", value: 250 }}
           repeat={0}
           className="remove-after-pseudo"
         />
@@ -69,7 +68,7 @@ const WelcomePageTypeWriter = ({ finishedRows, setFinishedRows }: any) => {
 
       {finishedRows > 1 && (
         <TypeAnimation
-          sequence={["Te amo mucho <3", 500, () => setFinishedRows(3)]}
+          sequence={["Te amo muchissimo <3", 500, () => setFinishedRows(3)]}
           speed={1}
           repeat={0}
           className="remove-after-pseudo"

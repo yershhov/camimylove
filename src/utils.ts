@@ -43,6 +43,7 @@ export async function getPlaceName(lat: number, lon: number): Promise<string> {
 
   const displayName = data.display_name
     .split(",")
+    .map((s: string) => s.trim())
     .filter(
       (s: string) =>
         isNaN(Number(s)) &&
@@ -51,8 +52,8 @@ export async function getPlaceName(lat: number, lon: number): Promise<string> {
         !cyrillicRegex.test(s)
     );
 
-  if (displayName.stratsWith(pl)) return pl;
-  if (displayName.stratsWith(papaLuciani)) return papaLuciani;
+  if (displayName.join(", ").startsWith(pl)) return pl;
+  if (displayName.join(", ").startsWith(papaLuciani)) return papaLuciani;
 
   const bestTownName = village ?? county ?? town;
 

@@ -66,14 +66,6 @@ const MemoriesPage = () => {
     [memories]
   );
 
-  // const getRandomMemory = (givenMemories?: Memory[]) => {
-  //   const memoriesList = givenMemories ?? memories!;
-  //   console.log(memoriesList.map((m) => m.id));
-  //   const index = Math.floor(Math.random() * memoriesList.length);
-  //   setMemory(memoriesList[index]);
-  //   return memoriesList[index];
-  // };
-
   const getMemoryPlaceName = async (memory: Memory) => {
     console.log(memory.id);
     if (!memory?.place.latitude || !memory?.place.longitude) {
@@ -88,7 +80,8 @@ const MemoriesPage = () => {
         memory?.place.longitude
       );
       setPlaceName(placeName);
-    } catch (_) {
+    } catch (err: any) {
+      console.error(err);
       setPlaceName(null);
     }
   };
@@ -173,7 +166,7 @@ const MemoriesPage = () => {
           }}
         >
           <Text fontFamily="'Dancing Script', cursive" fontSize={"4xl"}>
-            Nostri ricordi [{memory!.id}]
+            Nostri ricordi
           </Text>
 
           <MemoryCard
