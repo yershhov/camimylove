@@ -9,7 +9,7 @@ const WelcomePage = () => {
   const [clicked, setClicked] = useState(false);
   const { handlePage } = useContext(AppContext);
 
-  const [finishedTypingRows, setFinishedTypingRows] = useState(3);
+  const [finishedTypingRows, setFinishedTypingRows] = useState(0);
 
   const goAhead = (page?: number) => {
     if (clicked) return;
