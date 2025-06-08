@@ -251,7 +251,7 @@ const QuizPage = () => {
                   fontWeight={"bold"}
                   textDecoration={"underline"}
                   size="sm"
-                  visibility={"hidden"}
+                  // visibility={"hidden"}
                 >
                   Salta <FiArrowRight />
                 </Button>

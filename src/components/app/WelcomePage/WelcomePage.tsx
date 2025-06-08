@@ -60,7 +60,7 @@ const WelcomePage = () => {
           size="sm"
           position={"relative"}
           bottom={3}
-          visibility={"hidden"}
+          // visibility={"hidden"}
         >
           Vai ai ricordi
         </Button>
