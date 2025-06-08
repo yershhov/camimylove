@@ -62,6 +62,8 @@ const QuizPage = () => {
     isSubmitted.current = true;
     e.preventDefault();
 
+    if (/iPhone/.test(navigator.userAgent)) window.scrollBy(0, 1);
+
     const newErrors = {};
 
     for (const [key, expected] of Object.entries(responses)) {

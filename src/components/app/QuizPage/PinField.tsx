@@ -42,9 +42,6 @@ const PinField = ({
             index={idx}
             bg="white"
             fontSize="16px"
-            // onBlur={() => {
-            //   if (/iPhone/.test(navigator.userAgent)) window.scrollBy(0, 1);
-            // }}
             style={{
               textTransform: "uppercase",
               ...(isSubmitted && !error
