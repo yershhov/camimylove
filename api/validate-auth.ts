@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { createAuthCookie, clearAuthCookie } from "./_lib/auth";
 
 dotenv.config();
 
@@ -32,8 +33,10 @@ export default async function handler(req: any, res: any) {
   const isSecondInputValid = normalize(petName) === normalize(expectedPetName);
 
   if (!isDateValid || !isSecondInputValid) {
+    res.setHeader("Set-Cookie", clearAuthCookie());
     return res.status(401).json({ ok: false });
   }
 
+  res.setHeader("Set-Cookie", createAuthCookie());
   return res.status(200).json({ ok: true });
 }

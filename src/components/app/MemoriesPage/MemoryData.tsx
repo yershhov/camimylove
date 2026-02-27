@@ -2,9 +2,9 @@ import { VStack, Text, SkeletonText, Box } from "@chakra-ui/react";
 import { format } from "date-fns";
 
 const MemoryData = (props: any) => {
-  const { memory, isLoading, placeName } = props;
+  const { memory, isLoading } = props;
 
-  const hasData = memory?.date || placeName;
+  const hasData = memory?.date || memory?.location;
 
   if (isLoading) {
     return (
@@ -23,7 +23,7 @@ const MemoryData = (props: any) => {
               <Text>📅 {format(memory?.date, "dd/MM/yyyy, HH:mm")}</Text>
             )}
 
-            {placeName && <Text>📍 {placeName}</Text>}
+            {memory?.location && <Text>📍 {memory.location}</Text>}
           </>
         </VStack>
       )}

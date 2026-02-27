@@ -46,7 +46,12 @@ function getRandomIndex(animate?: boolean) {
   return idx;
 }
 
-const Loader = memo(({ animate }: { animate?: boolean }) => {
+type LoaderProps = {
+  animate?: boolean;
+  fitContainer?: boolean;
+};
+
+const Loader = memo(({ animate, fitContainer }: LoaderProps) => {
   const [src] = useState(() => loaders[getRandomIndex(animate)]);
 
   const [animateFinished, setAnimateFinished] = useState(false);
@@ -61,8 +66,9 @@ const Loader = memo(({ animate }: { animate?: boolean }) => {
 
   return (
     <Center
-      h="300px"
-      aspectRatio={1}
+      h={fitContainer ? "100%" : "300px"}
+      w={fitContainer ? "100%" : undefined}
+      aspectRatio={fitContainer ? undefined : 1}
       data-state={animate ? (animateFinished ? "closed" : "open") : ""}
       _open={{
         animationName: "fade-in, scale-in",
@@ -74,7 +80,12 @@ const Loader = memo(({ animate }: { animate?: boolean }) => {
         animationFillMode: "forwards",
       }}
     >
-      <Image src={src} />
+      <Image
+        src={src}
+        maxH={fitContainer ? "75%" : undefined}
+        maxW={fitContainer ? "75%" : undefined}
+        objectFit="contain"
+      />
     </Center>
   );
 });

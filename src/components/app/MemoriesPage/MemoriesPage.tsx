@@ -1,90 +1,30 @@
-import { VStack, Center, Button, Text } from "@chakra-ui/react";
-import { useState, useEffect, useContext, useRef, useCallback } from "react";
-import { getPlaceName } from "../../../utils";
+import {
+  VStack,
+  Center,
+  Button,
+  Text,
+  IconButton,
+  Box,
+} from "@chakra-ui/react";
+import { useState, useEffect, useContext } from "react";
 import { FaHeart } from "react-icons/fa";
-import type { Memory } from "../../../types";
+import { IoAdd } from "react-icons/io5";
+import type { Memory, RandomMemoryResponse } from "../../../types";
 import MemoryCard from "./MemoryCard";
-import { toaster } from "../../ui/toaster";
+import { createAppToast } from "../../ui/toaster";
 import Loader from "../../ui/Loader";
 import { AppContext } from "../../../App";
 
-const RECENTS_LIMIT = 50;
-
 const MemoriesPage = () => {
-  const { setShowSettings } = useContext(AppContext);
+  const { setShowSettings, handlePage, isUploadEnabled } =
+    useContext(AppContext);
 
-  const [memories, setMemories] = useState<Memory[] | null>(null);
   const [memory, setMemory] = useState<Memory | null>(null);
-  const [placeName, setPlaceName] = useState<string | null>(null);
 
   const [isLoadingMemory, setIsLoadingMemory] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
-
-  function getInitialRecents() {
-    try {
-      const data = localStorage.getItem("recents");
-      return data ? JSON.parse(data) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  const recentsRef = useRef<number[]>(getInitialRecents());
-
-  const getRandomMemory = useCallback(
-    (givenMemories?: Memory[]) => {
-      const memoriesList = givenMemories ?? memories!;
-      const limit = Math.min(RECENTS_LIMIT, memoriesList.length);
-
-      const recent = recentsRef.current.slice(-limit);
-      const recentSet = new Set(recent);
-
-      const available: number[] = [];
-      for (let i = 0; i < memoriesList.length; i++) {
-        if (!recentSet.has(i)) available.push(i);
-      }
-
-      const pickFrom =
-        available.length > 0
-          ? available
-          : Array.from({ length: memoriesList.length }, (_, i) => i);
-
-      const idx = pickFrom[Math.floor(Math.random() * pickFrom.length)];
-      recentsRef.current.push(idx);
-
-      if (recentsRef.current.length > RECENTS_LIMIT) {
-        recentsRef.current.splice(0, recentsRef.current.length - RECENTS_LIMIT);
-      }
-
-      localStorage.setItem("recents", JSON.stringify(recentsRef.current));
-
-      // console.log(recentsRef.current);
-      setMemory(memoriesList[idx]);
-      return memoriesList[idx];
-    },
-    [memories]
-  );
-
-  const getMemoryPlaceName = async (memory: Memory) => {
-    // console.log(memory.id);
-    if (!memory?.place.latitude || !memory?.place.longitude) {
-      setPlaceName(null);
-      // console.log("---");
-      return;
-    }
-
-    try {
-      const placeName = await getPlaceName(
-        memory?.place.latitude,
-        memory?.place.longitude
-      );
-      setPlaceName(placeName);
-    } catch (err: any) {
-      console.error(err);
-      setPlaceName(null);
-    }
-  };
+  const [skipIntroLoader, setSkipIntroLoader] = useState(false);
 
   const handleDelayedLoadingEnd = (first?: boolean) => {
     setTimeout(
@@ -99,21 +39,44 @@ const MemoriesPage = () => {
           setIsLoadingMemory(false);
         }
       },
-      first ? 5000 : 2000
+      first ? 5000 : 2000,
     );
   };
 
+  const fetchRandomMemory = async () => {
+    const response = await fetch("/api/memories/random");
+    if (!response.ok) {
+      throw new Error("Failed to fetch random memory");
+    }
+
+    const payload = (await response.json()) as RandomMemoryResponse;
+    if (!payload.ok || !payload.memory) {
+      throw new Error(payload.error ?? "No memory returned");
+    }
+    return payload.memory as Memory;
+  };
+
   const loadNewMemory = async () => {
-    const memory = getRandomMemory();
     try {
       setIsLoadingMemory(true);
-      await getMemoryPlaceName(memory);
+      const newMemory = await fetchRandomMemory();
+      setMemory(newMemory);
     } finally {
       handleDelayedLoadingEnd();
     }
   };
 
   useEffect(() => {
+    // const shouldSkipIntro =
+    //   sessionStorage.getItem("skip_memories_intro_loader") === "true";
+
+    // if (shouldSkipIntro) {
+    //   sessionStorage.removeItem("skip_memories_intro_loader");
+    //   setSkipIntroLoader(true);
+    //   setIsFirstLoad(true);
+    //   return;
+    // }
+
     setTimeout(() => {
       setIsFirstLoad(true);
     }, 1000);
@@ -122,26 +85,30 @@ const MemoriesPage = () => {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const res = await fetch("/metadata.json");
-        const memories = await res.json();
-        setMemories(memories);
-
-        const memory = getRandomMemory(memories);
-
-        await getMemoryPlaceName(memory);
+        const initialMemory = await fetchRandomMemory();
+        setMemory(initialMemory);
       } catch (error: any) {
         console.error(error);
-        toaster.create({
+        createAppToast({
           title: "Errore, oopsie :(",
           type: "error",
         });
       } finally {
-        handleDelayedLoadingEnd(true);
+        if (skipIntroLoader) {
+          setIsFirstLoad(false);
+          setFirstLoadDone(true);
+          setShowSettings(true);
+          localStorage.setItem("show_settings", "true");
+          setIsLoadingMemory(false);
+          setSkipIntroLoader(false);
+        } else {
+          handleDelayedLoadingEnd(true);
+        }
       }
     };
 
     if (isFirstLoad) fetchInitialData();
-  }, [isFirstLoad]);
+  }, [isFirstLoad, skipIntroLoader]);
 
   useEffect(() => {
     if (!isFirstLoad && firstLoadDone) {
@@ -152,42 +119,56 @@ const MemoriesPage = () => {
 
   return (
     <Center h="100%" w="100%" flex={1}>
-      {isFirstLoad && <Loader animate />}
+      {isFirstLoad && !skipIntroLoader && <Loader animate />}
 
       {firstLoadDone && (
-        <VStack
-          h="100%"
-          w="100%"
-          pb={20}
-          data-state="open"
-          _open={{
-            animationName: "fade-in, scale-in",
-            animationDuration: "1200ms",
-          }}
-        >
-          <Text fontFamily="'Dancing Script', cursive" fontSize={"4xl"}>
-            Nostri ricordi
-          </Text>
-
-          <MemoryCard
-            memory={memory}
-            placeName={placeName}
-            isLoading={isLoadingMemory}
-          />
-
-          <Button
-            colorPalette={"pink"}
-            size={"xl"}
+        <Box h="100%" w="100%" position="relative">
+          <VStack
+            h="100%"
             w="100%"
-            onClick={loadNewMemory}
-            rounded={"16px"}
-            disabled={isLoadingMemory}
-            mt={6}
+            pb={20}
+            data-state="open"
+            _open={{
+              animationName: "fade-in, scale-in",
+              animationDuration: "1200ms",
+            }}
           >
-            <FaHeart />
-            Carica un altro ricordo
-          </Button>
-        </VStack>
+            <Text fontFamily="'Dancing Script', cursive" fontSize={"4xl"}>
+              Nostri ricordi
+            </Text>
+
+            <MemoryCard memory={memory} isLoading={isLoadingMemory} />
+
+            <Button
+              colorPalette={"pink"}
+              size={"xl"}
+              w="100%"
+              onClick={loadNewMemory}
+              rounded={"16px"}
+              disabled={isLoadingMemory}
+              mt={6}
+            >
+              <FaHeart />
+              Carica un altro ricordo
+            </Button>
+          </VStack>
+
+          {isUploadEnabled && (
+            <IconButton
+              aria-label="Apri pagina upload"
+              rounded="full"
+              size="xl"
+              colorPalette="pink"
+              position="fixed"
+              right={{ base: 6, md: 12 }}
+              bottom={{ base: 8, md: 12 }}
+              shadow="lg"
+              onClick={() => handlePage(5)}
+            >
+              <IoAdd />
+            </IconButton>
+          )}
+        </Box>
       )}
     </Center>
   );

@@ -49,7 +49,7 @@ export async function getPlaceName(lat: number, lon: number): Promise<string> {
         isNaN(Number(s)) &&
         s !== "Tempini" &&
         s !== "Isola" &&
-        !cyrillicRegex.test(s)
+        !cyrillicRegex.test(s),
     );
 
   if (displayName.join(", ").startsWith(pl)) return pl;

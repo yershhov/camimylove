@@ -3,7 +3,7 @@ import { useContext, useRef, useState } from "react";
 import { AppContext } from "../../../App";
 import { MdDone } from "react-icons/md";
 import PageContainer from "../../ui/PageContainer";
-import { toaster } from "../../ui/toaster";
+import { createAppToast, toaster } from "../../ui/toaster";
 import PinField from "./PinField";
 import AppleStyleConfetti from "../../ui/AppleStyleConfetti";
 import QuizPageTypeWriter from "./QuizPageTypeWriter";
@@ -87,9 +87,9 @@ const QuizPage = () => {
       toaster.remove(lastToastId.current);
       if (!firstTimeError.current) {
         firstTimeError.current = true;
-        lastToastId.current = toaster.create(randomErrorToasters[1]);
+        lastToastId.current = createAppToast(randomErrorToasters[1]);
       } else {
-        lastToastId.current = toaster.create({
+        lastToastId.current = createAppToast({
           ...randomErrorToasters[
             Math.floor(Math.random() * randomErrorToasters!.length)
           ],

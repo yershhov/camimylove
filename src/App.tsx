@@ -6,6 +6,7 @@ import "./App.css";
 import QuizPage from "./components/app/QuizPage/QuizPage";
 import PrepPage from "./components/app/PrepPage/PrepPage";
 import WelcomePage from "./components/app/WelcomePage/WelcomePage";
+import UploadPage from "./components/app/UploadPage/UploadPage";
 // import Settings from "./components/app/Settings";
 
 export const AppContext = createContext<any>({});
@@ -13,6 +14,7 @@ export const AppContext = createContext<any>({});
 function App() {
   const [page, setPage] = useState(0);
   const [_, setShowSettings] = useState(localStorage.getItem("show_settings"));
+  const [isUploadEnabled, setIsUploadEnabled] = useState(false);
 
   useEffect(() => {
     sessionStorage.removeItem("image_container_mounted");
@@ -22,12 +24,37 @@ function App() {
     window.scrollTo({ top: 0 });
   }, [page]);
 
+  useEffect(() => {
+    const loadFeatureFlags = async () => {
+      try {
+        const response = await fetch("/api/feature-flags");
+        if (!response.ok) return;
+
+        const payload = await response.json();
+        setIsUploadEnabled(Boolean(payload.uploadEnabled));
+      } catch {
+        setIsUploadEnabled(false);
+      }
+    };
+
+    void loadFeatureFlags();
+  }, []);
+
+  useEffect(() => {
+    if (!isUploadEnabled && page === 5) {
+      setPage(4);
+    }
+  }, [isUploadEnabled, page]);
+
   return (
     <AppContext.Provider
       value={{
         handlePage: (newPage?: number) =>
-          setPage((page) => (newPage ? newPage : page + 1)),
+          setPage((page) =>
+            typeof newPage === "number" ? newPage : page + 1
+          ),
         setShowSettings,
+        isUploadEnabled,
       }}
     >
       <Flex
@@ -51,6 +78,7 @@ function App() {
           {page === 2 && <QuizPage />}
           {page === 3 && <PrepPage />}
           {page === 4 && <MemoriesPage />}
+          {page === 5 && isUploadEnabled && <UploadPage />}
         </Flex>
       </Flex>
     </AppContext.Provider>
