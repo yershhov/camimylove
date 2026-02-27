@@ -94,16 +94,16 @@ const MemoriesPage = () => {
           type: "error",
         });
       } finally {
-        if (skipIntroLoader) {
-          setIsFirstLoad(false);
-          setFirstLoadDone(true);
-          setShowSettings(true);
-          localStorage.setItem("show_settings", "true");
-          setIsLoadingMemory(false);
-          setSkipIntroLoader(false);
-        } else {
-          handleDelayedLoadingEnd(true);
-        }
+        // if (skipIntroLoader) {
+        //   setIsFirstLoad(false);
+        //   setFirstLoadDone(true);
+        //   setShowSettings(true);
+        //   localStorage.setItem("show_settings", "true");
+        //   setIsLoadingMemory(false);
+        //   setSkipIntroLoader(false);
+        // } else {
+        handleDelayedLoadingEnd(true);
+        // }
       }
     };
 
