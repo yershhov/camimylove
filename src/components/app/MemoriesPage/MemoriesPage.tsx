@@ -24,7 +24,7 @@ const MemoriesPage = () => {
   const [isLoadingMemory, setIsLoadingMemory] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
-  const [skipIntroLoader, setSkipIntroLoader] = useState(false);
+  const [skipIntroLoader] = useState(false);
 
   const handleDelayedLoadingEnd = (first?: boolean) => {
     setTimeout(
