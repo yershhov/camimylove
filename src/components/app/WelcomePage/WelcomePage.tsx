@@ -52,7 +52,7 @@ const WelcomePage = () => {
         )}
 
         <Button
-          onClick={() => goAhead(3)}
+          onClick={() => goAhead(4)}
           color="pink.800"
           variant={"plain"}
           fontWeight={"bold"}

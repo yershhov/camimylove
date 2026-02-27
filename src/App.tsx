@@ -1,10 +1,11 @@
 import MemoriesPage from "./components/app/MemoriesPage/MemoriesPage";
-import WelcomePage from "./components/app/WelcomePage/WelcomePage";
+import AuthPage from "./components/app/AuthPage/AuthPage";
 import { Flex } from "@chakra-ui/react";
 import { createContext, useEffect, useState } from "react";
 import "./App.css";
 import QuizPage from "./components/app/QuizPage/QuizPage";
 import PrepPage from "./components/app/PrepPage/PrepPage";
+import WelcomePage from "./components/app/WelcomePage/WelcomePage";
 // import Settings from "./components/app/Settings";
 
 export const AppContext = createContext<any>({});
@@ -45,10 +46,11 @@ function App() {
         >
           {/* {showSettings && <Settings />} */}
 
-          {page === 0 && <WelcomePage />}
-          {page === 1 && <QuizPage />}
-          {page === 2 && <PrepPage />}
-          {page === 3 && <MemoriesPage />}
+          {page === 0 && <AuthPage />}
+          {page === 1 && <WelcomePage />}
+          {page === 2 && <QuizPage />}
+          {page === 3 && <PrepPage />}
+          {page === 4 && <MemoriesPage />}
         </Flex>
       </Flex>
     </AppContext.Provider>

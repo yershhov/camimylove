@@ -245,7 +245,7 @@ const QuizPage = () => {
                 )}
 
                 <Button
-                  onClick={() => handlePage(3)}
+                  onClick={() => handlePage(4)}
                   color="pink.800"
                   variant={"plain"}
                   fontWeight={"bold"}
