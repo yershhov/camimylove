@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { createAuthCookie, clearAuthCookie } from "./_lib/auth";
+import { createAuthCookie, clearAuthCookie } from "./_lib/auth.js";
 
 dotenv.config();
 

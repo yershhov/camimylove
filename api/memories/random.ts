@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { listAllMetadataBlobs, normalizeMemoryRecord } from "../_lib/memory";
+import { listAllMetadataBlobs, normalizeMemoryRecord } from "../_lib/memory.js";
 
 dotenv.config();
 

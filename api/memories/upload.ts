@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import { put } from "@vercel/blob";
-import { isAuthenticatedRequest } from "../_lib/auth";
-import { listAllMetadataBlobs, normalizeMemoryRecord } from "../_lib/memory";
+import { isAuthenticatedRequest } from "../_lib/auth.js";
+import { listAllMetadataBlobs, normalizeMemoryRecord } from "../_lib/memory.js";
 
 dotenv.config();
 
