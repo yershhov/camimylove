@@ -1,7 +1,7 @@
 import { Button, Input, Text, VStack } from "@chakra-ui/react";
 import { useContext, useState } from "react";
-import PageContainer from "../../ui/PageContainer";
 import { AppContext } from "../../../App";
+import PageContainer from "../../ui/PageContainer";
 
 const AuthPage = () => {
   const { handlePage } = useContext(AppContext);
