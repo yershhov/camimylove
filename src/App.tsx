@@ -6,14 +6,11 @@ import "./App.css";
 import QuizPage from "./components/app/QuizPage/QuizPage";
 import PrepPage from "./components/app/PrepPage/PrepPage";
 import WelcomePage from "./components/app/WelcomePage/WelcomePage";
-import UploadPage from "./components/app/UploadPage/UploadPage";
-// import Settings from "./components/app/Settings";
 
 export const AppContext = createContext<any>({});
 
 function App() {
   const [page, setPage] = useState(0);
-  const [_, setShowSettings] = useState(localStorage.getItem("show_settings"));
   const [isUploadEnabled, setIsUploadEnabled] = useState(false);
 
   useEffect(() => {
@@ -50,10 +47,7 @@ function App() {
     <AppContext.Provider
       value={{
         handlePage: (newPage?: number) =>
-          setPage((page) =>
-            typeof newPage === "number" ? newPage : page + 1
-          ),
-        setShowSettings,
+          setPage((page) => (typeof newPage === "number" ? newPage : page + 1)),
         isUploadEnabled,
       }}
     >
@@ -71,14 +65,11 @@ function App() {
           maxW={{ md: "800px" }}
           p={{ base: 6, md: 24 }}
         >
-          {/* {showSettings && <Settings />} */}
-
           {page === 0 && <AuthPage />}
           {page === 1 && <WelcomePage />}
           {page === 2 && <QuizPage />}
           {page === 3 && <PrepPage />}
           {page === 4 && <MemoriesPage />}
-          {page === 5 && isUploadEnabled && <UploadPage />}
         </Flex>
       </Flex>
     </AppContext.Provider>

@@ -1,24 +1,12 @@
-import {
-  VStack,
-  Center,
-  Button,
-  Text,
-  IconButton,
-  Box,
-} from "@chakra-ui/react";
-import { useState, useEffect, useContext } from "react";
+import { VStack, Center, Button, Text, Box } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 import { FaHeart } from "react-icons/fa";
-import { IoAdd } from "react-icons/io5";
 import type { Memory, RandomMemoryResponse } from "../../../types";
 import MemoryCard from "./MemoryCard";
 import { createAppToast } from "../../ui/toaster";
 import Loader from "../../ui/Loader";
-import { AppContext } from "../../../App";
 
 const MemoriesPage = () => {
-  const { setShowSettings, handlePage, isUploadEnabled } =
-    useContext(AppContext);
-
   const [memory, setMemory] = useState<Memory | null>(null);
 
   const [isLoadingMemory, setIsLoadingMemory] = useState(true);
@@ -33,9 +21,6 @@ const MemoriesPage = () => {
           setIsFirstLoad(false);
           setFirstLoadDone(true);
         } else {
-          setShowSettings(true);
-          localStorage.setItem("show_settings", "true");
-
           setIsLoadingMemory(false);
         }
       },
@@ -94,16 +79,7 @@ const MemoriesPage = () => {
           type: "error",
         });
       } finally {
-        // if (skipIntroLoader) {
-        //   setIsFirstLoad(false);
-        //   setFirstLoadDone(true);
-        //   setShowSettings(true);
-        //   localStorage.setItem("show_settings", "true");
-        //   setIsLoadingMemory(false);
-        //   setSkipIntroLoader(false);
-        // } else {
         handleDelayedLoadingEnd(true);
-        // }
       }
     };
 
@@ -152,22 +128,6 @@ const MemoriesPage = () => {
               Carica un altro ricordo
             </Button>
           </VStack>
-
-          {isUploadEnabled && (
-            <IconButton
-              aria-label="Apri pagina upload"
-              rounded="full"
-              size="xl"
-              colorPalette="pink"
-              position="fixed"
-              right={{ base: 6, md: 12 }}
-              bottom={{ base: 8, md: 12 }}
-              shadow="lg"
-              onClick={() => handlePage(5)}
-            >
-              <IoAdd />
-            </IconButton>
-          )}
         </Box>
       )}
     </Center>
