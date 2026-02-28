@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { isAuthenticatedRequest } from "../_lib/auth.js";
 import { listAllMetadataBlobs, normalizeMemoryRecord } from "../_lib/memory.js";
 
 dotenv.config();
@@ -6,6 +7,10 @@ dotenv.config();
 export default async function handler(req: any, res: any) {
   if (req.method !== "GET") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
+  }
+
+  if (!isAuthenticatedRequest(req, res)) {
+    return res.status(401).json({ ok: false, error: "Unauthorized" });
   }
 
   const token = process.env.BLOB_READ_WRITE_TOKEN;

@@ -1,6 +1,6 @@
-import { Button, VStack, Text, Flex } from "@chakra-ui/react";
+import { Button, VStack, Text, Flex, HStack } from "@chakra-ui/react";
 import { useContext, useRef, useState } from "react";
-import { AppContext } from "../../../App";
+import { AppContext } from "../../../context/AppContext";
 import { MdDone } from "react-icons/md";
 import PageContainer from "../../ui/PageContainer";
 import { createAppToast, toaster } from "../../ui/toaster";
@@ -8,6 +8,7 @@ import PinField from "./PinField";
 import AppleStyleConfetti from "../../ui/AppleStyleConfetti";
 import QuizPageTypeWriter from "./QuizPageTypeWriter";
 import { FiArrowRight } from "react-icons/fi";
+import BackHomeButton from "../../ui/BackHomeButton";
 
 const responses = {
   nickname: "POLITOS",
@@ -27,11 +28,11 @@ const randomErrorToasters = [
     description: "Come fai a non rispondere",
   },
   {
-    title: "Aha, well played!",
-    description: 'Say "home"',
+    title: "Mossa furba!",
+    description: "Concentratiii",
   },
   {
-    title: "Nope!",
+    title: "Nooo!",
     description: "Tieni🧠",
   },
   {
@@ -40,10 +41,22 @@ const randomErrorToasters = [
   },
 ].map((t) => ({ ...t, type: "error" }));
 
-const QuizPage = () => {
+type QuizPageProps = {
+  mode?: "legacy" | "standalone";
+  onComplete?: () => void;
+  onSkip?: () => void;
+};
+
+const QuizPage = ({
+  mode = "legacy",
+  onComplete,
+  onSkip,
+}: QuizPageProps) => {
   const { handlePage } = useContext(AppContext);
 
-  const [finishedTypingRows, setFinishedTypingRows] = useState(0);
+  const [finishedTypingRows, setFinishedTypingRows] = useState(
+    mode === "standalone" ? 1 : 0,
+  );
 
   const [formData, setFormData] = useState<any>({});
   const [formErrors, setFormErrors] = useState<any>({});
@@ -80,7 +93,17 @@ const QuizPage = () => {
     if (Object.keys(newErrors).length === 0) {
       setShowConfetti(true);
       setTimeout(() => {
+        if (mode === "standalone") {
+          setQuizEnd(false);
+          if (onComplete) onComplete();
+          return;
+        }
+
         setQuizEnd(true);
+        if (onComplete) {
+          setTimeout(onComplete, 1000);
+          return;
+        }
         setTimeout(handlePage, 1000);
       }, 4000);
     } else {
@@ -111,10 +134,12 @@ const QuizPage = () => {
     >
       {showConfetti && <AppleStyleConfetti />}
 
-      <QuizPageTypeWriter
-        finishedRows={finishedTypingRows}
-        setFinishedRows={setFinishedTypingRows}
-      />
+      {mode === "legacy" && (
+        <QuizPageTypeWriter
+          finishedRows={finishedTypingRows}
+          setFinishedRows={setFinishedTypingRows}
+        />
+      )}
 
       {finishedTypingRows === 1 && (
         <>
@@ -132,6 +157,12 @@ const QuizPage = () => {
               }}
               gap={8}
             >
+              {mode === "standalone" && (
+                <HStack justifyContent="flex-start" w="100%">
+                  <BackHomeButton />
+                </HStack>
+              )}
+
               <VStack alignItems={"start"} w="100%">
                 <PinField
                   label="Il primo nomignolo che abbiamo usato:"
@@ -244,17 +275,24 @@ const QuizPage = () => {
                   </Button>
                 )}
 
-                <Button
-                  onClick={() => handlePage(4)}
-                  color="pink.800"
-                  variant={"plain"}
-                  fontWeight={"bold"}
-                  textDecoration={"underline"}
-                  size="sm"
-                  // visibility={"hidden"}
-                >
-                  Salta <FiArrowRight />
-                </Button>
+                {mode === "legacy" && (
+                  <Button
+                    onClick={() => {
+                      if (onSkip) {
+                        onSkip();
+                        return;
+                      }
+                      handlePage(4);
+                    }}
+                    color="pink.800"
+                    variant={"plain"}
+                    fontWeight={"bold"}
+                    textDecoration={"underline"}
+                    size="sm"
+                  >
+                    Salta <FiArrowRight />
+                  </Button>
+                )}
               </VStack>
             </VStack>
           </form>

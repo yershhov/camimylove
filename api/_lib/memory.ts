@@ -10,6 +10,13 @@ export type MemoryRecord = {
 
 const METADATA_PREFIX = "metadata/";
 
+export function parseMemoryIdFromMetadataPath(pathname: string) {
+  const fileName = pathname.split("/").pop() ?? "";
+  const idRaw = fileName.replace(".json", "");
+  const id = Number(idRaw);
+  return Number.isFinite(id) ? id : null;
+}
+
 export function normalizeMemoryRecord(input: any): MemoryRecord | null {
   if (!input || typeof input !== "object") return null;
 

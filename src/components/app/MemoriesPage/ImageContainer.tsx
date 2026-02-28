@@ -8,7 +8,7 @@ const ImageContainer = (props: any) => {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const [hasAlreadyMounted] = useState(
-    sessionStorage.getItem("image_container_mounted")
+    sessionStorage.getItem("image_container_mounted"),
   );
 
   useEffect(() => {

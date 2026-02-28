@@ -14,7 +14,7 @@ import heic2any from "heic2any";
 import { IoArrowBack } from "react-icons/io5";
 import PageContainer from "../../ui/PageContainer";
 import { createAppToast } from "../../ui/toaster";
-import { AppContext } from "../../../App";
+import { AppContext } from "../../../context/AppContext";
 import { getPlaceName } from "../../../utils";
 import Loader from "../../ui/Loader";
 
@@ -61,13 +61,25 @@ async function fileToBase64(file: Blob) {
   return btoa(binary);
 }
 
-const UploadPage = () => {
-  const { handlePage, isUploadEnabled } = useContext(AppContext);
+type UploadPageProps = {
+  mode?: "legacy" | "standalone";
+  onBack?: () => void;
+};
+
+const UploadPage = ({ mode = "legacy", onBack }: UploadPageProps) => {
+  const { handlePage } = useContext(AppContext);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const goBackToMemories = () => {
-    sessionStorage.setItem("skip_memories_intro_loader", "true");
-    handlePage(4);
+    if (onBack) {
+      onBack();
+      return;
+    }
+
+    if (mode === "legacy") {
+      sessionStorage.setItem("skip_memories_intro_loader", "true");
+      handlePage(4);
+    }
   };
 
   const [previewUrl, setPreviewUrl] = useState<string>("");
@@ -241,17 +253,6 @@ const UploadPage = () => {
       setIsSubmitting(false);
     }
   };
-
-  if (!isUploadEnabled) {
-    return (
-      <PageContainer justifyContent="center" gap={5}>
-        <Text textAlign="center">Upload feature is currently disabled.</Text>
-        <Button colorPalette="pink" onClick={goBackToMemories}>
-          Torna ai ricordi
-        </Button>
-      </PageContainer>
-    );
-  }
 
   return (
     <PageContainer alignItems="stretch" gap={5}>

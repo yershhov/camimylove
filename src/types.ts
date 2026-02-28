@@ -11,3 +11,11 @@ export type RandomMemoryResponse = {
   memory?: Memory;
   error?: string;
 };
+
+export type GalleryMemoriesResponse = {
+  ok: boolean;
+  memories?: Memory[];
+  hasMore?: boolean;
+  nextBeforeId?: number | null;
+  error?: string;
+};

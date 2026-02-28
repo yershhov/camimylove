@@ -1,9 +1,13 @@
 import { Button, Input, Text, VStack } from "@chakra-ui/react";
 import { useContext, useState } from "react";
-import { AppContext } from "../../../App";
+import { AppContext } from "../../../context/AppContext";
 import PageContainer from "../../ui/PageContainer";
 
-const AuthPage = () => {
+type AuthPageProps = {
+  onAuthSuccess?: () => void;
+};
+
+const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
   const { handlePage } = useContext(AppContext);
   const [dateInput, setDateInput] = useState("");
   const [petNameInput, setPetNameInput] = useState("");
@@ -28,6 +32,10 @@ const AuthPage = () => {
       .then(async (response) => {
         if (!response.ok) {
           throw new Error("Invalid answers");
+        }
+        if (onAuthSuccess) {
+          onAuthSuccess();
+          return;
         }
         handlePage();
       })

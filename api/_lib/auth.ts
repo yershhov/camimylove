@@ -1,7 +1,7 @@
 import crypto from "crypto";
 
 const AUTH_COOKIE_NAME = "camimylove_auth";
-const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 days
+const SESSION_TTL_SECONDS = 60 * 15; // 15 minutes
 
 function getAuthSecret() {
   const fromEnv = process.env.AUTH_SESSION_SECRET;
@@ -44,7 +44,22 @@ export function clearAuthCookie() {
   return `${AUTH_COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0; Secure`;
 }
 
-export function isAuthenticatedRequest(req: any) {
+function appendSetCookie(res: any, cookie: string) {
+  const currentHeader = res.getHeader("Set-Cookie");
+  if (!currentHeader) {
+    res.setHeader("Set-Cookie", cookie);
+    return;
+  }
+
+  if (Array.isArray(currentHeader)) {
+    res.setHeader("Set-Cookie", [...currentHeader, cookie]);
+    return;
+  }
+
+  res.setHeader("Set-Cookie", [String(currentHeader), cookie]);
+}
+
+export function isAuthenticatedRequest(req: any, res?: any) {
   const token = getCookieValue(req, AUTH_COOKIE_NAME);
   if (!token) return false;
 
@@ -64,5 +79,10 @@ export function isAuthenticatedRequest(req: any) {
   const given = Buffer.from(signature);
   if (expected.length !== given.length) return false;
 
-  return crypto.timingSafeEqual(expected, given);
+  const isValid = crypto.timingSafeEqual(expected, given);
+  if (isValid && res) {
+    appendSetCookie(res, createAuthCookie());
+  }
+
+  return isValid;
 }

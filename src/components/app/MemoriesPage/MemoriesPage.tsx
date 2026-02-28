@@ -1,12 +1,32 @@
-import { VStack, Center, Button, Text, Box } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import {
+  VStack,
+  Center,
+  Button,
+  Text,
+  IconButton,
+  Box,
+  HStack,
+} from "@chakra-ui/react";
+import { useState, useEffect, useContext } from "react";
 import { FaHeart } from "react-icons/fa";
+import { IoAdd } from "react-icons/io5";
 import type { Memory, RandomMemoryResponse } from "../../../types";
 import MemoryCard from "./MemoryCard";
 import { createAppToast } from "../../ui/toaster";
 import Loader from "../../ui/Loader";
+import { AppContext } from "../../../context/AppContext";
+import BackHomeButton from "../../ui/BackHomeButton";
 
-const MemoriesPage = () => {
+type MemoriesPageProps = {
+  mode?: "legacy" | "standalone";
+  onOpenUpload?: () => void;
+};
+
+const MemoriesPage = ({
+  mode = "legacy",
+  onOpenUpload,
+}: MemoriesPageProps) => {
+  const { handlePage } = useContext(AppContext);
   const [memory, setMemory] = useState<Memory | null>(null);
 
   const [isLoadingMemory, setIsLoadingMemory] = useState(true);
@@ -109,6 +129,12 @@ const MemoriesPage = () => {
               animationDuration: "1200ms",
             }}
           >
+            {mode === "standalone" && (
+              <HStack justifyContent="flex-start" w="100%">
+                <BackHomeButton />
+              </HStack>
+            )}
+
             <Text fontFamily="'Dancing Script', cursive" fontSize={"4xl"}>
               Nostri ricordi
             </Text>
@@ -128,6 +154,27 @@ const MemoriesPage = () => {
               Carica un altro ricordo
             </Button>
           </VStack>
+          <IconButton
+            aria-label="Apri pagina upload"
+            rounded="full"
+            size="xl"
+            colorPalette="pink"
+            position="fixed"
+            right={{ base: 6, md: 12 }}
+            bottom={{ base: 8, md: 12 }}
+            shadow="lg"
+            onClick={() => {
+              if (onOpenUpload) {
+                onOpenUpload();
+                return;
+              }
+              if (mode === "legacy") {
+                handlePage(5);
+              }
+            }}
+          >
+            <IoAdd />
+          </IconButton>
         </Box>
       )}
     </Center>
