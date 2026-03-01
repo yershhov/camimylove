@@ -160,9 +160,9 @@ const MemoriesPage = ({ mode = "legacy", onOpenUpload }: MemoriesPageProps) => {
   return (
     <Center h="100%" w="100%" flex={1}>
       {isFirstLoad && !skipIntroLoader && (
-        <Center h="100%">
+        <Box position={"relative"} bottom={"5%"}>
           <Loader animate />
-        </Center>
+        </Box>
       )}
 
       {firstLoadDone && (
