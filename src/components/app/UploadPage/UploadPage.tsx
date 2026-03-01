@@ -5,10 +5,11 @@ import {
   HStack,
   Image,
   Input,
+  Spinner,
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useContext, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import exifr from "exifr";
 import heic2any from "heic2any";
 import { IoArrowBack } from "react-icons/io5";
@@ -16,7 +17,11 @@ import PageContainer from "../../ui/PageContainer";
 import { createAppToast } from "../../ui/toaster";
 import { AppContext } from "../../../context/AppContext";
 import { getPlaceName } from "../../../utils";
-import Loader from "../../ui/Loader";
+import type {
+  Memory,
+  RandomMemoryResponse,
+  UpdateMemoryResponse,
+} from "../../../types";
 
 const ACCEPTED_FILE_TYPES =
   ".heic,.heif,.jpg,.jpeg,.png,image/heic,image/heif,image/jpeg,image/png";
@@ -64,9 +69,31 @@ async function fileToBase64(file: Blob) {
 type UploadPageProps = {
   mode?: "legacy" | "standalone";
   onBack?: () => void;
+  variant?: "create" | "edit";
+  memoryId?: number;
 };
 
-const UploadPage = ({ mode = "legacy", onBack }: UploadPageProps) => {
+function toDateTimeLocalInput(value: string | null | undefined) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const pad = (num: number) => String(num).padStart(2, "0");
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+const UploadPage = ({
+  mode = "legacy",
+  onBack,
+  variant = "create",
+  memoryId,
+}: UploadPageProps) => {
   const { handlePage } = useContext(AppContext);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -86,6 +113,7 @@ const UploadPage = ({ mode = "legacy", onBack }: UploadPageProps) => {
   const [selectedBlob, setSelectedBlob] = useState<Blob | null>(null);
   const [selectedMimeType, setSelectedMimeType] = useState<string>("");
   const [selectedFileName, setSelectedFileName] = useState<string>("");
+  const [editingMemory, setEditingMemory] = useState<Memory | null>(null);
 
   const [dateValue, setDateValue] = useState("");
   const [locationValue, setLocationValue] = useState("");
@@ -93,14 +121,18 @@ const UploadPage = ({ mode = "legacy", onBack }: UploadPageProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isProcessingFile, setIsProcessingFile] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingEditMemory, setIsLoadingEditMemory] = useState(false);
 
   const canSubmit = useMemo(
-    () => Boolean(selectedBlob) && !isSubmitting,
-    [selectedBlob, isSubmitting],
+    () =>
+      variant === "edit"
+        ? Boolean(editingMemory) && !isSubmitting
+        : Boolean(selectedBlob) && !isSubmitting,
+    [editingMemory, isSubmitting, selectedBlob, variant],
   );
 
   const resetForm = (keepFileInput?: boolean) => {
-    if (previewUrl) {
+    if (previewUrl && previewUrl.startsWith("blob:")) {
       URL.revokeObjectURL(previewUrl);
     }
     setPreviewUrl("");
@@ -112,6 +144,54 @@ const UploadPage = ({ mode = "legacy", onBack }: UploadPageProps) => {
     setDateInputKey((value) => value + 1);
     if (!keepFileInput && inputRef.current) inputRef.current.value = "";
   };
+
+  useEffect(() => {
+    if (variant !== "edit") return;
+    if (!Number.isInteger(memoryId) || (memoryId ?? -1) < 0) {
+      createAppToast({
+        type: "error",
+        title: "Ricordo non valido",
+        description: "Id ricordo non valido per la modifica.",
+      });
+      return;
+    }
+
+    const loadMemoryForEdit = async () => {
+      try {
+        setIsLoadingEditMemory(true);
+        const response = await fetch(`/api/memories/random?id=${String(memoryId)}`);
+        if (!response.ok) {
+          throw new Error("Impossibile caricare il ricordo");
+        }
+
+        const payload = (await response.json()) as RandomMemoryResponse;
+        if (!payload.ok || !payload.memory) {
+          throw new Error(payload.error ?? "Ricordo non trovato");
+        }
+
+        if (previewUrl && previewUrl.startsWith("blob:")) {
+          URL.revokeObjectURL(previewUrl);
+        }
+        setEditingMemory(payload.memory);
+        setPreviewUrl(payload.memory.url);
+        setDateValue(toDateTimeLocalInput(payload.memory.date));
+        setLocationValue(payload.memory.location ?? "");
+        setDateInputKey((value) => value + 1);
+      } catch (error) {
+        createAppToast({
+          type: "error",
+          title: "Errore caricamento",
+          description:
+            error instanceof Error ? error.message : "Riprova tra qualche secondo.",
+        });
+      } finally {
+        setIsLoadingEditMemory(false);
+      }
+    };
+
+    void loadMemoryForEdit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [memoryId, variant]);
 
   const extractExif = async (file: File) => {
     try {
@@ -216,6 +296,50 @@ const UploadPage = ({ mode = "legacy", onBack }: UploadPageProps) => {
   };
 
   const handleSubmit = async () => {
+    if (variant === "edit") {
+      if (!editingMemory) return;
+      setIsSubmitting(true);
+
+      try {
+        const response = await fetch("/api/memories/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: editingMemory.id,
+            date: dateValue ? new Date(dateValue).toISOString() : null,
+            location: locationValue ? locationValue.trim() : null,
+          }),
+        });
+        const payload = (await response.json()) as UpdateMemoryResponse;
+        if (!response.ok || !payload.ok || !payload.memory) {
+          throw new Error(payload.error ?? "Salvataggio fallito");
+        }
+
+        setEditingMemory(payload.memory);
+        setDateValue(toDateTimeLocalInput(payload.memory.date));
+        setLocationValue(payload.memory.location ?? "");
+        setDateInputKey((value) => value + 1);
+        sessionStorage.setItem(
+          `memory_override_${payload.memory.id}`,
+          JSON.stringify(payload.memory),
+        );
+        createAppToast({
+          type: "success",
+          title: "Ricordo aggiornato",
+          description: "Le modifiche sono state salvate.",
+        });
+      } catch {
+        createAppToast({
+          type: "error",
+          title: "Aggiornamento fallito",
+          description: "Riprova tra qualche secondo.",
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+      return;
+    }
+
     if (!selectedBlob) return;
     setIsSubmitting(true);
 
@@ -272,73 +396,81 @@ const UploadPage = ({ mode = "legacy", onBack }: UploadPageProps) => {
         fontSize="4xl"
         textAlign="center"
       >
-        Aggiungi un nuovo ricordo
+        {variant === "edit" ? "Modifica questo ricordo" : "Aggiungi un nuovo ricordo"}
       </Text>
 
       <VStack gap={4} w="100%" alignItems="stretch">
-        <Box
-          position="relative"
-          borderWidth="2px"
-          borderStyle="dashed"
-          borderColor={isDragging ? "pink.500" : "pink.300"}
-          rounded="16px"
-          p={6}
-          bg={isDragging ? "pink.50" : "white"}
-          textAlign="center"
-          cursor={isProcessingFile ? "not-allowed" : "pointer"}
-          onClick={() => {
-            if (isProcessingFile) return;
-            inputRef.current?.click();
-          }}
-          onDragOver={(event) => {
-            if (isProcessingFile) return;
-            event.preventDefault();
-            setIsDragging(true);
-          }}
-          onDragLeave={(event) => {
-            if (isProcessingFile) return;
-            event.preventDefault();
-            setIsDragging(false);
-          }}
-          onDrop={(event) => {
-            if (isProcessingFile) return;
-            event.preventDefault();
-            setIsDragging(false);
-            const file = event.dataTransfer.files?.[0];
-            void onFileSelected(file);
-          }}
-        >
-          <Input
-            ref={inputRef}
-            type="file"
-            display="none"
-            accept={ACCEPTED_FILE_TYPES}
-            disabled={isProcessingFile}
-            onChange={(event) => {
-              const file = event.target.files?.[0];
+        {variant === "create" && (
+          <Box
+            position="relative"
+            borderWidth="2px"
+            borderStyle="dashed"
+            borderColor={isDragging ? "pink.500" : "pink.300"}
+            rounded="16px"
+            p={6}
+            bg={isDragging ? "pink.50" : "white"}
+            textAlign="center"
+            cursor={isProcessingFile ? "not-allowed" : "pointer"}
+            onClick={() => {
+              if (isProcessingFile) return;
+              inputRef.current?.click();
+            }}
+            onDragOver={(event) => {
+              if (isProcessingFile) return;
+              event.preventDefault();
+              setIsDragging(true);
+            }}
+            onDragLeave={(event) => {
+              if (isProcessingFile) return;
+              event.preventDefault();
+              setIsDragging(false);
+            }}
+            onDrop={(event) => {
+              if (isProcessingFile) return;
+              event.preventDefault();
+              setIsDragging(false);
+              const file = event.dataTransfer.files?.[0];
               void onFileSelected(file);
             }}
-          />
-          <Text fontWeight="bold">
-            Trascina qui la foto o clicca per selezionare
-          </Text>
-          <Text mt={2} color="pink.700" fontSize="sm">
-            Formati supportati: HEIC, JPG, JPEG, PNG
-          </Text>
+          >
+            <Input
+              ref={inputRef}
+              type="file"
+              display="none"
+              accept={ACCEPTED_FILE_TYPES}
+              disabled={isProcessingFile}
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                void onFileSelected(file);
+              }}
+            />
+            <Text fontWeight="bold">
+              Trascina qui la foto o clicca per selezionare
+            </Text>
+            <Text mt={2} color="pink.700" fontSize="sm">
+              Formati supportati: HEIC, JPG, JPEG, PNG
+            </Text>
 
-          {isProcessingFile && (
-            <Center
-              position="absolute"
-              inset={0}
-              rounded="inherit"
-              bg="rgba(255,255,255,0.65)"
-              backdropFilter="blur(2px)"
-              zIndex={2}
-            >
-              <Loader fitContainer />
-            </Center>
-          )}
-        </Box>
+            {isProcessingFile && (
+              <Center
+                position="absolute"
+                inset={0}
+                rounded="inherit"
+                bg="rgba(255,255,255,0.65)"
+                backdropFilter="blur(2px)"
+                zIndex={2}
+              >
+                <Spinner color="pink.500" size="lg" />
+              </Center>
+            )}
+          </Box>
+        )}
+
+        {variant === "edit" && isLoadingEditMemory && (
+          <Center minH="280px">
+            <Spinner color="pink.500" size="lg" />
+          </Center>
+        )}
 
         {previewUrl && (
           <Box rounded="16px" overflow="hidden">
@@ -352,7 +484,7 @@ const UploadPage = ({ mode = "legacy", onBack }: UploadPageProps) => {
           </Box>
         )}
 
-        {previewUrl && (
+        {(variant === "edit" ? Boolean(editingMemory) : Boolean(previewUrl)) && (
           <>
             <VStack gap={5} w="100%">
               <VStack alignItems="start" gap={2} w="100%">
@@ -381,9 +513,15 @@ const UploadPage = ({ mode = "legacy", onBack }: UploadPageProps) => {
               colorPalette="pink"
               size="lg"
               onClick={handleSubmit}
-              disabled={!canSubmit || isProcessingFile}
+              disabled={!canSubmit || isProcessingFile || isLoadingEditMemory}
             >
-              {isSubmitting ? "Caricamento..." : "Salva ricordo"}
+              {isSubmitting
+                ? variant === "edit"
+                  ? "Salvataggio..."
+                  : "Caricamento..."
+                : variant === "edit"
+                  ? "Salva modifiche"
+                  : "Salva ricordo"}
             </Button>
           </>
         )}

@@ -7,9 +7,10 @@ import {
   Box,
   HStack,
 } from "@chakra-ui/react";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useMemo } from "react";
 import { FaHeart } from "react-icons/fa";
 import { IoAdd } from "react-icons/io5";
+import { useLocation, useNavigate } from "react-router-dom";
 import type { Memory, RandomMemoryResponse } from "../../../types";
 import MemoryCard from "./MemoryCard";
 import { createAppToast } from "../../ui/toaster";
@@ -22,10 +23,9 @@ type MemoriesPageProps = {
   onOpenUpload?: () => void;
 };
 
-const MemoriesPage = ({
-  mode = "legacy",
-  onOpenUpload,
-}: MemoriesPageProps) => {
+const MemoriesPage = ({ mode = "legacy", onOpenUpload }: MemoriesPageProps) => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { handlePage } = useContext(AppContext);
   const [memory, setMemory] = useState<Memory | null>(null);
 
@@ -33,6 +33,13 @@ const MemoriesPage = ({
   const [isFirstLoad, setIsFirstLoad] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const [skipIntroLoader] = useState(false);
+  const requestedMemoryId = useMemo(() => {
+    const idRaw = new URLSearchParams(location.search).get("id");
+    if (!idRaw) return null;
+    const parsed = Number(idRaw);
+    if (!Number.isInteger(parsed) || parsed < 0) return null;
+    return parsed;
+  }, [location.search]);
 
   const handleDelayedLoadingEnd = (first?: boolean) => {
     setTimeout(
@@ -49,7 +56,9 @@ const MemoriesPage = ({
   };
 
   const fetchRandomMemory = async () => {
-    const response = await fetch("/api/memories/random");
+    const query =
+      requestedMemoryId !== null ? `?id=${String(requestedMemoryId)}` : "";
+    const response = await fetch(`/api/memories/random${query}`);
     if (!response.ok) {
       throw new Error("Failed to fetch random memory");
     }
@@ -69,6 +78,16 @@ const MemoriesPage = ({
     } finally {
       handleDelayedLoadingEnd();
     }
+  };
+
+  const handleDeleteMemory = async (_memory: Memory) => {
+    await loadNewMemory();
+  };
+
+  const handleEditMemory = (memoryToEdit: Memory) => {
+    navigate(`/memories/edit/${memoryToEdit.id}`, {
+      state: { from: "/random-memories" },
+    });
   };
 
   useEffect(() => {
@@ -104,7 +123,7 @@ const MemoriesPage = ({
     };
 
     if (isFirstLoad) fetchInitialData();
-  }, [isFirstLoad, skipIntroLoader]);
+  }, [isFirstLoad, skipIntroLoader, requestedMemoryId]);
 
   useEffect(() => {
     if (!isFirstLoad && firstLoadDone) {
@@ -139,7 +158,12 @@ const MemoriesPage = ({
               Nostri ricordi
             </Text>
 
-            <MemoryCard memory={memory} isLoading={isLoadingMemory} />
+            <MemoryCard
+              memory={memory}
+              isLoading={isLoadingMemory}
+              onDelete={handleDeleteMemory}
+              onEdit={handleEditMemory}
+            />
 
             <Button
               colorPalette={"pink"}

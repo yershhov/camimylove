@@ -25,6 +25,8 @@ function parseBeforeId(rawBeforeId: unknown) {
 }
 
 export default async function handler(req: any, res: any) {
+  res.setHeader("Cache-Control", "no-store");
+
   if (req.method !== "GET") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
@@ -64,7 +66,9 @@ export default async function handler(req: any, res: any) {
     const rawRecords = await Promise.all(
       pageBlobs.map(async (blob) => {
         try {
-          const response = await fetch(blob.url);
+          const response = await fetch(`${blob.url}?t=${Date.now()}`, {
+            cache: "no-store",
+          });
           if (!response.ok) return null;
           return await response.json();
         } catch {

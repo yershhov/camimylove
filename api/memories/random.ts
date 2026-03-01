@@ -1,10 +1,16 @@
 import dotenv from "dotenv";
 import { isAuthenticatedRequest } from "../_lib/auth.js";
-import { listAllMetadataBlobs, normalizeMemoryRecord } from "../_lib/memory.js";
+import {
+  findMetadataBlobById,
+  listAllMetadataBlobs,
+  normalizeMemoryRecord,
+} from "../_lib/memory.js";
 
 dotenv.config();
 
 export default async function handler(req: any, res: any) {
+  res.setHeader("Cache-Control", "no-store");
+
   if (req.method !== "GET") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
@@ -22,19 +28,49 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    const metadataBlobs = await listAllMetadataBlobs(token);
+    const requestedIdRaw = req.query?.id;
+    const requestedId =
+      requestedIdRaw === undefined ? null : Number(requestedIdRaw);
 
-    if (metadataBlobs.length === 0) {
-      return res.status(404).json({
+    if (
+      requestedIdRaw !== undefined &&
+      (!Number.isFinite(requestedId) || !Number.isInteger(requestedId) || requestedId < 0)
+    ) {
+      return res.status(400).json({
         ok: false,
-        error: "No memories available",
+        error: "Invalid memory id",
       });
     }
 
-    // Pick from metadata records only to guarantee image+metadata pairing.
-    const randomBlob =
-      metadataBlobs[Math.floor(Math.random() * metadataBlobs.length)];
-    const metadataResponse = await fetch(randomBlob.url);
+    let selectedBlob: { pathname: string; url: string } | null = null;
+
+    if (requestedId !== null) {
+      const blob = await findMetadataBlobById(token, requestedId);
+      if (!blob) {
+        return res.status(404).json({
+          ok: false,
+          error: "Memory not found",
+        });
+      }
+      selectedBlob = { pathname: blob.pathname, url: blob.url };
+    } else {
+      const metadataBlobs = await listAllMetadataBlobs(token);
+
+      if (metadataBlobs.length === 0) {
+        return res.status(404).json({
+          ok: false,
+          error: "No memories available",
+        });
+      }
+
+      // Pick from metadata records only to guarantee image+metadata pairing.
+      selectedBlob =
+        metadataBlobs[Math.floor(Math.random() * metadataBlobs.length)];
+    }
+
+    const metadataResponse = await fetch(`${selectedBlob.url}?t=${Date.now()}`, {
+      cache: "no-store",
+    });
 
     if (!metadataResponse.ok) {
       return res.status(500).json({

@@ -1,9 +1,22 @@
-import { Button } from "@chakra-ui/react";
+import { Button, IconButton } from "@chakra-ui/react";
 import { IoArrowBack } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
 const BackHomeButton = ({ iconOnly = false }: { iconOnly?: boolean }) => {
   const navigate = useNavigate();
+
+  if (iconOnly) {
+    return (
+      <IconButton
+        aria-label="Torna alla pagina home"
+        colorPalette="pink"
+        variant={"plain"}
+        onClick={() => navigate("/home")}
+      >
+        <IoArrowBack />
+      </IconButton>
+    );
+  }
 
   return (
     <Button
@@ -12,7 +25,7 @@ const BackHomeButton = ({ iconOnly = false }: { iconOnly?: boolean }) => {
       onClick={() => navigate("/home")}
     >
       <IoArrowBack />
-      {iconOnly ? null : "Torna alla home"}
+      {"Torna alla home"}
     </Button>
   );
 };

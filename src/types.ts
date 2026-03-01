@@ -19,3 +19,15 @@ export type GalleryMemoriesResponse = {
   nextBeforeId?: number | null;
   error?: string;
 };
+
+export type DeleteMemoryResponse = {
+  ok: boolean;
+  id?: number;
+  error?: string;
+};
+
+export type UpdateMemoryResponse = {
+  ok: boolean;
+  memory?: Memory;
+  error?: string;
+};

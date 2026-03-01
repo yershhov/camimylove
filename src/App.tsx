@@ -6,6 +6,7 @@ import {
   Routes,
   useLocation,
   useNavigate,
+  useParams,
 } from "react-router-dom";
 import "./App.css";
 import AuthPage from "./components/app/AuthPage/AuthPage";
@@ -64,6 +65,7 @@ function App() {
               <Route path="/gallery" element={<GalleryPage />} />
               <Route path="/random-memories" element={<RandomMemoriesRoute />} />
               <Route path="/upload" element={<StandaloneUploadRoute />} />
+              <Route path="/memories/edit/:id" element={<EditMemoryRoute />} />
               <Route path="/quiz" element={<StandaloneQuizRoute />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/legacy" element={<LegacyFlowPage />} />
@@ -119,6 +121,30 @@ function StandaloneUploadRoute() {
   return (
     <UploadPage
       mode="standalone"
+      onBack={() => navigate(from)}
+    />
+  );
+}
+
+function EditMemoryRoute() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const params = useParams();
+  const memoryId = Number(params.id);
+  const from =
+    typeof location.state?.from === "string"
+      ? location.state.from
+      : "/random-memories";
+
+  if (!Number.isInteger(memoryId) || memoryId < 0) {
+    return <Navigate to="/random-memories" replace />;
+  }
+
+  return (
+    <UploadPage
+      mode="standalone"
+      variant="edit"
+      memoryId={memoryId}
       onBack={() => navigate(from)}
     />
   );

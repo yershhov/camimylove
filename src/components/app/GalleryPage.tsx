@@ -26,6 +26,7 @@ const GalleryPage = () => {
 
   const [memories, setMemories] = useState<Memory[]>([]);
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [nextBeforeId, setNextBeforeId] = useState<number | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -71,6 +72,29 @@ const GalleryPage = () => {
     };
   };
 
+  const applyMemoryOverrides = (list: Memory[]) => {
+    const overrides = new Map<number, Memory>();
+    for (let index = 0; index < sessionStorage.length; index += 1) {
+      const key = sessionStorage.key(index);
+      if (!key || !key.startsWith("memory_override_")) continue;
+      const raw = sessionStorage.getItem(key);
+      if (!raw) continue;
+
+      try {
+        const parsed = JSON.parse(raw) as Memory;
+        if (typeof parsed?.id === "number") {
+          overrides.set(parsed.id, parsed);
+          sessionStorage.removeItem(key);
+        }
+      } catch {
+        sessionStorage.removeItem(key);
+      }
+    }
+
+    if (overrides.size === 0) return list;
+    return list.map((memory) => overrides.get(memory.id) ?? memory);
+  };
+
   useEffect(() => {
     const loadInitial = async () => {
       try {
@@ -78,7 +102,7 @@ const GalleryPage = () => {
         const result = await fetchGallerySlice({ limit: 40 });
         if (!mountedRef.current) return;
 
-        setMemories(result.memoriesDesc);
+        setMemories(applyMemoryOverrides(result.memoriesDesc));
         setHasMore(result.hasMore);
         setNextBeforeId(result.nextBeforeId);
       } catch (error) {
@@ -103,7 +127,9 @@ const GalleryPage = () => {
         limit: 40,
       });
       if (!mountedRef.current) return;
-      setMemories((prev) => [...prev, ...result.memoriesDesc]);
+      setMemories((prev) =>
+        applyMemoryOverrides([...prev, ...result.memoriesDesc]),
+      );
       setHasMore(result.hasMore);
       setNextBeforeId(result.nextBeforeId);
     } catch (error) {
@@ -113,6 +139,20 @@ const GalleryPage = () => {
         setIsLoadingMore(false);
       }
     }
+  };
+
+  const handleDeleteMemory = async (memoryToDelete: Memory) => {
+    setMemories((prev) => prev.filter((memory) => memory.id !== memoryToDelete.id));
+    setSelectedMemory((current) =>
+      current?.id === memoryToDelete.id ? null : current,
+    );
+    setIsDeleteConfirmOpen(false);
+  };
+
+  const handleEditMemory = (memoryToEdit: Memory) => {
+    navigate(`/memories/edit/${memoryToEdit.id}`, {
+      state: { from: "/gallery" },
+    });
   };
 
   return (
@@ -135,10 +175,8 @@ const GalleryPage = () => {
           </Text>
           <IconButton
             aria-label="Apri pagina upload"
-            rounded="full"
-            size="xl"
             colorPalette="pink"
-            shadow="lg"
+            rounded="full"
             onClick={() => navigate("/upload", { state: { from: "/gallery" } })}
           >
             <IoAdd />
@@ -194,22 +232,29 @@ const GalleryPage = () => {
                 </AspectRatio>
               ))}
             </SimpleGrid>
-            <HStack justifyContent="center" minH="32px" py={1}>
-              {isLoadingMore && <Spinner color="pink.500" size="sm" />}
-            </HStack>
+            {isLoadingMore && (
+              <HStack justifyContent="center" py={1}>
+                <Spinner color="pink.500" size="sm" />
+              </HStack>
+            )}
           </VStack>
         )}
       </Box>
 
       <Dialog.Root
         open={Boolean(selectedMemory)}
+        closeOnInteractOutside={!isDeleteConfirmOpen}
         onOpenChange={(event) => {
-          if (!event.open) setSelectedMemory(null);
+          if (!event.open) {
+            setSelectedMemory(null);
+            setIsDeleteConfirmOpen(false);
+          }
         }}
       >
         <Portal>
           <Dialog.Backdrop />
-          <Dialog.Positioner>
+
+          <Dialog.Positioner mt={6}>
             <Dialog.Content
               bg="transparent"
               shadow="none"
@@ -219,7 +264,15 @@ const GalleryPage = () => {
             >
               <Dialog.Body p={0}>
                 {selectedMemory && (
-                  <MemoryCard memory={selectedMemory} isLoading={false} />
+                  <MemoryCard
+                    memory={selectedMemory}
+                    isLoading={false}
+                    isDialog
+                    onDelete={handleDeleteMemory}
+                    onEdit={handleEditMemory}
+                    onClose={() => setSelectedMemory(null)}
+                    onDeleteDialogOpenChange={setIsDeleteConfirmOpen}
+                  />
                 )}
               </Dialog.Body>
             </Dialog.Content>

@@ -47,11 +47,7 @@ type QuizPageProps = {
   onSkip?: () => void;
 };
 
-const QuizPage = ({
-  mode = "legacy",
-  onComplete,
-  onSkip,
-}: QuizPageProps) => {
+const QuizPage = ({ mode = "legacy", onComplete, onSkip }: QuizPageProps) => {
   const { handlePage } = useContext(AppContext);
 
   const [finishedTypingRows, setFinishedTypingRows] = useState(
@@ -105,7 +101,7 @@ const QuizPage = ({
           return;
         }
         setTimeout(handlePage, 1000);
-      }, 4000);
+      }, 2000);
     } else {
       toaster.remove(lastToastId.current);
       if (!firstTimeError.current) {
