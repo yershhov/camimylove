@@ -62,7 +62,7 @@ const HomePage = () => {
     },
     { label: "Aggiungi ricordi", route: "/upload", icon: <FiCamera /> },
     { label: "Quiz 1# anniversario", route: "/quiz", icon: <FiHelpCircle /> },
-    { label: "Ricorda com'era", route: "/legacy", icon: <FiMap /> },
+    { label: "Ricordati com'era", route: "/legacy", icon: <FiMap /> },
     {
       label: "Impostazioni",
       route: "/settings",

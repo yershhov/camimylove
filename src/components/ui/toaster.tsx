@@ -17,7 +17,7 @@ export const toaster = createToaster({
 export const createAppToast = (options: any) => {
   return toaster.create({
     ...options,
-    duration: 5000,
+    duration: 2000,
   });
 };
 

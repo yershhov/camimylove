@@ -159,7 +159,19 @@ const UploadPage = ({
     const loadMemoryForEdit = async () => {
       try {
         setIsLoadingEditMemory(true);
-        const response = await fetch(`/api/memories/random?id=${String(memoryId)}`);
+        const query = new URLSearchParams({
+          id: String(memoryId),
+          t: String(Date.now()),
+        });
+        const response = await fetch(
+          `/api/memories/random?${query.toString()}`,
+          {
+            cache: "no-store",
+            headers: {
+              "Cache-Control": "no-cache",
+            },
+          },
+        );
         if (!response.ok) {
           throw new Error("Impossibile caricare il ricordo");
         }
@@ -182,7 +194,9 @@ const UploadPage = ({
           type: "error",
           title: "Errore caricamento",
           description:
-            error instanceof Error ? error.message : "Riprova tra qualche secondo.",
+            error instanceof Error
+              ? error.message
+              : "Riprova tra qualche secondo.",
         });
       } finally {
         setIsLoadingEditMemory(false);
@@ -222,18 +236,6 @@ const UploadPage = ({
           // Keep location empty if reverse geocode fails.
         }
       }
-
-      console.log("Upload metadata extracted", {
-        extractedDate: extractedDate || null,
-        latitude:
-          typeof latitude === "number" && Number.isFinite(latitude)
-            ? latitude
-            : null,
-        longitude:
-          typeof longitude === "number" && Number.isFinite(longitude)
-            ? longitude
-            : null,
-      });
     } catch {
       // Metadata extraction is best-effort and optional.
     }
@@ -241,7 +243,6 @@ const UploadPage = ({
 
   const processFile = async (file: File) => {
     const mimeType = file.type.toLowerCase();
-    console.log("mimeType", mimeType);
     const isImage = mimeType.startsWith("image/");
     if (!isImage) {
       throw new Error("Unsupported file type");
@@ -254,7 +255,6 @@ const UploadPage = ({
     let targetName = file.name;
 
     if (isHeicFile(file)) {
-      console.log("here");
       const converted = await heic2any({
         blob: file,
         toType: "image/jpeg",
@@ -319,10 +319,6 @@ const UploadPage = ({
         setDateValue(toDateTimeLocalInput(payload.memory.date));
         setLocationValue(payload.memory.location ?? "");
         setDateInputKey((value) => value + 1);
-        sessionStorage.setItem(
-          `memory_override_${payload.memory.id}`,
-          JSON.stringify(payload.memory),
-        );
         createAppToast({
           type: "success",
           title: "Ricordo aggiornato",
@@ -364,7 +360,6 @@ const UploadPage = ({
       createAppToast({
         type: "success",
         title: "Ricordo salvato",
-        description: "Puoi caricarne subito un altro.",
       });
       resetForm();
     } catch {
@@ -396,7 +391,9 @@ const UploadPage = ({
         fontSize="4xl"
         textAlign="center"
       >
-        {variant === "edit" ? "Modifica questo ricordo" : "Aggiungi un nuovo ricordo"}
+        {variant === "edit"
+          ? "Modifica questo ricordo"
+          : "Aggiungi un nuovo ricordo"}
       </Text>
 
       <VStack gap={4} w="100%" alignItems="stretch">
@@ -484,7 +481,9 @@ const UploadPage = ({
           </Box>
         )}
 
-        {(variant === "edit" ? Boolean(editingMemory) : Boolean(previewUrl)) && (
+        {(variant === "edit"
+          ? Boolean(editingMemory)
+          : Boolean(previewUrl)) && (
           <>
             <VStack gap={5} w="100%">
               <VStack alignItems="start" gap={2} w="100%">

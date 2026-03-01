@@ -134,7 +134,11 @@ const MemoriesPage = ({ mode = "legacy", onOpenUpload }: MemoriesPageProps) => {
 
   return (
     <Center h="100%" w="100%" flex={1}>
-      {isFirstLoad && !skipIntroLoader && <Loader animate />}
+      {isFirstLoad && !skipIntroLoader && (
+        <Center h="100%">
+          <Loader animate />
+        </Center>
+      )}
 
       {firstLoadDone && (
         <Box h="100%" w="100%" position="relative">
@@ -175,7 +179,7 @@ const MemoriesPage = ({ mode = "legacy", onOpenUpload }: MemoriesPageProps) => {
               mt={6}
             >
               <FaHeart />
-              Carica un altro ricordo
+              Vedi un altro ricordo
             </Button>
           </VStack>
           <IconButton

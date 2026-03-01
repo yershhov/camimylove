@@ -1,4 +1,4 @@
-import { Button, VStack, Text, Flex, HStack } from "@chakra-ui/react";
+import { Button, VStack, Text, Flex, HStack, Box } from "@chakra-ui/react";
 import { useContext, useRef, useState } from "react";
 import { AppContext } from "../../../context/AppContext";
 import { MdDone } from "react-icons/md";
@@ -28,11 +28,11 @@ const randomErrorToasters = [
     description: "Come fai a non rispondere",
   },
   {
-    title: "Mossa furba!",
-    description: "Concentratiii",
+    title: "Aha, well played!",
+    description: 'Say "home"',
   },
   {
-    title: "Nooo!",
+    title: "Nope!",
     description: "Tieni🧠",
   },
   {
@@ -67,6 +67,31 @@ const QuizPage = ({ mode = "legacy", onComplete, onSkip }: QuizPageProps) => {
     setFormData({ ...formData, [e.target.name]: e.target.value.toUpperCase() });
   };
 
+  const handleSuccessfulQuizSubmit = () => {
+    setShowConfetti(true);
+    setTimeout(() => {
+      if (mode === "standalone") {
+        setQuizEnd(false);
+        if (onComplete) onComplete();
+        return;
+      }
+
+      setQuizEnd(true);
+      if (onComplete) {
+        setTimeout(onComplete, 1000);
+        return;
+      }
+      setTimeout(handlePage, 1000);
+    }, 2000);
+  };
+
+  const autofillCorrectAnswers = () => {
+    setFormData({ ...responses });
+    setFormErrors({});
+    isSubmitted.current = true;
+    handleSuccessfulQuizSubmit();
+  };
+
   const handleSubmit = (e: any) => {
     isSubmitted.current = true;
     e.preventDefault();
@@ -87,21 +112,7 @@ const QuizPage = ({ mode = "legacy", onComplete, onSkip }: QuizPageProps) => {
     setFormErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      setShowConfetti(true);
-      setTimeout(() => {
-        if (mode === "standalone") {
-          setQuizEnd(false);
-          if (onComplete) onComplete();
-          return;
-        }
-
-        setQuizEnd(true);
-        if (onComplete) {
-          setTimeout(onComplete, 1000);
-          return;
-        }
-        setTimeout(handlePage, 1000);
-      }, 2000);
+      handleSuccessfulQuizSubmit();
     } else {
       toaster.remove(lastToastId.current);
       if (!firstTimeError.current) {
@@ -122,179 +133,241 @@ const QuizPage = ({ mode = "legacy", onComplete, onSkip }: QuizPageProps) => {
   return (
     <PageContainer
       gap={6}
+      alignItems="stretch"
       data-state={quizEnd ? "closed" : ""}
       _closed={{
         animationName: "fade-out",
         animationDuration: "1200ms",
       }}
+      {...(mode === "standalone"
+        ? { overflowY: "auto", h: "100%", minH: 0 }
+        : {})}
     >
       {showConfetti && <AppleStyleConfetti />}
 
-      {mode === "legacy" && (
-        <QuizPageTypeWriter
-          finishedRows={finishedTypingRows}
-          setFinishedRows={setFinishedTypingRows}
-        />
+      {mode === "standalone" && (
+        <Box position="sticky" top={0} zIndex={2} bg="pink.100">
+          <HStack justifyContent="center" w="100%" position={"relative"}>
+            <Box position={"absolute"} left={0}>
+              <BackHomeButton iconOnly />
+            </Box>
+            <Text
+              fontFamily="'Dancing Script', cursive"
+              fontSize="4xl"
+              textAlign="center"
+            >
+              Quiz #1 anno
+            </Text>
+          </HStack>
+        </Box>
       )}
 
-      {finishedTypingRows === 1 && (
+      {mode === "legacy" && (
+        <Box onClick={autofillCorrectAnswers}>
+          <QuizPageTypeWriter
+            finishedRows={finishedTypingRows}
+            setFinishedRows={setFinishedTypingRows}
+            onBrainClick={autofillCorrectAnswers}
+          />
+        </Box>
+      )}
+
+      {finishedTypingRows === 1 && mode === "legacy" && (
         <>
-          <form
-            onSubmit={handleSubmit}
-            style={{ height: "100%", width: "100%" }}
-          >
-            <VStack
-              h="100%"
-              w="100%"
-              data-state={"open"}
-              _open={{
-                animationName: "fade-in",
-                animationDuration: "1200ms",
-              }}
-              gap={8}
-            >
-              {mode === "standalone" && (
-                <HStack justifyContent="flex-start" w="100%">
-                  <BackHomeButton />
-                </HStack>
-              )}
-
-              <VStack alignItems={"start"} w="100%">
-                <PinField
-                  label="Il primo nomignolo che abbiamo usato:"
-                  name="nickname"
-                  error={formErrors.nickname}
-                  value={formData.nickname}
-                  numCells={7}
-                  emoji="🐣🐥"
-                  {...sharedProps}
-                />
-
-                <PinField
-                  label="Il secondo invece?"
-                  name="nickname2"
-                  error={formErrors.nickname2}
-                  value={formData.nickname2}
-                  numCells={7}
-                  emoji="😽😻"
-                  {...sharedProps}
-                />
-
-                <PinField
-                  label="Dove ci siamo messi insieme?"
-                  name="where"
-                  error={formErrors.where}
-                  value={formData.where}
-                  numCells={11}
-                  emoji="3️⃣6️⃣0️⃣"
-                  {...sharedProps}
-                />
-
-                <PinField
-                  label="Tu eres mi ..."
-                  name="plush"
-                  error={formErrors.plush}
-                  value={formData.plush}
-                  numCells={9}
-                  emoji="🧸"
-                  {...sharedProps}
-                />
-
-                <PinField
-                  label="Ti amo quanto?"
-                  name="love"
-                  error={formErrors.love}
-                  value={formData.love}
-                  numCells={5}
-                  emoji={
-                    <Flex gap={44} display={"inline-flex"}>
-                      <span>🫲🏼</span> <span>🫱🏼</span>
-                    </Flex>
-                  }
-                  {...sharedProps}
-                />
-
-                <PinField
-                  label="Nell'ora del pranzo si ordina..."
-                  name="coffee"
-                  error={formErrors.coffee}
-                  value={formData.coffee}
-                  numCells={15}
-                  emoji="☕️☕️"
-                  disabledCells={[3]}
-                  {...sharedProps}
-                />
-
-                <PinField
-                  label="Quanti figli avremo in futuro?)"
-                  name="kids"
-                  error={formErrors.kids}
-                  value={formData.kids}
-                  numCells={3}
-                  emoji="👼👼👼"
-                  {...sharedProps}
-                />
-
-                <PinField
-                  label="Miau"
-                  name="miau"
-                  error={formErrors.miau}
-                  value={formData.miau}
-                  numCells={4}
-                  emoji="🐶"
-                  {...sharedProps}
-                />
-
-                <PinField
-                  label="Da ricchi avremo la casa in..."
-                  name="switzerland"
-                  error={formErrors.switzerland}
-                  value={formData.switzerland}
-                  numCells={8}
-                  emoji="💶⛰🌄"
-                  {...sharedProps}
-                />
-              </VStack>
-
-              <VStack w="100%">
-                {showConfetti ? (
-                  <Text fontSize={"4xl"}>🥳🥳🥳🥳🥳🥳🥳</Text>
-                ) : (
-                  <Button
-                    type="submit"
-                    colorPalette={"pink"}
-                    size={"xl"}
-                    w="100%"
-                    disabled={showConfetti}
-                  >
-                    <MdDone /> Invia
-                  </Button>
-                )}
-
-                {mode === "legacy" && (
-                  <Button
-                    onClick={() => {
-                      if (onSkip) {
-                        onSkip();
-                        return;
-                      }
-                      handlePage(4);
-                    }}
-                    color="pink.800"
-                    variant={"plain"}
-                    fontWeight={"bold"}
-                    textDecoration={"underline"}
-                    size="sm"
-                  >
-                    Salta <FiArrowRight />
-                  </Button>
-                )}
-              </VStack>
-            </VStack>
-          </form>
+          <QuizForm
+            handleSubmit={handleSubmit}
+            formErrors={formErrors}
+            formData={formData}
+            sharedProps={sharedProps}
+            showConfetti={showConfetti}
+            mode={mode}
+            onSkip={onSkip}
+            handlePage={handlePage}
+          />
         </>
       )}
+
+      {finishedTypingRows === 1 && mode === "standalone" && (
+        <Box overflowY="auto" flex={1} minH={0}>
+          <QuizForm
+            handleSubmit={handleSubmit}
+            formErrors={formErrors}
+            formData={formData}
+            sharedProps={sharedProps}
+            showConfetti={showConfetti}
+            mode={mode}
+            onSkip={onSkip}
+            handlePage={handlePage}
+          />
+        </Box>
+      )}
     </PageContainer>
+  );
+};
+
+const QuizForm = ({
+  handleSubmit,
+  formErrors,
+  formData,
+  sharedProps,
+  showConfetti,
+  mode,
+  onSkip,
+  handlePage,
+}: {
+  handleSubmit: (e: any) => void;
+  formErrors: any;
+  formData: any;
+  sharedProps: any;
+  showConfetti: boolean;
+  mode: "legacy" | "standalone";
+  onSkip?: () => void;
+  handlePage: (newPage?: number) => void;
+}) => {
+  return (
+    <form onSubmit={handleSubmit} style={{ width: "100%" }}>
+      <VStack
+        w="100%"
+        data-state={"open"}
+        _open={{
+          animationName: "fade-in",
+          animationDuration: "1200ms",
+        }}
+        gap={8}
+      >
+        <VStack alignItems={"start"} w="100%">
+          <PinField
+            label="Il primo nomignolo che abbiamo usato:"
+            name="nickname"
+            error={formErrors.nickname}
+            value={formData.nickname}
+            numCells={7}
+            emoji="🐣🐥"
+            {...sharedProps}
+          />
+
+          <PinField
+            label="Il secondo invece?"
+            name="nickname2"
+            error={formErrors.nickname2}
+            value={formData.nickname2}
+            numCells={7}
+            emoji="😽😻"
+            {...sharedProps}
+          />
+
+          <PinField
+            label="Dove ci siamo messi insieme?"
+            name="where"
+            error={formErrors.where}
+            value={formData.where}
+            numCells={11}
+            emoji="3️⃣6️⃣0️⃣"
+            {...sharedProps}
+          />
+
+          <PinField
+            label="Tu eres mi ..."
+            name="plush"
+            error={formErrors.plush}
+            value={formData.plush}
+            numCells={9}
+            emoji="🧸"
+            {...sharedProps}
+          />
+
+          <PinField
+            label="Ti amo quanto?"
+            name="love"
+            error={formErrors.love}
+            value={formData.love}
+            numCells={5}
+            emoji={
+              <Flex gap={44} display={"inline-flex"}>
+                <span>🫲🏼</span> <span>🫱🏼</span>
+              </Flex>
+            }
+            {...sharedProps}
+          />
+
+          <PinField
+            label="Nell'ora del pranzo si ordina..."
+            name="coffee"
+            error={formErrors.coffee}
+            value={formData.coffee}
+            numCells={15}
+            emoji="☕️☕️"
+            disabledCells={[3]}
+            {...sharedProps}
+          />
+
+          <PinField
+            label="Quanti figli avremo in futuro?)"
+            name="kids"
+            error={formErrors.kids}
+            value={formData.kids}
+            numCells={3}
+            emoji="👼👼👼"
+            {...sharedProps}
+          />
+
+          <PinField
+            label="Miau"
+            name="miau"
+            error={formErrors.miau}
+            value={formData.miau}
+            numCells={4}
+            emoji="🐶"
+            {...sharedProps}
+          />
+
+          <PinField
+            label="Da ricchi avremo la casa in..."
+            name="switzerland"
+            error={formErrors.switzerland}
+            value={formData.switzerland}
+            numCells={8}
+            emoji="💶⛰🌄"
+            {...sharedProps}
+          />
+        </VStack>
+
+        <VStack w="100%">
+          {showConfetti ? (
+            <Text fontSize={"4xl"}>🥳🥳🥳🥳🥳🥳🥳</Text>
+          ) : (
+            <Button
+              type="submit"
+              colorPalette={"pink"}
+              size={"xl"}
+              w="100%"
+              disabled={showConfetti}
+            >
+              <MdDone /> Invia
+            </Button>
+          )}
+
+          {mode === "legacy" && (
+            <Button
+              onClick={() => {
+                if (onSkip) {
+                  onSkip();
+                  return;
+                }
+                handlePage(4);
+              }}
+              color="pink.800"
+              variant={"plain"}
+              fontWeight={"bold"}
+              textDecoration={"underline"}
+              size="sm"
+            >
+              Salta <FiArrowRight />
+            </Button>
+          )}
+        </VStack>
+      </VStack>
+    </form>
   );
 };
 

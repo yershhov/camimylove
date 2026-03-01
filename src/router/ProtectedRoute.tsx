@@ -1,7 +1,6 @@
-import { Spinner, VStack } from "@chakra-ui/react";
+import { Flex, Spinner, VStack } from "@chakra-ui/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import PageContainer from "../components/ui/PageContainer";
 
 const SESSION_REFRESH_INTERVAL_MS = 4 * 60 * 1000;
 const MIN_ACTIVITY_REFRESH_GAP_MS = 60 * 1000;
@@ -62,11 +61,11 @@ function ProtectedRoute() {
 
   if (isChecking) {
     return (
-      <PageContainer justifyContent="center">
-        <VStack gap={3}>
+      <Flex bg="pink.100" minH="100vh" justifyContent="center" overflow="hidden">
+        <VStack gap={3} pt="28vh">
           <Spinner color="pink.500" size="lg" />
         </VStack>
-      </PageContainer>
+      </Flex>
     );
   }
 

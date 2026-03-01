@@ -1,7 +1,8 @@
 import { Flex, Spinner, VStack } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Navigate,
+  Outlet,
   Route,
   Routes,
   useLocation,
@@ -22,6 +23,7 @@ import { AppContext } from "./context/AppContext";
 
 function App() {
   const location = useLocation();
+  const [isFixedHeightEnabled, setIsFixedHeightEnabled] = useState(true);
 
   useEffect(() => {
     sessionStorage.removeItem("image_container_mounted");
@@ -29,53 +31,71 @@ function App() {
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
+    setIsFixedHeightEnabled(true);
   }, [location.pathname]);
 
   return (
     <AppContext.Provider
       value={{
         handlePage: () => undefined,
+        fixedHeightEnabled: isFixedHeightEnabled,
+        setFixedHeightEnabled: setIsFixedHeightEnabled,
       }}
     >
-      <Flex
-        bg="pink.100"
-        color="pink.800"
-        fontWeight="bold"
-        justifyContent={"center"}
-        minH="100dvh"
-        h="100dvh"
-        overflow="hidden"
-      >
-        <Flex
-          flexDirection="column"
-          minH={"100dvh"}
-          h="100%"
-          overflow="hidden"
-          minW={0}
-          w="100%"
-          maxW={{ md: "800px" }}
-          p={{ base: 6, md: 24 }}
-        >
-          <Routes>
-            <Route path="/login" element={<LoginRoute />} />
+      <Routes>
+        <Route element={<AppFrameLayout fixedHeight />}>
+          <Route path="/login" element={<LoginRoute />} />
+        </Route>
 
-            <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<Navigate to="/home" replace />} />
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/gallery" element={<GalleryPage />} />
-              <Route path="/random-memories" element={<RandomMemoriesRoute />} />
-              <Route path="/upload" element={<StandaloneUploadRoute />} />
-              <Route path="/memories/edit/:id" element={<EditMemoryRoute />} />
-              <Route path="/quiz" element={<StandaloneQuizRoute />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/legacy" element={<LegacyFlowPage />} />
-            </Route>
+        <Route element={<ProtectedRoute />}>
+          <Route element={<AppFrameLayout />}>
+            <Route path="/" element={<Navigate to="/home" replace />} />
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/upload" element={<StandaloneUploadRoute />} />
+            <Route path="/memories/edit/:id" element={<EditMemoryRoute />} />
+            <Route path="/settings" element={<SettingsPage />} />
+          </Route>
 
-            <Route path="*" element={<Navigate to="/home" replace />} />
-          </Routes>
-        </Flex>
-      </Flex>
+          <Route element={<AppFrameLayout fixedHeight />}>
+            <Route path="/random-memories" element={<RandomMemoriesRoute />} />
+            <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/quiz" element={<StandaloneQuizRoute />} />
+            <Route path="/legacy" element={<LegacyFlowPage />} />
+          </Route>
+        </Route>
+
+        <Route path="*" element={<Navigate to="/home" replace />} />
+      </Routes>
     </AppContext.Provider>
+  );
+}
+
+function AppFrameLayout({ fixedHeight = false }: { fixedHeight?: boolean }) {
+  const { fixedHeightEnabled } = useContext(AppContext);
+  const effectiveFixedHeight = fixedHeight && fixedHeightEnabled;
+
+  return (
+    <Flex
+      bg="pink.100"
+      color="pink.800"
+      fontWeight="bold"
+      justifyContent={"center"}
+      overflow="auto"
+      minH="100vh"
+      h={effectiveFixedHeight ? "100vh" : undefined}
+      position="relative"
+    >
+      <Flex
+        flexDirection="column"
+        w="100%"
+        maxW={{ md: "800px" }}
+        p={{ base: 6, md: 24 }}
+        position="relative"
+        h="100%"
+      >
+        <Outlet />
+      </Flex>
+    </Flex>
   );
 }
 
@@ -91,9 +111,9 @@ function LoginRoute() {
           navigate("/home", { replace: true });
           return;
         }
+        setCheckingSession(false);
       } catch {
         // noop
-      } finally {
         setCheckingSession(false);
       }
     };
@@ -103,13 +123,17 @@ function LoginRoute() {
 
   if (checkingSession) {
     return (
-      <VStack justifyContent="center" minH="60vh">
-        <Spinner color="pink.500" size="lg" />
-      </VStack>
+      <Flex bg="pink.100" h="100vh" justifyContent="center" overflow="hidden">
+        <VStack pt="28vh">
+          <Spinner color="pink.500" size="lg" />
+        </VStack>
+      </Flex>
     );
   }
 
-  return <AuthPage onAuthSuccess={() => navigate("/home", { replace: true })} />;
+  return (
+    <AuthPage onAuthSuccess={() => navigate("/home", { replace: true })} />
+  );
 }
 
 function StandaloneUploadRoute() {
@@ -118,12 +142,7 @@ function StandaloneUploadRoute() {
   const from =
     typeof location.state?.from === "string" ? location.state.from : "/home";
 
-  return (
-    <UploadPage
-      mode="standalone"
-      onBack={() => navigate(from)}
-    />
-  );
+  return <UploadPage mode="standalone" onBack={() => navigate(from)} />;
 }
 
 function EditMemoryRoute() {
@@ -156,7 +175,9 @@ function RandomMemoriesRoute() {
   return (
     <MemoriesPage
       mode="standalone"
-      onOpenUpload={() => navigate("/upload", { state: { from: "/random-memories" } })}
+      onOpenUpload={() =>
+        navigate("/upload", { state: { from: "/random-memories" } })
+      }
     />
   );
 }

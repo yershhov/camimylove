@@ -51,11 +51,17 @@ const GalleryPage = () => {
   }) => {
     const query = new URLSearchParams();
     query.set("limit", String(params?.limit ?? 40));
+    query.set("t", String(Date.now()));
     if (params?.beforeId) {
       query.set("beforeId", String(params.beforeId));
     }
 
-    const response = await fetch(`/api/memories/gallery?${query.toString()}`);
+    const response = await fetch(`/api/memories/gallery?${query.toString()}`, {
+      cache: "no-store",
+      headers: {
+        "Cache-Control": "no-cache",
+      },
+    });
     if (!response.ok) {
       throw new Error("Failed to load gallery memories");
     }
@@ -72,29 +78,6 @@ const GalleryPage = () => {
     };
   };
 
-  const applyMemoryOverrides = (list: Memory[]) => {
-    const overrides = new Map<number, Memory>();
-    for (let index = 0; index < sessionStorage.length; index += 1) {
-      const key = sessionStorage.key(index);
-      if (!key || !key.startsWith("memory_override_")) continue;
-      const raw = sessionStorage.getItem(key);
-      if (!raw) continue;
-
-      try {
-        const parsed = JSON.parse(raw) as Memory;
-        if (typeof parsed?.id === "number") {
-          overrides.set(parsed.id, parsed);
-          sessionStorage.removeItem(key);
-        }
-      } catch {
-        sessionStorage.removeItem(key);
-      }
-    }
-
-    if (overrides.size === 0) return list;
-    return list.map((memory) => overrides.get(memory.id) ?? memory);
-  };
-
   useEffect(() => {
     const loadInitial = async () => {
       try {
@@ -102,7 +85,7 @@ const GalleryPage = () => {
         const result = await fetchGallerySlice({ limit: 40 });
         if (!mountedRef.current) return;
 
-        setMemories(applyMemoryOverrides(result.memoriesDesc));
+        setMemories(result.memoriesDesc);
         setHasMore(result.hasMore);
         setNextBeforeId(result.nextBeforeId);
       } catch (error) {
@@ -127,9 +110,7 @@ const GalleryPage = () => {
         limit: 40,
       });
       if (!mountedRef.current) return;
-      setMemories((prev) =>
-        applyMemoryOverrides([...prev, ...result.memoriesDesc]),
-      );
+      setMemories((prev) => [...prev, ...result.memoriesDesc]);
       setHasMore(result.hasMore);
       setNextBeforeId(result.nextBeforeId);
     } catch (error) {
@@ -142,7 +123,9 @@ const GalleryPage = () => {
   };
 
   const handleDeleteMemory = async (memoryToDelete: Memory) => {
-    setMemories((prev) => prev.filter((memory) => memory.id !== memoryToDelete.id));
+    setMemories((prev) =>
+      prev.filter((memory) => memory.id !== memoryToDelete.id),
+    );
     setSelectedMemory((current) =>
       current?.id === memoryToDelete.id ? null : current,
     );

@@ -93,7 +93,7 @@ const MemoryCard = ({
         <IconButton
           aria-label="Elimina ricordo"
           colorPalette="red"
-          variant="outline"
+          variant="subtle"
           disabled={isLoading || !memory}
           onClick={() => {
             setDeleteConfirmed(false);
@@ -107,7 +107,7 @@ const MemoryCard = ({
 
         <IconButton
           aria-label="Modifica ricordo"
-          variant="outline"
+          variant="subtle"
           flex={1}
           disabled={isLoading || !memory || !onEdit}
           colorPalette={"pink"}
@@ -122,7 +122,7 @@ const MemoryCard = ({
         {isDialog && onClose && (
           <IconButton
             aria-label="Chiudi anteprima"
-            variant="outline"
+            variant="subtle"
             flex={1}
             onClick={onClose}
             colorPalette={"pink"}

@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import BackHomeButton from "../ui/BackHomeButton";
@@ -12,21 +12,32 @@ import WelcomePage from "./WelcomePage/WelcomePage";
 const LegacyFlowPage = () => {
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
+  const { fixedHeightEnabled, setFixedHeightEnabled } = useContext(AppContext);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, [page]);
 
+  useEffect(() => {
+    setFixedHeightEnabled(page !== 2);
+
+    return () => {
+      setFixedHeightEnabled(true);
+    };
+  }, [page, setFixedHeightEnabled]);
+
   return (
     <AppContext.Provider
       value={{
+        fixedHeightEnabled,
+        setFixedHeightEnabled,
         handlePage: (newPage?: number) =>
           setPage((currentPage) =>
             typeof newPage === "number" ? newPage : currentPage + 1,
           ),
       }}
     >
-      <Box position="fixed" top={{ base: 4, md: 8 }} left={{ base: 4, md: 8 }} zIndex={20}>
+      <Box mb={page === 4 ? 4 : 0}>
         <BackHomeButton />
       </Box>
       {page === 1 && <WelcomePage />}
