@@ -7,20 +7,16 @@ const ImageContainer = (props: any) => {
 
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  const [hasAlreadyMounted] = useState(
-    sessionStorage.getItem("image_container_mounted"),
-  );
-
   useEffect(() => {
-    sessionStorage.setItem("image_container_mounted", "true");
-  }, []);
+    setImageLoaded(false);
+  }, [memory?.url]);
 
   return (
     <Center
       roundedTop={"16px"}
       w="100%"
       overflow={"hidden"}
-      minH={!hasAlreadyMounted ? "240px" : "unset"}
+      minH={isLoading || !imageLoaded ? "400px" : "unset"}
       position="relative"
     >
       {(isLoading || !imageLoaded) && (

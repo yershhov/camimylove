@@ -27,12 +27,13 @@ const MemoriesPage = ({ mode = "legacy", onOpenUpload }: MemoriesPageProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { handlePage, memoriesVersion } = useContext(AppContext);
+  const isStandaloneMode = mode === "standalone";
   const [memory, setMemory] = useState<Memory | null>(null);
 
   const [isLoadingMemory, setIsLoadingMemory] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(false);
-  const [firstLoadDone, setFirstLoadDone] = useState(false);
-  const [skipIntroLoader] = useState(false);
+  const [firstLoadDone, setFirstLoadDone] = useState(isStandaloneMode);
+  const skipIntroLoader = isStandaloneMode;
   const requestedMemoryId = useMemo(() => {
     const idRaw = new URLSearchParams(location.search).get("id");
     if (!idRaw) return null;
@@ -101,20 +102,12 @@ const MemoriesPage = ({ mode = "legacy", onOpenUpload }: MemoriesPageProps) => {
   };
 
   useEffect(() => {
-    // const shouldSkipIntro =
-    //   sessionStorage.getItem("skip_memories_intro_loader") === "true";
-
-    // if (shouldSkipIntro) {
-    //   sessionStorage.removeItem("skip_memories_intro_loader");
-    //   setSkipIntroLoader(true);
-    //   setIsFirstLoad(true);
-    //   return;
-    // }
+    if (skipIntroLoader) return;
 
     setTimeout(() => {
       setIsFirstLoad(true);
     }, 1000);
-  }, []);
+  }, [skipIntroLoader]);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -132,7 +125,7 @@ const MemoriesPage = ({ mode = "legacy", onOpenUpload }: MemoriesPageProps) => {
       }
     };
 
-    if (isFirstLoad) fetchInitialData();
+    if (!skipIntroLoader && isFirstLoad) fetchInitialData();
   }, [isFirstLoad, skipIntroLoader, requestedMemoryId]);
 
   useEffect(() => {

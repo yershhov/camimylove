@@ -82,14 +82,15 @@ const MemoryCard = ({
       bg="white"
       color="pink.800"
       fontWeight="bold"
-      maxH={{ base: "600px", md: "1200px" }}
+      maxH={{ base: "620px", md: "1200px" }}
       p={6}
       boxShadow="4px 7px 15px rgba(213, 63, 140, 0.3)"
+      gap={4}
     >
       <ImageContainer memory={memory} isLoading={isLoading} />
       <MemoryData memory={memory} isLoading={isLoading} />
 
-      <HStack w="100%" justifyContent="space-between" gap={2} pt={4}>
+      <HStack w="100%" justifyContent="space-between" gap={2}>
         <IconButton
           aria-label="Elimina ricordo"
           colorPalette="red"
