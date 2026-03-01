@@ -7,7 +7,7 @@ import {
   FiHelpCircle,
   FiLogOut,
   FiMap,
-  FiSettings,
+  // FiSettings,
 } from "react-icons/fi";
 import { IoShuffle } from "react-icons/io5";
 import PageContainer from "../../ui/PageContainer";
@@ -63,12 +63,12 @@ const HomePage = () => {
     { label: "Aggiungi ricordi", route: "/upload", icon: <FiCamera /> },
     { label: "Quiz 1# anniversario", route: "/quiz", icon: <FiHelpCircle /> },
     { label: "Ricordati com'era", route: "/legacy", icon: <FiMap /> },
-    {
-      label: "Impostazioni",
-      route: "/settings",
-      icon: <FiSettings />,
-      disabled: true,
-    },
+    // {
+    //   label: "Impostazioni",
+    //   route: "/settings",
+    //   icon: <FiSettings />,
+    //   disabled: true,
+    // },
     {
       label: "Logout",
       icon: <FiLogOut />,

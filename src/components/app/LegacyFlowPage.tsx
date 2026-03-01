@@ -12,7 +12,12 @@ import WelcomePage from "./WelcomePage/WelcomePage";
 const LegacyFlowPage = () => {
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
-  const { fixedHeightEnabled, setFixedHeightEnabled } = useContext(AppContext);
+  const {
+    fixedHeightEnabled,
+    setFixedHeightEnabled,
+    memoriesVersion,
+    invalidateMemories,
+  } = useContext(AppContext);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -35,6 +40,8 @@ const LegacyFlowPage = () => {
           setPage((currentPage) =>
             typeof newPage === "number" ? newPage : currentPage + 1,
           ),
+        memoriesVersion,
+        invalidateMemories,
       }}
     >
       <Box mb={page === 4 ? 4 : 0}>

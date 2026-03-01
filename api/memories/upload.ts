@@ -1,7 +1,12 @@
 import dotenv from "dotenv";
+import { randomInt } from "node:crypto";
 import { put } from "@vercel/blob";
 import { isAuthenticatedRequest } from "../_lib/auth.js";
-import { listAllMetadataBlobs, normalizeMemoryRecord } from "../_lib/memory.js";
+import {
+  buildMetadataRevisionKey,
+  findMetadataBlobById,
+  normalizeMemoryRecord,
+} from "../_lib/memory.js";
 
 dotenv.config();
 
@@ -43,22 +48,23 @@ function parseBody(req: any): UploadBody {
   return body;
 }
 
-function getNextMemoryId(pathnames: string[]) {
-  let maxId = -1;
-
-  for (const pathname of pathnames) {
-    const fileName = pathname.split("/").pop() ?? "";
-    const idRaw = fileName.replace(".json", "");
-    const id = Number(idRaw);
-    if (Number.isFinite(id)) {
-      maxId = Math.max(maxId, id);
+async function generateMemoryId(token: string) {
+  for (let attempts = 0; attempts < 8; attempts += 1) {
+    // Date.now()*1000 keeps numeric IDs unique enough and ordered without list+max race.
+    const candidateId = Date.now() * 1000 + randomInt(0, 1000);
+    const existing = await findMetadataBlobById(token, candidateId);
+    if (!existing) {
+      return candidateId;
     }
   }
-
-  return maxId + 1;
+  throw new Error("Failed to allocate a unique memory id");
 }
 
 export default async function handler(req: any, res: any) {
+  res.setHeader("Cache-Control", "no-store, max-age=0");
+  res.setHeader("CDN-Cache-Control", "no-store");
+  res.setHeader("Vercel-CDN-Cache-Control", "no-store");
+
   if (req.method !== "POST") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
@@ -102,11 +108,10 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    const metadataBlobs = await listAllMetadataBlobs(token);
-    const memoryId = getNextMemoryId(metadataBlobs.map((blob) => blob.pathname));
+    const memoryId = await generateMemoryId(token);
     const extension = MIME_TO_EXTENSION[mimeType] ?? "jpg";
     const imageKey = `images/${memoryId}.${extension}`;
-    const metadataKey = `metadata/${memoryId}.json`;
+    const metadataKey = buildMetadataRevisionKey(memoryId);
 
     const imageUpload = await put(imageKey, buffer, {
       access: "public",

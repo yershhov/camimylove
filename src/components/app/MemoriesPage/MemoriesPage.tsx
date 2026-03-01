@@ -26,7 +26,7 @@ type MemoriesPageProps = {
 const MemoriesPage = ({ mode = "legacy", onOpenUpload }: MemoriesPageProps) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { handlePage } = useContext(AppContext);
+  const { handlePage, memoriesVersion } = useContext(AppContext);
   const [memory, setMemory] = useState<Memory | null>(null);
 
   const [isLoadingMemory, setIsLoadingMemory] = useState(true);
@@ -56,9 +56,18 @@ const MemoriesPage = ({ mode = "legacy", onOpenUpload }: MemoriesPageProps) => {
   };
 
   const fetchRandomMemory = async () => {
-    const query =
-      requestedMemoryId !== null ? `?id=${String(requestedMemoryId)}` : "";
-    const response = await fetch(`/api/memories/random${query}`);
+    const query = new URLSearchParams();
+    query.set("t", String(Date.now()));
+    if (requestedMemoryId !== null) {
+      query.set("id", String(requestedMemoryId));
+    }
+
+    const response = await fetch(`/api/memories/random?${query.toString()}`, {
+      cache: "no-store",
+      headers: {
+        "Cache-Control": "no-cache",
+      },
+    });
     if (!response.ok) {
       throw new Error("Failed to fetch random memory");
     }
@@ -67,6 +76,7 @@ const MemoriesPage = ({ mode = "legacy", onOpenUpload }: MemoriesPageProps) => {
     if (!payload.ok || !payload.memory) {
       throw new Error(payload.error ?? "No memory returned");
     }
+
     return payload.memory as Memory;
   };
 
@@ -124,6 +134,28 @@ const MemoriesPage = ({ mode = "legacy", onOpenUpload }: MemoriesPageProps) => {
 
     if (isFirstLoad) fetchInitialData();
   }, [isFirstLoad, skipIntroLoader, requestedMemoryId]);
+
+  useEffect(() => {
+    if (!firstLoadDone) return;
+
+    const refreshCurrentMemory = async () => {
+      try {
+        setIsLoadingMemory(true);
+        const currentMemory = await fetchRandomMemory();
+        setMemory(currentMemory);
+      } catch (error: any) {
+        console.error(error);
+        createAppToast({
+          title: "Errore, oopsie :(",
+          type: "error",
+        });
+      } finally {
+        handleDelayedLoadingEnd();
+      }
+    };
+
+    void refreshCurrentMemory();
+  }, [firstLoadDone, requestedMemoryId, memoriesVersion]);
 
   useEffect(() => {
     if (!isFirstLoad && firstLoadDone) {

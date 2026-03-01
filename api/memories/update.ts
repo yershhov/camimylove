@@ -1,7 +1,11 @@
 import dotenv from "dotenv";
 import { put } from "@vercel/blob";
 import { isAuthenticatedRequest } from "../_lib/auth.js";
-import { findMetadataBlobById, normalizeMemoryRecord } from "../_lib/memory.js";
+import {
+  buildMetadataRevisionKey,
+  findMetadataBlobById,
+  normalizeMemoryRecord,
+} from "../_lib/memory.js";
 
 dotenv.config();
 
@@ -33,6 +37,12 @@ function parseMemoryId(rawId: unknown) {
 }
 
 export default async function handler(req: any, res: any) {
+  res.setHeader("Cache-Control", "no-store, max-age=0");
+  res.setHeader("CDN-Cache-Control", "no-store");
+  res.setHeader("Vercel-CDN-Cache-Control", "no-store");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+
   if (req.method !== "POST") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
@@ -67,7 +77,9 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    const metadataResponse = await fetch(metadataBlob.url);
+    const metadataResponse = await fetch(`${metadataBlob.url}?t=${Date.now()}`, {
+      cache: "no-store",
+    });
     if (!metadataResponse.ok) {
       return res.status(500).json({
         ok: false,
@@ -99,12 +111,11 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    const metadataKey = `metadata/${existingMemory.id}.json`;
+    const metadataKey = buildMetadataRevisionKey(existingMemory.id);
     await put(metadataKey, JSON.stringify(updatedMemory, null, 2), {
       access: "public",
       token,
       addRandomSuffix: false,
-      allowOverwrite: true,
       contentType: "application/json",
     });
 

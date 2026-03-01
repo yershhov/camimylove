@@ -4,11 +4,15 @@ import { isAuthenticatedRequest } from "../_lib/auth.js";
 import {
   findImageBlobByKey,
   findImageBlobByMemoryId,
+  findMetadataBlobsById,
   findMetadataBlobById,
   normalizeMemoryRecord,
 } from "../_lib/memory.js";
 
 dotenv.config();
+
+const DELETE_VERIFY_ATTEMPTS = 5;
+const DELETE_VERIFY_DELAY_MS = 200;
 
 function parseMemoryId(body: unknown) {
   if (!body || typeof body !== "object") return null;
@@ -17,7 +21,17 @@ function parseMemoryId(body: unknown) {
   return Math.floor(parsed);
 }
 
+async function sleep(ms: number) {
+  await new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 export default async function handler(req: any, res: any) {
+  res.setHeader("Cache-Control", "no-store, max-age=0");
+  res.setHeader("CDN-Cache-Control", "no-store");
+  res.setHeader("Vercel-CDN-Cache-Control", "no-store");
+
   if (req.method !== "POST") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
@@ -51,9 +65,13 @@ export default async function handler(req: any, res: any) {
       });
     }
 
+    const metadataBlobs = await findMetadataBlobsById(token, id);
+
     let memory = null;
     try {
-      const metadataResponse = await fetch(metadataBlob.url);
+      const metadataResponse = await fetch(`${metadataBlob.url}?t=${Date.now()}`, {
+        cache: "no-store",
+      });
       if (metadataResponse.ok) {
         const metadataJson = await metadataResponse.json();
         memory = normalizeMemoryRecord(metadataJson);
@@ -70,6 +88,9 @@ export default async function handler(req: any, res: any) {
       : await findImageBlobByMemoryId(token, id);
 
     const urlsToDelete = new Set<string>();
+    for (const blob of metadataBlobs) {
+      urlsToDelete.add(blob.url);
+    }
     urlsToDelete.add(metadataBlob.url);
 
     if (imageBlobFromKey?.url) {
@@ -81,6 +102,14 @@ export default async function handler(req: any, res: any) {
     }
 
     await del(Array.from(urlsToDelete), { token });
+
+    // Best-effort consistency wait: avoid returning success before metadata delete
+    // is visible to list readers in quick back/refresh UI flows.
+    for (let attempt = 0; attempt < DELETE_VERIFY_ATTEMPTS; attempt += 1) {
+      const remainingMetadata = await findMetadataBlobsById(token, id);
+      if (remainingMetadata.length === 0) break;
+      await sleep(DELETE_VERIFY_DELAY_MS * (attempt + 1));
+    }
 
     return res.status(200).json({
       ok: true,

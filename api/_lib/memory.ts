@@ -11,11 +11,27 @@ export type MemoryRecord = {
 const METADATA_PREFIX = "metadata/";
 const IMAGE_PREFIX = "images/";
 
+export type MetadataBlob = {
+  pathname: string;
+  url: string;
+  uploadedAtMs: number;
+};
+
 export function parseMemoryIdFromMetadataPath(pathname: string) {
-  const fileName = pathname.split("/").pop() ?? "";
-  const idRaw = fileName.replace(".json", "");
-  const id = Number(idRaw);
-  return Number.isFinite(id) ? id : null;
+  const revisionPathMatch = pathname.match(/^metadata\/(\d+)\/[^/]+\.json$/);
+  if (revisionPathMatch) {
+    const id = Number(revisionPathMatch[1]);
+    return Number.isFinite(id) ? id : null;
+  }
+
+  // Backward compatibility with legacy metadata/{id}.json entries.
+  const legacyPathMatch = pathname.match(/^metadata\/(\d+)\.json$/);
+  if (legacyPathMatch) {
+    const id = Number(legacyPathMatch[1]);
+    return Number.isFinite(id) ? id : null;
+  }
+
+  return null;
 }
 
 export function normalizeMemoryRecord(input: any): MemoryRecord | null {
@@ -46,7 +62,7 @@ export function normalizeMemoryRecord(input: any): MemoryRecord | null {
 }
 
 export async function listAllMetadataBlobs(token: string) {
-  const blobs: Array<{ pathname: string; url: string }> = [];
+  const blobs: MetadataBlob[] = [];
   let cursor: string | undefined;
 
   do {
@@ -59,7 +75,12 @@ export async function listAllMetadataBlobs(token: string) {
 
     for (const blob of response.blobs) {
       if (blob.pathname.endsWith(".json")) {
-        blobs.push({ pathname: blob.pathname, url: blob.url });
+        const uploadedAtMs = new Date(blob.uploadedAt).getTime();
+        blobs.push({
+          pathname: blob.pathname,
+          url: blob.url,
+          uploadedAtMs: Number.isFinite(uploadedAtMs) ? uploadedAtMs : 0,
+        });
       }
     }
 
@@ -70,14 +91,97 @@ export async function listAllMetadataBlobs(token: string) {
 }
 
 export async function findMetadataBlobById(token: string, id: number) {
-  const pathname = `${METADATA_PREFIX}${id}.json`;
+  const pathnamePrefix = `${METADATA_PREFIX}${id}`;
   const response = await list({
     token,
-    prefix: pathname,
-    limit: 10,
+    prefix: pathnamePrefix,
+    limit: 100,
   });
 
-  return response.blobs.find((blob) => blob.pathname === pathname) ?? null;
+  const candidates: MetadataBlob[] = response.blobs
+    .map((blob) => {
+      const parsedId = parseMemoryIdFromMetadataPath(blob.pathname);
+      if (parsedId !== id) return null;
+      const uploadedAtMs = new Date(blob.uploadedAt).getTime();
+      return {
+        pathname: blob.pathname,
+        url: blob.url,
+        uploadedAtMs: Number.isFinite(uploadedAtMs) ? uploadedAtMs : 0,
+      };
+    })
+    .filter((blob): blob is MetadataBlob => Boolean(blob));
+
+  return pickLatestMetadataBlob(candidates);
+}
+
+export async function findMetadataBlobsById(token: string, id: number) {
+  const pathnamePrefix = `${METADATA_PREFIX}${id}`;
+  const response = await list({
+    token,
+    prefix: pathnamePrefix,
+    limit: 1000,
+  });
+
+  return response.blobs
+    .map((blob) => {
+      const parsedId = parseMemoryIdFromMetadataPath(blob.pathname);
+      if (parsedId !== id) return null;
+      const uploadedAtMs = new Date(blob.uploadedAt).getTime();
+      return {
+        pathname: blob.pathname,
+        url: blob.url,
+        uploadedAtMs: Number.isFinite(uploadedAtMs) ? uploadedAtMs : 0,
+      };
+    })
+    .filter((blob): blob is MetadataBlob => Boolean(blob));
+}
+
+export function pickLatestMetadataBlob(blobs: MetadataBlob[]) {
+  if (blobs.length === 0) return null;
+  return blobs.reduce((latest, current) => {
+    if (current.uploadedAtMs > latest.uploadedAtMs) return current;
+    if (current.uploadedAtMs < latest.uploadedAtMs) return latest;
+    return current.pathname > latest.pathname ? current : latest;
+  });
+}
+
+export function selectLatestMetadataBlobsById(blobs: MetadataBlob[]) {
+  const byId = new Map<number, MetadataBlob>();
+
+  for (const blob of blobs) {
+    const id = parseMemoryIdFromMetadataPath(blob.pathname);
+    if (id === null) continue;
+
+    const previous = byId.get(id);
+    if (!previous) {
+      byId.set(id, blob);
+      continue;
+    }
+
+    if (blob.uploadedAtMs > previous.uploadedAtMs) {
+      byId.set(id, blob);
+      continue;
+    }
+
+    if (
+      blob.uploadedAtMs === previous.uploadedAtMs &&
+      blob.pathname > previous.pathname
+    ) {
+      byId.set(id, blob);
+    }
+  }
+
+  return Array.from(byId.entries()).map(([id, blob]) => ({
+    id,
+    pathname: blob.pathname,
+    url: blob.url,
+    uploadedAtMs: blob.uploadedAtMs,
+  }));
+}
+
+export function buildMetadataRevisionKey(id: number) {
+  const revision = `${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`;
+  return `${METADATA_PREFIX}${id}/${revision}.json`;
 }
 
 export async function findImageBlobByKey(token: string, imageKey: string) {

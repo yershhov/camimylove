@@ -4,12 +4,15 @@ import {
   findMetadataBlobById,
   listAllMetadataBlobs,
   normalizeMemoryRecord,
+  selectLatestMetadataBlobsById,
 } from "../_lib/memory.js";
 
 dotenv.config();
 
 export default async function handler(req: any, res: any) {
   res.setHeader("Cache-Control", "no-store");
+  res.setHeader("CDN-Cache-Control", "no-store");
+  res.setHeader("Vercel-CDN-Cache-Control", "no-store");
 
   if (req.method !== "GET") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
@@ -29,17 +32,21 @@ export default async function handler(req: any, res: any) {
 
   try {
     const requestedIdRaw = req.query?.id;
-    const requestedId =
-      requestedIdRaw === undefined ? null : Number(requestedIdRaw);
+    let requestedId: number | null = null;
 
-    if (
-      requestedIdRaw !== undefined &&
-      (!Number.isFinite(requestedId) || !Number.isInteger(requestedId) || requestedId < 0)
-    ) {
-      return res.status(400).json({
-        ok: false,
-        error: "Invalid memory id",
-      });
+    if (requestedIdRaw !== undefined) {
+      const parsedRequestedId = Number(requestedIdRaw);
+      if (
+        !Number.isFinite(parsedRequestedId) ||
+        !Number.isInteger(parsedRequestedId) ||
+        parsedRequestedId < 0
+      ) {
+        return res.status(400).json({
+          ok: false,
+          error: "Invalid memory id",
+        });
+      }
+      requestedId = parsedRequestedId;
     }
 
     let selectedBlob: { pathname: string; url: string } | null = null;
@@ -55,8 +62,9 @@ export default async function handler(req: any, res: any) {
       selectedBlob = { pathname: blob.pathname, url: blob.url };
     } else {
       const metadataBlobs = await listAllMetadataBlobs(token);
+      const latestBlobs = selectLatestMetadataBlobsById(metadataBlobs);
 
-      if (metadataBlobs.length === 0) {
+      if (latestBlobs.length === 0) {
         return res.status(404).json({
           ok: false,
           error: "No memories available",
@@ -64,8 +72,7 @@ export default async function handler(req: any, res: any) {
       }
 
       // Pick from metadata records only to guarantee image+metadata pairing.
-      selectedBlob =
-        metadataBlobs[Math.floor(Math.random() * metadataBlobs.length)];
+      selectedBlob = latestBlobs[Math.floor(Math.random() * latestBlobs.length)];
     }
 
     const metadataResponse = await fetch(`${selectedBlob.url}?t=${Date.now()}`, {

@@ -11,16 +11,18 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoAdd } from "react-icons/io5";
 import PageContainer from "../ui/PageContainer";
 import BackHomeButton from "../ui/BackHomeButton";
 import type { GalleryMemoriesResponse, Memory } from "../../types";
 import MemoryCard from "./MemoriesPage/MemoryCard";
+import { AppContext } from "../../context/AppContext";
 
 const GalleryPage = () => {
   const navigate = useNavigate();
+  const { memoriesVersion } = useContext(AppContext);
   const scrollRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(true);
 
@@ -86,6 +88,10 @@ const GalleryPage = () => {
         if (!mountedRef.current) return;
 
         setMemories(result.memoriesDesc);
+        setSelectedMemory((current) => {
+          if (!current) return current;
+          return result.memoriesDesc.find((item) => item.id === current.id) ?? null;
+        });
         setHasMore(result.hasMore);
         setNextBeforeId(result.nextBeforeId);
       } catch (error) {
@@ -98,7 +104,7 @@ const GalleryPage = () => {
     };
 
     void loadInitial();
-  }, []);
+  }, [memoriesVersion]);
 
   const loadOlderMemories = async () => {
     if (!canLoadMore) return;

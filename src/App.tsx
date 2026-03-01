@@ -24,6 +24,7 @@ import { AppContext } from "./context/AppContext";
 function App() {
   const location = useLocation();
   const [isFixedHeightEnabled, setIsFixedHeightEnabled] = useState(true);
+  const [memoriesVersion, setMemoriesVersion] = useState(0);
 
   useEffect(() => {
     sessionStorage.removeItem("image_container_mounted");
@@ -40,6 +41,9 @@ function App() {
         handlePage: () => undefined,
         fixedHeightEnabled: isFixedHeightEnabled,
         setFixedHeightEnabled: setIsFixedHeightEnabled,
+        memoriesVersion,
+        invalidateMemories: () =>
+          setMemoriesVersion((currentVersion) => currentVersion + 1),
       }}
     >
       <Routes>

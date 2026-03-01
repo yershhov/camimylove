@@ -14,6 +14,7 @@ import exifr from "exifr";
 import heic2any from "heic2any";
 import { IoArrowBack } from "react-icons/io5";
 import PageContainer from "../../ui/PageContainer";
+import Loader from "../../ui/Loader";
 import { createAppToast } from "../../ui/toaster";
 import { AppContext } from "../../../context/AppContext";
 import { getPlaceName } from "../../../utils";
@@ -94,7 +95,7 @@ const UploadPage = ({
   variant = "create",
   memoryId,
 }: UploadPageProps) => {
-  const { handlePage } = useContext(AppContext);
+  const { handlePage, invalidateMemories } = useContext(AppContext);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const goBackToMemories = () => {
@@ -319,6 +320,7 @@ const UploadPage = ({
         setDateValue(toDateTimeLocalInput(payload.memory.date));
         setLocationValue(payload.memory.location ?? "");
         setDateInputKey((value) => value + 1);
+        invalidateMemories();
         createAppToast({
           type: "success",
           title: "Ricordo aggiornato",
@@ -361,6 +363,7 @@ const UploadPage = ({
         type: "success",
         title: "Ricordo salvato",
       });
+      invalidateMemories();
       resetForm();
     } catch {
       createAppToast({
@@ -457,7 +460,7 @@ const UploadPage = ({
                 backdropFilter="blur(2px)"
                 zIndex={2}
               >
-                <Spinner color="pink.500" size="lg" />
+                <Loader fitContainer />
               </Center>
             )}
           </Box>
