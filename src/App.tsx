@@ -267,16 +267,7 @@ function EditMemoryRoute() {
 }
 
 function RandomMemoriesRoute() {
-  const navigate = useNavigate();
-
-  return (
-    <MemoriesPage
-      mode="standalone"
-      onOpenUpload={() =>
-        navigate("/upload", { state: { from: "/random-memories" } })
-      }
-    />
-  );
+  return <MemoriesPage mode="standalone" />;
 }
 
 function StandaloneQuizRoute() {

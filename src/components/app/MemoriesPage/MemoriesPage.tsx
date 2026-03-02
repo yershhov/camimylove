@@ -11,10 +11,9 @@ import BackHomeButton from "../../ui/BackHomeButton";
 
 type MemoriesPageProps = {
   mode?: "legacy" | "standalone";
-  onOpenUpload?: () => void;
 };
 
-const MemoriesPage = ({ mode = "legacy", onOpenUpload }: MemoriesPageProps) => {
+const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { memoriesVersion } = useContext(AppContext);
