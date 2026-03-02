@@ -11,6 +11,7 @@ import {
 } from "react-icons/fi";
 import { IoShuffle } from "react-icons/io5";
 import PageContainer from "../../ui/PageContainer";
+import AppleStyleConfetti from "../../ui/AppleStyleConfetti";
 
 type HomeCard = {
   label: string;
@@ -20,7 +21,11 @@ type HomeCard = {
   onClick?: () => void | Promise<void>;
 };
 
-const HomePage = () => {
+type HomePageProps = {
+  womensDayMode?: boolean;
+};
+
+const HomePage = ({ womensDayMode = false }: HomePageProps) => {
   const navigate = useNavigate();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -79,12 +84,14 @@ const HomePage = () => {
 
   return (
     <PageContainer alignItems="stretch" gap={5}>
+      {womensDayMode && <AppleStyleConfetti />}
+
       <Text
         fontFamily="'Dancing Script', cursive"
-        fontSize="5xl"
+        fontSize={womensDayMode ? "4xl" : "5xl"}
         textAlign="center"
       >
-        Camimylove
+        {womensDayMode ? "Happy Women's Day, Baby!" : "Camimylove"}
       </Text>
 
       <VStack alignItems="stretch" gap={4} w="100%">
@@ -127,6 +134,19 @@ const HomePage = () => {
           </Box>
         ))}
       </VStack>
+
+      {womensDayMode && (
+        <Text
+          textAlign="center"
+          fontSize="4xl"
+          lineHeight={1.2}
+          whiteSpace="pre-wrap"
+        >
+          {
+            "🪷               🪷\n💐💐💐     💐💐💐\n🌹🌹🌹🌹🌹🌹🌹🌹\n 🌸🌸🌸🌸🌸🌸🌸\n🌷🌷🌷🌷🌷🌷\n🌼🌼🌼🌼\n🌺"
+          }
+        </Text>
+      )}
     </PageContainer>
   );
 };
