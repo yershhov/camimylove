@@ -141,12 +141,12 @@ function App() {
             <Route path="/upload" element={<StandaloneUploadRoute />} />
             <Route path="/memories/edit/:id" element={<EditMemoryRoute />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/quiz" element={<StandaloneQuizRoute />} />
+            <Route path="/random-memories" element={<RandomMemoriesRoute />} />
           </Route>
 
           <Route element={<AppFrameLayout fixedHeight />}>
-            <Route path="/random-memories" element={<RandomMemoriesRoute />} />
             <Route path="/gallery" element={<GalleryPage />} />
-            <Route path="/quiz" element={<StandaloneQuizRoute />} />
             <Route path="/legacy" element={<LegacyFlowPage />} />
           </Route>
         </Route>

@@ -365,6 +365,7 @@ const UploadPage = ({
       });
       invalidateMemories();
       resetForm();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
       createAppToast({
         type: "error",

@@ -1,15 +1,6 @@
-import {
-  VStack,
-  Center,
-  Button,
-  Text,
-  IconButton,
-  Box,
-  HStack,
-} from "@chakra-ui/react";
+import { VStack, Center, Button, Text, Box, HStack } from "@chakra-ui/react";
 import { useState, useEffect, useContext, useMemo } from "react";
 import { FaHeart } from "react-icons/fa";
-import { IoAdd } from "react-icons/io5";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Memory, RandomMemoryResponse } from "../../../types";
 import MemoryCard from "./MemoryCard";
@@ -26,7 +17,7 @@ type MemoriesPageProps = {
 const MemoriesPage = ({ mode = "legacy", onOpenUpload }: MemoriesPageProps) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { handlePage, memoriesVersion } = useContext(AppContext);
+  const { memoriesVersion } = useContext(AppContext);
   const isStandaloneMode = mode === "standalone";
   const [memory, setMemory] = useState<Memory | null>(null);
 
@@ -207,27 +198,6 @@ const MemoriesPage = ({ mode = "legacy", onOpenUpload }: MemoriesPageProps) => {
               Vedi un altro ricordo
             </Button>
           </VStack>
-          <IconButton
-            aria-label="Apri pagina upload"
-            rounded="full"
-            size="xl"
-            colorPalette="pink"
-            position="fixed"
-            right={{ base: 6, md: 12 }}
-            bottom={{ base: 8, md: 12 }}
-            shadow="lg"
-            onClick={() => {
-              if (onOpenUpload) {
-                onOpenUpload();
-                return;
-              }
-              if (mode === "legacy") {
-                handlePage(5);
-              }
-            }}
-          >
-            <IoAdd />
-          </IconButton>
         </Box>
       )}
     </Center>
