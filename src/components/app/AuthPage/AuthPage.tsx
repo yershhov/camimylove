@@ -64,6 +64,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
               value={dateInput}
               onChange={(e) => setDateInput(e.target.value)}
               bg="white"
+              fontSize="16px"
             />
           </VStack>
 
@@ -73,6 +74,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
               value={petNameInput}
               onChange={(e) => setPetNameInput(e.target.value)}
               bg="white"
+              fontSize="16px"
             />
           </VStack>
 
