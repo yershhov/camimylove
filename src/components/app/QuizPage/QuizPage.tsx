@@ -85,13 +85,6 @@ const QuizPage = ({ mode = "legacy", onComplete, onSkip }: QuizPageProps) => {
     }, 2000);
   };
 
-  const autofillCorrectAnswers = () => {
-    setFormData({ ...responses });
-    setFormErrors({});
-    isSubmitted.current = true;
-    handleSuccessfulQuizSubmit();
-  };
-
   const handleSubmit = (e: any) => {
     isSubmitted.current = true;
     e.preventDefault();
@@ -163,13 +156,10 @@ const QuizPage = ({ mode = "legacy", onComplete, onSkip }: QuizPageProps) => {
       )}
 
       {mode === "legacy" && (
-        <Box onClick={autofillCorrectAnswers}>
-          <QuizPageTypeWriter
-            finishedRows={finishedTypingRows}
-            setFinishedRows={setFinishedTypingRows}
-            onBrainClick={autofillCorrectAnswers}
-          />
-        </Box>
+        <QuizPageTypeWriter
+          finishedRows={finishedTypingRows}
+          setFinishedRows={setFinishedTypingRows}
+        />
       )}
 
       {finishedTypingRows === 1 && mode === "legacy" && (

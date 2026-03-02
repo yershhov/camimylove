@@ -1,12 +1,8 @@
-import { Box, VStack } from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 import { useEffect, useRef } from "react";
 import { TypeAnimation } from "react-type-animation";
 
-const QuizPageTypeWriter = ({
-  finishedRows,
-  setFinishedRows,
-  onBrainClick,
-}: any) => {
+const QuizPageTypeWriter = ({ finishedRows, setFinishedRows }: any) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,24 +31,22 @@ const QuizPageTypeWriter = ({
       w="100%"
       mt={4}
     >
-      <Box onClick={onBrainClick}>
-        <TypeAnimation
-          sequence={[
-            500,
-            "Che sorpresa sarebbe stata senza alcuna sfida?))",
-            1500,
-            "Che sorpresa sarebbe stata senza alcuna sfida?)) I regali si incarta bene, giusto?🎁",
-            2500,
-            "Per procedere, completa il quiz🧠",
-            500,
-            () => setFinishedRows(1),
-          ]}
-          speed={45}
-          deletionSpeed={83}
-          repeat={0}
-          className="remove-after-pseudo"
-        />
-      </Box>
+      <TypeAnimation
+        sequence={[
+          500,
+          "Che sorpresa sarebbe stata senza alcuna sfida?))",
+          1500,
+          "Che sorpresa sarebbe stata senza alcuna sfida?)) I regali si incarta bene, giusto?🎁",
+          2500,
+          "Per procedere, completa il quiz🧠",
+          500,
+          () => setFinishedRows(1),
+        ]}
+        speed={45}
+        deletionSpeed={83}
+        repeat={0}
+        className="remove-after-pseudo"
+      />
     </VStack>
   );
 };
