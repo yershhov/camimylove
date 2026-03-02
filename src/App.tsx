@@ -77,12 +77,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (featureFlags.maintenanceModeEnabled) return;
-    localStorage.removeItem(MAINTENANCE_UNLOCK_STORAGE_KEY);
-    setIsMaintenanceUnlocked(false);
-  }, [featureFlags.maintenanceModeEnabled]);
-
-  useEffect(() => {
     window.scrollTo({ top: 0 });
     setIsFixedHeightEnabled(true);
   }, [location.pathname]);
