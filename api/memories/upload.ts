@@ -2,11 +2,13 @@ import dotenv from "dotenv";
 import { randomInt } from "node:crypto";
 import { put } from "@vercel/blob";
 import { isAuthenticatedRequest } from "../_lib/auth.js";
+import { normalizeMemoryRecord } from "../_lib/memory.js";
+import { getMemoryById, upsertMemory } from "../_lib/memory-repository.js";
 import {
-  buildMetadataRevisionKey,
-  findMetadataBlobById,
-  normalizeMemoryRecord,
-} from "../_lib/memory.js";
+  ensurePostgresMemoriesReady,
+  getSqlClient,
+  isPostgresConfigured,
+} from "../_lib/postgres.js";
 
 dotenv.config();
 
@@ -48,11 +50,11 @@ function parseBody(req: any): UploadBody {
   return body;
 }
 
-async function generateMemoryId(token: string) {
+async function generateMemoryId() {
+  const sql = getSqlClient();
   for (let attempts = 0; attempts < 8; attempts += 1) {
-    // Date.now()*1000 keeps numeric IDs unique enough and ordered without list+max race.
     const candidateId = Date.now() * 1000 + randomInt(0, 1000);
-    const existing = await findMetadataBlobById(token, candidateId);
+    const existing = await getMemoryById(sql, candidateId);
     if (!existing) {
       return candidateId;
     }
@@ -78,6 +80,13 @@ export default async function handler(req: any, res: any) {
     return res.status(500).json({
       ok: false,
       error: "Blob token is not configured",
+    });
+  }
+
+  if (!isPostgresConfigured()) {
+    return res.status(503).json({
+      ok: false,
+      error: "Postgres is not configured",
     });
   }
 
@@ -108,10 +117,11 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    const memoryId = await generateMemoryId(token);
+    await ensurePostgresMemoriesReady();
+
+    const memoryId = await generateMemoryId();
     const extension = MIME_TO_EXTENSION[mimeType] ?? "jpg";
     const imageKey = `images/${memoryId}.${extension}`;
-    const metadataKey = buildMetadataRevisionKey(memoryId);
 
     const imageUpload = await put(imageKey, buffer, {
       access: "public",
@@ -135,19 +145,13 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    await put(metadataKey, JSON.stringify(memoryRecord, null, 2), {
-      access: "public",
-      token,
-      addRandomSuffix: false,
-      contentType: "application/json",
-    });
+    await upsertMemory(getSqlClient(), memoryRecord);
 
     return res.status(201).json({
       ok: true,
       memory: memoryRecord,
     });
   } catch (error) {
-    console.error("Failed to upload memory", error);
     return res.status(500).json({
       ok: false,
       error: "Failed to upload memory",

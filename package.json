@@ -9,7 +9,11 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "memories:max-id": "node scripts/get-max-memory-id.mjs",
-    "memories:delete-from": "node scripts/delete-memories-from-id.mjs"
+    "memories:delete-from": "node scripts/delete-memories-from-id.mjs",
+    "db:migrate:memories": "node scripts/migrate-memories-schema.mjs",
+    "memories:backfill:postgres": "node scripts/backfill-memories-to-postgres.mjs",
+    "memories:parity:check": "node scripts/validate-metadata-parity.mjs",
+    "memories:blob-metadata:cleanup": "node scripts/delete-blob-metadata.mjs"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.19.1",
@@ -20,11 +24,13 @@
     "dotenv": "^16.5.0",
     "exifr": "^7.1.3",
     "heic2any": "^0.0.4",
+    "postgres": "^3.4.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.13.1",
-    "react-type-animation": "^3.2.0"
+    "react-type-animation": "^3.2.0",
+    "vercel": "^50.26.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

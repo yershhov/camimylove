@@ -1,10 +1,11 @@
 import dotenv from "dotenv";
 import { isAuthenticatedRequest } from "../_lib/auth.js";
+import { listMemoriesPage } from "../_lib/memory-repository.js";
 import {
-  listAllMetadataBlobs,
-  normalizeMemoryRecord,
-  selectLatestMetadataBlobsById,
-} from "../_lib/memory.js";
+  ensurePostgresMemoriesReady,
+  getSqlClient,
+  isPostgresConfigured,
+} from "../_lib/postgres.js";
 
 dotenv.config();
 
@@ -37,11 +38,10 @@ export default async function handler(req: any, res: any) {
     return res.status(401).json({ ok: false, error: "Unauthorized" });
   }
 
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
-  if (!token) {
-    return res.status(500).json({
+  if (!isPostgresConfigured()) {
+    return res.status(503).json({
       ok: false,
-      error: "Blob token is not configured",
+      error: "Postgres is not configured",
     });
   }
 
@@ -49,47 +49,16 @@ export default async function handler(req: any, res: any) {
     const limit = parseLimit(req.query?.limit);
     const beforeId = parseBeforeId(req.query?.beforeId);
 
-    const metadataBlobs = await listAllMetadataBlobs(token);
-    const sortedByIdDesc = selectLatestMetadataBlobsById(metadataBlobs)
-      .sort((a, b) => Number(b.id) - Number(a.id));
-
-    const filtered = beforeId
-      ? sortedByIdDesc.filter((blob) => Number(blob.id) < beforeId)
-      : sortedByIdDesc;
-
-    const pageBlobs = filtered.slice(0, limit);
-    const hasMore = filtered.length > pageBlobs.length;
-
-    const rawRecords = await Promise.all(
-      pageBlobs.map(async (blob) => {
-        try {
-          const response = await fetch(`${blob.url}?t=${Date.now()}`, {
-            cache: "no-store",
-          });
-          if (!response.ok) return null;
-          return await response.json();
-        } catch {
-          return null;
-        }
-      }),
-    );
-
-    const memories = rawRecords
-      .map((record) => normalizeMemoryRecord(record))
-      .filter((record) => Boolean(record))
-      .sort((a, b) => Number(b?.id ?? 0) - Number(a?.id ?? 0));
-
-    const nextBeforeId =
-      memories.length > 0 ? memories[memories.length - 1]?.id ?? null : null;
+    await ensurePostgresMemoriesReady();
+    const page = await listMemoriesPage(getSqlClient(), limit, beforeId);
 
     return res.status(200).json({
       ok: true,
-      memories,
-      hasMore,
-      nextBeforeId,
+      memories: page.memories,
+      hasMore: page.hasMore,
+      nextBeforeId: page.nextBeforeId,
     });
   } catch (error) {
-    console.error("Failed to fetch gallery memories", error);
     return res.status(500).json({
       ok: false,
       error: "Failed to fetch gallery memories",

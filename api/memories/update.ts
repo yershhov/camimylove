@@ -1,11 +1,12 @@
 import dotenv from "dotenv";
-import { put } from "@vercel/blob";
 import { isAuthenticatedRequest } from "../_lib/auth.js";
+import { normalizeMemoryRecord } from "../_lib/memory.js";
+import { getMemoryById, upsertMemory } from "../_lib/memory-repository.js";
 import {
-  buildMetadataRevisionKey,
-  findMetadataBlobById,
-  normalizeMemoryRecord,
-} from "../_lib/memory.js";
+  ensurePostgresMemoriesReady,
+  getSqlClient,
+  isPostgresConfigured,
+} from "../_lib/postgres.js";
 
 dotenv.config();
 
@@ -59,6 +60,13 @@ export default async function handler(req: any, res: any) {
     });
   }
 
+  if (!isPostgresConfigured()) {
+    return res.status(503).json({
+      ok: false,
+      error: "Postgres is not configured",
+    });
+  }
+
   try {
     const body = parseBody(req);
     const memoryId = parseMemoryId(body.id);
@@ -69,30 +77,13 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    const metadataBlob = await findMetadataBlobById(token, memoryId);
-    if (!metadataBlob) {
+    await ensurePostgresMemoriesReady();
+
+    const existingMemory = await getMemoryById(getSqlClient(), memoryId);
+    if (!existingMemory) {
       return res.status(404).json({
         ok: false,
         error: "Memory not found",
-      });
-    }
-
-    const metadataResponse = await fetch(`${metadataBlob.url}?t=${Date.now()}`, {
-      cache: "no-store",
-    });
-    if (!metadataResponse.ok) {
-      return res.status(500).json({
-        ok: false,
-        error: "Failed to load memory metadata",
-      });
-    }
-
-    const rawExisting = await metadataResponse.json();
-    const existingMemory = normalizeMemoryRecord(rawExisting);
-    if (!existingMemory) {
-      return res.status(500).json({
-        ok: false,
-        error: "Invalid memory metadata format",
       });
     }
 
@@ -111,20 +102,13 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    const metadataKey = buildMetadataRevisionKey(existingMemory.id);
-    await put(metadataKey, JSON.stringify(updatedMemory, null, 2), {
-      access: "public",
-      token,
-      addRandomSuffix: false,
-      contentType: "application/json",
-    });
+    await upsertMemory(getSqlClient(), updatedMemory);
 
     return res.status(200).json({
       ok: true,
       memory: updatedMemory,
     });
   } catch (error) {
-    console.error("Failed to update memory", error);
     return res.status(500).json({
       ok: false,
       error: "Failed to update memory",
