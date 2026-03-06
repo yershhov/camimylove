@@ -1,7 +1,14 @@
 import dotenv from "dotenv";
+import { randomInt } from "node:crypto";
 import { put } from "@vercel/blob";
 import { isAuthenticatedRequest } from "../_lib/auth.js";
-import { listAllMetadataBlobs, normalizeMemoryRecord } from "../_lib/memory.js";
+import { normalizeMemoryRecord } from "../_lib/memory.js";
+import { getMemoryById, upsertMemory } from "../_lib/memory-repository.js";
+import {
+  ensurePostgresMemoriesReady,
+  getSqlClient,
+  isPostgresConfigured,
+} from "../_lib/postgres.js";
 
 dotenv.config();
 
@@ -43,27 +50,28 @@ function parseBody(req: any): UploadBody {
   return body;
 }
 
-function getNextMemoryId(pathnames: string[]) {
-  let maxId = -1;
-
-  for (const pathname of pathnames) {
-    const fileName = pathname.split("/").pop() ?? "";
-    const idRaw = fileName.replace(".json", "");
-    const id = Number(idRaw);
-    if (Number.isFinite(id)) {
-      maxId = Math.max(maxId, id);
+async function generateMemoryId() {
+  const sql = getSqlClient();
+  for (let attempts = 0; attempts < 8; attempts += 1) {
+    const candidateId = Date.now() * 1000 + randomInt(0, 1000);
+    const existing = await getMemoryById(sql, candidateId);
+    if (!existing) {
+      return candidateId;
     }
   }
-
-  return maxId + 1;
+  throw new Error("Failed to allocate a unique memory id");
 }
 
 export default async function handler(req: any, res: any) {
+  res.setHeader("Cache-Control", "no-store, max-age=0");
+  res.setHeader("CDN-Cache-Control", "no-store");
+  res.setHeader("Vercel-CDN-Cache-Control", "no-store");
+
   if (req.method !== "POST") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
 
-  if (!isAuthenticatedRequest(req)) {
+  if (!isAuthenticatedRequest(req, res)) {
     return res.status(401).json({ ok: false, error: "Unauthorized" });
   }
 
@@ -72,6 +80,13 @@ export default async function handler(req: any, res: any) {
     return res.status(500).json({
       ok: false,
       error: "Blob token is not configured",
+    });
+  }
+
+  if (!isPostgresConfigured()) {
+    return res.status(503).json({
+      ok: false,
+      error: "Postgres is not configured",
     });
   }
 
@@ -102,11 +117,11 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    const metadataBlobs = await listAllMetadataBlobs(token);
-    const memoryId = getNextMemoryId(metadataBlobs.map((blob) => blob.pathname));
+    await ensurePostgresMemoriesReady();
+
+    const memoryId = await generateMemoryId();
     const extension = MIME_TO_EXTENSION[mimeType] ?? "jpg";
     const imageKey = `images/${memoryId}.${extension}`;
-    const metadataKey = `metadata/${memoryId}.json`;
 
     const imageUpload = await put(imageKey, buffer, {
       access: "public",
@@ -130,19 +145,13 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    await put(metadataKey, JSON.stringify(memoryRecord, null, 2), {
-      access: "public",
-      token,
-      addRandomSuffix: false,
-      contentType: "application/json",
-    });
+    await upsertMemory(getSqlClient(), memoryRecord);
 
     return res.status(201).json({
       ok: true,
       memory: memoryRecord,
     });
   } catch (error) {
-    console.error("Failed to upload memory", error);
     return res.status(500).json({
       ok: false,
       error: "Failed to upload memory",

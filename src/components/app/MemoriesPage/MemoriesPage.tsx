@@ -1,18 +1,36 @@
-import { VStack, Center, Button, Text, Box } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { VStack, Center, Button, Text, Box, HStack } from "@chakra-ui/react";
+import { useState, useEffect, useContext, useMemo } from "react";
 import { FaHeart } from "react-icons/fa";
+import { useLocation, useNavigate } from "react-router-dom";
 import type { Memory, RandomMemoryResponse } from "../../../types";
 import MemoryCard from "./MemoryCard";
 import { createAppToast } from "../../ui/toaster";
 import Loader from "../../ui/Loader";
+import { AppContext } from "../../../context/AppContext";
+import BackHomeButton from "../../ui/BackHomeButton";
 
-const MemoriesPage = () => {
+type MemoriesPageProps = {
+  mode?: "legacy" | "standalone";
+};
+
+const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { memoriesVersion } = useContext(AppContext);
+  const isStandaloneMode = mode === "standalone";
   const [memory, setMemory] = useState<Memory | null>(null);
 
   const [isLoadingMemory, setIsLoadingMemory] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(false);
-  const [firstLoadDone, setFirstLoadDone] = useState(false);
-  const [skipIntroLoader] = useState(false);
+  const [firstLoadDone, setFirstLoadDone] = useState(isStandaloneMode);
+  const skipIntroLoader = isStandaloneMode;
+  const requestedMemoryId = useMemo(() => {
+    const idRaw = new URLSearchParams(location.search).get("id");
+    if (!idRaw) return null;
+    const parsed = Number(idRaw);
+    if (!Number.isInteger(parsed) || parsed < 0) return null;
+    return parsed;
+  }, [location.search]);
 
   const handleDelayedLoadingEnd = (first?: boolean) => {
     setTimeout(
@@ -29,7 +47,18 @@ const MemoriesPage = () => {
   };
 
   const fetchRandomMemory = async () => {
-    const response = await fetch("/api/memories/random");
+    const query = new URLSearchParams();
+    query.set("t", String(Date.now()));
+    if (requestedMemoryId !== null) {
+      query.set("id", String(requestedMemoryId));
+    }
+
+    const response = await fetch(`/api/memories/random?${query.toString()}`, {
+      cache: "no-store",
+      headers: {
+        "Cache-Control": "no-cache",
+      },
+    });
     if (!response.ok) {
       throw new Error("Failed to fetch random memory");
     }
@@ -38,6 +67,7 @@ const MemoriesPage = () => {
     if (!payload.ok || !payload.memory) {
       throw new Error(payload.error ?? "No memory returned");
     }
+
     return payload.memory as Memory;
   };
 
@@ -51,21 +81,23 @@ const MemoriesPage = () => {
     }
   };
 
-  useEffect(() => {
-    // const shouldSkipIntro =
-    //   sessionStorage.getItem("skip_memories_intro_loader") === "true";
+  const handleDeleteMemory = async (_memory: Memory) => {
+    await loadNewMemory();
+  };
 
-    // if (shouldSkipIntro) {
-    //   sessionStorage.removeItem("skip_memories_intro_loader");
-    //   setSkipIntroLoader(true);
-    //   setIsFirstLoad(true);
-    //   return;
-    // }
+  const handleEditMemory = (memoryToEdit: Memory) => {
+    navigate(`/memories/edit/${memoryToEdit.id}`, {
+      state: { from: "/random-memories" },
+    });
+  };
+
+  useEffect(() => {
+    if (skipIntroLoader) return;
 
     setTimeout(() => {
       setIsFirstLoad(true);
     }, 1000);
-  }, []);
+  }, [skipIntroLoader]);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -83,8 +115,30 @@ const MemoriesPage = () => {
       }
     };
 
-    if (isFirstLoad) fetchInitialData();
-  }, [isFirstLoad, skipIntroLoader]);
+    if (!skipIntroLoader && isFirstLoad) fetchInitialData();
+  }, [isFirstLoad, skipIntroLoader, requestedMemoryId]);
+
+  useEffect(() => {
+    if (!firstLoadDone) return;
+
+    const refreshCurrentMemory = async () => {
+      try {
+        setIsLoadingMemory(true);
+        const currentMemory = await fetchRandomMemory();
+        setMemory(currentMemory);
+      } catch (error: any) {
+        console.error(error);
+        createAppToast({
+          title: "Errore, oopsie :(",
+          type: "error",
+        });
+      } finally {
+        handleDelayedLoadingEnd();
+      }
+    };
+
+    void refreshCurrentMemory();
+  }, [firstLoadDone, requestedMemoryId, memoriesVersion]);
 
   useEffect(() => {
     if (!isFirstLoad && firstLoadDone) {
@@ -95,7 +149,11 @@ const MemoriesPage = () => {
 
   return (
     <Center h="100%" w="100%" flex={1}>
-      {isFirstLoad && !skipIntroLoader && <Loader animate />}
+      {isFirstLoad && !skipIntroLoader && (
+        <Box position={"relative"} bottom={"5%"}>
+          <Loader animate />
+        </Box>
+      )}
 
       {firstLoadDone && (
         <Box h="100%" w="100%" position="relative">
@@ -109,11 +167,22 @@ const MemoriesPage = () => {
               animationDuration: "1200ms",
             }}
           >
+            {mode === "standalone" && (
+              <HStack justifyContent="flex-start" w="100%">
+                <BackHomeButton />
+              </HStack>
+            )}
+
             <Text fontFamily="'Dancing Script', cursive" fontSize={"4xl"}>
               Nostri ricordi
             </Text>
 
-            <MemoryCard memory={memory} isLoading={isLoadingMemory} />
+            <MemoryCard
+              memory={memory}
+              isLoading={isLoadingMemory}
+              onDelete={handleDeleteMemory}
+              onEdit={handleEditMemory}
+            />
 
             <Button
               colorPalette={"pink"}
@@ -125,7 +194,7 @@ const MemoriesPage = () => {
               mt={6}
             >
               <FaHeart />
-              Carica un altro ricordo
+              Vedi un altro ricordo
             </Button>
           </VStack>
         </Box>

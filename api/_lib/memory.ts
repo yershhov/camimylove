@@ -8,7 +8,7 @@ export type MemoryRecord = {
   imageKey?: string;
 };
 
-const METADATA_PREFIX = "metadata/";
+const IMAGE_PREFIX = "images/";
 
 export function normalizeMemoryRecord(input: any): MemoryRecord | null {
   if (!input || typeof input !== "object") return null;
@@ -37,26 +37,33 @@ export function normalizeMemoryRecord(input: any): MemoryRecord | null {
   };
 }
 
-export async function listAllMetadataBlobs(token: string) {
-  const blobs: Array<{ pathname: string; url: string }> = [];
-  let cursor: string | undefined;
+export async function findImageBlobByKey(token: string, imageKey: string) {
+  const response = await list({
+    token,
+    prefix: imageKey,
+    limit: 10,
+  });
 
-  do {
-    const response = await list({
-      token,
-      prefix: METADATA_PREFIX,
-      cursor,
-      limit: 1000,
-    });
+  return response.blobs.find((blob) => blob.pathname === imageKey) ?? null;
+}
 
-    for (const blob of response.blobs) {
-      if (blob.pathname.endsWith(".json")) {
-        blobs.push({ pathname: blob.pathname, url: blob.url });
-      }
-    }
+export function parseMemoryIdFromImagePath(pathname: string) {
+  if (!pathname.startsWith(IMAGE_PREFIX)) return null;
+  const fileName = pathname.split("/").pop() ?? "";
+  const idRaw = fileName.replace(/\.[^.]+$/, "");
+  const id = Number(idRaw);
+  return Number.isFinite(id) ? id : null;
+}
 
-    cursor = response.hasMore ? response.cursor : undefined;
-  } while (cursor);
+export async function findImageBlobByMemoryId(token: string, id: number) {
+  const response = await list({
+    token,
+    prefix: `${IMAGE_PREFIX}${id}`,
+    limit: 20,
+  });
 
-  return blobs;
+  return (
+    response.blobs.find((blob) => parseMemoryIdFromImagePath(blob.pathname) === id) ??
+    null
+  );
 }

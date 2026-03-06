@@ -1,7 +1,7 @@
 import { Button, Spacer, VStack } from "@chakra-ui/react";
 import { FiArrowRight } from "react-icons/fi";
 import { useContext, useState } from "react";
-import { AppContext } from "../../../App";
+import { AppContext } from "../../../context/AppContext";
 import PageContainer from "../../ui/PageContainer";
 import WelcomePageTypeWriter from "./WelcomePageTypeWriter";
 
