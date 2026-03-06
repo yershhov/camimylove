@@ -47,6 +47,17 @@ const GalleryPage = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        setSelectedMemory(null);
+        setIsDeleteConfirmOpen(false);
+      }
+    };
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, []);
+
   const fetchGallerySlice = async (params?: {
     beforeId?: number | null;
     limit?: number;
