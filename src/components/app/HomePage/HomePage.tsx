@@ -86,13 +86,25 @@ const HomePage = ({ womensDayMode = false }: HomePageProps) => {
     <PageContainer alignItems="stretch" gap={5}>
       {womensDayMode && <AppleStyleConfetti />}
 
-      <Text
-        fontFamily="'Dancing Script', cursive"
-        fontSize={womensDayMode ? "4xl" : "5xl"}
-        textAlign="center"
-      >
-        {womensDayMode ? "Happy Women's Day, Baby!" : "Camimylove"}
-      </Text>
+      <Box>
+        <Text
+          fontFamily="'Dancing Script', cursive"
+          fontSize={womensDayMode ? "4xl" : "5xl"}
+          textAlign="center"
+        >
+          {womensDayMode ? "Happy Women's Day, Baby!" : "Camimylove"}
+        </Text>
+
+        {womensDayMode && (
+          <Text
+            fontFamily="'Dancing Script', cursive"
+            fontSize={"3xl"}
+            textAlign="center"
+          >
+            {"And Happy Monthiversary <3"}
+          </Text>
+        )}
+      </Box>
 
       <VStack alignItems="stretch" gap={4} w="100%">
         {cards.map((card) => (
