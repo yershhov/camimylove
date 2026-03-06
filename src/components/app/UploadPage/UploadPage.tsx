@@ -496,6 +496,7 @@ const UploadPage = ({
                   key={dateInputKey}
                   type="datetime-local"
                   bg="white"
+                  fontSize="16px"
                   value={dateValue}
                   onChange={(event) => setDateValue(event.target.value)}
                 />
@@ -506,6 +507,7 @@ const UploadPage = ({
                 <Input
                   placeholder="Es. Jesolo, Via Dante Alighieri"
                   bg="white"
+                  fontSize="16px"
                   value={locationValue}
                   onChange={(event) => setLocationValue(event.target.value)}
                 />

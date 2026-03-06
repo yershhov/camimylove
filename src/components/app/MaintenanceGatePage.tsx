@@ -36,6 +36,7 @@ const MaintenanceGatePage = ({ onUnlock }: MaintenanceGatePageProps) => {
             onChange={(event) => setPassword(event.target.value)}
             placeholder="Admin password"
             bg="white"
+            fontSize="16px"
           />
 
           {errorMessage && (
