@@ -25,6 +25,7 @@ const GalleryPage = () => {
   const { memoriesVersion } = useContext(AppContext);
   const scrollRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(true);
+  const noFocusRef = useRef<HTMLDivElement>(null);
 
   const [memories, setMemories] = useState<Memory[]>([]);
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
@@ -244,6 +245,7 @@ const GalleryPage = () => {
       <Dialog.Root
         open={Boolean(selectedMemory)}
         closeOnInteractOutside={!isDeleteConfirmOpen}
+        initialFocusEl={() => noFocusRef.current}
         onOpenChange={(event) => {
           if (!event.open) {
             setSelectedMemory(null);
@@ -263,6 +265,18 @@ const GalleryPage = () => {
               position="relative"
             >
               <Dialog.Body p={0}>
+                <div
+                  ref={noFocusRef}
+                  tabIndex={-1}
+                  style={{
+                    position: "absolute",
+                    width: 0,
+                    height: 0,
+                    opacity: 0,
+                    pointerEvents: "none",
+                  }}
+                  aria-hidden
+                />
                 {selectedMemory && (
                   <MemoryCard
                     memory={selectedMemory}
