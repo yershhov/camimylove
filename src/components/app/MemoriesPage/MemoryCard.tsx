@@ -114,6 +114,7 @@ const MemoryCard = ({
           colorPalette={"pink"}
           onClick={() => {
             if (!memory || !onEdit) return;
+            if (isDialog && onClose) onClose();
             onEdit(memory);
           }}
         >
