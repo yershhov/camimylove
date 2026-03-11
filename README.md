@@ -1,7 +1,8 @@
 # A personal memory journal app — a private space to store and revisit cherished photos and moments together.
 
 **Live:** [www.camimylove.com](https://www.camimylove.com)
-**Want to try it out yourself?** Please Contact me for access credentials.
+
+**Want to try it out yourself?** Please contact me for access credentials.
 
 > English localization coming soon. The app is currently in Italian.
 
