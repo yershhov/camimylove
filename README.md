@@ -10,7 +10,7 @@
 
 - **Gallery** — browse memories in a gallery-like grid, see detailed preview on click
 - **Random memories** — randomly shuffle through memories
-- **Upload** — add new photos with date and location
+- **Upload, edit, delete** — add new photos with date and location, edit them and delete if you don't like them anymore
 
 ---
 
