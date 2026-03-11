@@ -7,13 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "memories:max-id": "node scripts/get-max-memory-id.mjs",
-    "memories:delete-from": "node scripts/delete-memories-from-id.mjs",
-    "db:migrate:memories": "node scripts/migrate-memories-schema.mjs",
-    "memories:backfill:postgres": "node scripts/backfill-memories-to-postgres.mjs",
-    "memories:parity:check": "node scripts/validate-metadata-parity.mjs",
-    "memories:blob-metadata:cleanup": "node scripts/delete-blob-metadata.mjs"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.19.1",
