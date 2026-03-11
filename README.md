@@ -2,10 +2,8 @@
 
 **Live:** [www.camimylove.com](https://www.camimylove.com)
 
-English localization coming soon. The app is currently in Italian.
-
-The app is mobile-first — using a phone or tablet is recommended for the best experience, though desktop works well too.
-
+> English localization coming soon. The app is currently in Italian.
+> The app is mobile-first — using a phone is recommended for the best experience, though desktop or tablet works well too.
 > **Want to try it out?** Contact me for access credentials.
 
 ---
