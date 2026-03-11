@@ -2,8 +2,6 @@ import { Button, Input, Text, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import PageContainer from "../ui/PageContainer";
 
-const MAINTENANCE_ADMIN_PASSWORD = "abracadabra";
-
 type MaintenanceGatePageProps = {
   onUnlock: () => void;
 };
@@ -11,17 +9,31 @@ type MaintenanceGatePageProps = {
 const MaintenanceGatePage = ({ onUnlock }: MaintenanceGatePageProps) => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrorMessage("");
+    setIsSubmitting(true);
 
-    if (password !== MAINTENANCE_ADMIN_PASSWORD) {
-      setErrorMessage("Password non valida.");
-      return;
+    try {
+      const res = await fetch("/api/maintenance-unlock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const data = (await res.json()) as { ok?: boolean; error?: string };
+
+      if (res.ok && data.ok) {
+        onUnlock();
+      } else {
+        setErrorMessage(data.error ?? "Password non valida.");
+      }
+    } catch {
+      setErrorMessage("Errore di connessione. Riprova.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    onUnlock();
   };
 
   return (
@@ -29,15 +41,17 @@ const MaintenanceGatePage = ({ onUnlock }: MaintenanceGatePageProps) => {
       <Text textAlign="center">Sito temporaneamente in manutenzione.</Text>
 
       <form onSubmit={handleSubmit} style={{ width: "100%" }}>
-        <VStack gap={4}>
-          <Input
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Admin password"
-            bg="white"
-            fontSize="16px"
-          />
+        <VStack gap={5} w="100%">
+          <VStack alignItems="start" gap={2} w="100%">
+            <Input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Admin password"
+              bg="white"
+              fontSize="16px"
+            />
+          </VStack>
 
           {errorMessage && (
             <Text fontSize="sm" color="red.500" textAlign="center">
@@ -45,8 +59,15 @@ const MaintenanceGatePage = ({ onUnlock }: MaintenanceGatePageProps) => {
             </Text>
           )}
 
-          <Button type="submit" colorPalette="pink" size="lg" w="100%">
-            Accedi
+          <Button
+            type="submit"
+            colorPalette="pink"
+            size="lg"
+            w="100%"
+            mt={2}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Verifica..." : "Accedi"}
           </Button>
         </VStack>
       </form>
