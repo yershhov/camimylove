@@ -16,7 +16,7 @@ type MemoriesPageProps = {
 const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { memoriesVersion } = useContext(AppContext);
+  const { memoriesChangeToken } = useContext(AppContext);
   const isStandaloneMode = mode === "standalone";
   const [memory, setMemory] = useState<Memory | null>(null);
 
@@ -52,7 +52,10 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
       query.set("id", String(requestedMemoryId));
     }
 
-    const response = await fetch(`/api/memories/random?${query.toString()}`);
+    const queryString = query.toString();
+    const response = await fetch(
+      queryString ? `/api/memories/random?${queryString}` : "/api/memories/random",
+    );
     if (!response.ok) {
       throw new Error("Failed to fetch random memory");
     }
@@ -132,7 +135,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
     };
 
     void refreshCurrentMemory();
-  }, [firstLoadDone, requestedMemoryId, memoriesVersion]);
+  }, [firstLoadDone, requestedMemoryId, memoriesChangeToken]);
 
   useEffect(() => {
     if (!isFirstLoad && firstLoadDone) {

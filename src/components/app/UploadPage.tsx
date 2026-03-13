@@ -95,7 +95,7 @@ const UploadPage = ({
   variant = "create",
   memoryId,
 }: UploadPageProps) => {
-  const { handlePage, invalidateMemories } = useContext(AppContext);
+  const { handlePage, notifyMemoriesChanged } = useContext(AppContext);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const goBackToMemories = () => {
@@ -311,7 +311,7 @@ const UploadPage = ({
         setDateValue(toDateTimeLocalInput(payload.memory.date));
         setLocationValue(payload.memory.location ?? "");
         setDateInputKey((value) => value + 1);
-        invalidateMemories();
+        notifyMemoriesChanged();
         createAppToast({
           type: "success",
           title: "Ricordo aggiornato",
@@ -354,7 +354,7 @@ const UploadPage = ({
         type: "success",
         title: "Ricordo salvato",
       });
-      invalidateMemories();
+      notifyMemoriesChanged();
       resetForm();
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {

@@ -32,8 +32,10 @@ type FeatureFlagsResponse = {
 function App() {
   const location = useLocation();
   const [isFixedHeightEnabled, setIsFixedHeightEnabled] = useState(true);
-  const [memoriesVersion, setMemoriesVersion] = useState(0);
+  const [memoriesChangeToken, setMemoriesChangeToken] = useState(0);
   const [isFlagsLoading, setIsFlagsLoading] = useState(true);
+  const [isSessionLoading, setIsSessionLoading] = useState(true);
+  const [sessionAuthenticated, setSessionAuthenticated] = useState(false);
   const [featureFlags, setFeatureFlags] = useState<FeatureFlagsResponse>({
     womensDayWelcomeEnabled: false,
     maintenanceModeEnabled: false,
@@ -77,6 +79,21 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await fetch("/api/session");
+        setSessionAuthenticated(response.ok);
+      } catch {
+        setSessionAuthenticated(false);
+      } finally {
+        setIsSessionLoading(false);
+      }
+    };
+
+    void checkSession();
+  }, []);
+
+  useEffect(() => {
     window.scrollTo({ top: 0 });
     setIsFixedHeightEnabled(true);
   }, [location.pathname]);
@@ -90,19 +107,17 @@ function App() {
     handlePage: () => undefined,
     fixedHeightEnabled: isFixedHeightEnabled,
     setFixedHeightEnabled: setIsFixedHeightEnabled,
-    memoriesVersion,
-    invalidateMemories: () =>
-      setMemoriesVersion((currentVersion) => currentVersion + 1),
+    memoriesChangeToken,
+    notifyMemoriesChanged: () =>
+      setMemoriesChangeToken((currentVersion) => currentVersion + 1),
+    sessionAuthenticated,
+    setSessionAuthenticated,
   };
 
-  if (isFlagsLoading) {
+  if (isFlagsLoading || isSessionLoading) {
     return (
       <AppContext.Provider value={appContextValue}>
-        <Flex bg="pink.100" h="100vh" justifyContent="center" overflow="hidden">
-          <VStack pt="28vh">
-            <Spinner color="pink.500" size="lg" />
-          </VStack>
-        </Flex>
+        <FullScreenSpinner />
       </AppContext.Provider>
     );
   }
@@ -194,41 +209,21 @@ function AppFrameLayout({
 
 function LoginRoute() {
   const navigate = useNavigate();
-  const [checkingSession, setCheckingSession] = useState(true);
+  const { sessionAuthenticated, setSessionAuthenticated } =
+    useContext(AppContext);
 
   const postLoginPath = "/home";
 
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const response = await fetch("/api/session");
-        if (response.ok) {
-          navigate(postLoginPath, { replace: true });
-          return;
-        }
-        setCheckingSession(false);
-      } catch {
-        // noop
-        setCheckingSession(false);
-      }
-    };
-
-    void checkSession();
-  }, [navigate, postLoginPath]);
-
-  if (checkingSession) {
-    return (
-      <Flex bg="pink.100" h="100vh" justifyContent="center" overflow="hidden">
-        <VStack pt="28vh">
-          <Spinner color="pink.500" size="lg" />
-        </VStack>
-      </Flex>
-    );
+  if (sessionAuthenticated) {
+    return <Navigate to={postLoginPath} replace />;
   }
 
   return (
     <AuthPage
-      onAuthSuccess={() => navigate(postLoginPath, { replace: true })}
+      onAuthSuccess={() => {
+        setSessionAuthenticated(true);
+        navigate(postLoginPath, { replace: true });
+      }}
     />
   );
 }
@@ -272,6 +267,16 @@ function RandomMemoriesRoute() {
 
 function StandaloneQuizRoute() {
   return <QuizPage mode="standalone" />;
+}
+
+function FullScreenSpinner() {
+  return (
+    <Flex bg="pink.100" h="100dvh" justifyContent="center" overflow="hidden">
+      <VStack pt="28dvh">
+        <Spinner color="pink.500" size="lg" />
+      </VStack>
+    </Flex>
+  );
 }
 
 export default App;

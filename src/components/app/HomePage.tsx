@@ -1,5 +1,5 @@
 import { Box, HStack, Text, VStack } from "@chakra-ui/react";
-import { useState, type ReactNode } from "react";
+import { useContext, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FiCamera,
@@ -12,6 +12,7 @@ import {
 import { IoShuffle } from "react-icons/io5";
 import PageContainer from "../ui/PageContainer";
 import AppleStyleConfetti from "../ui/AppleStyleConfetti";
+import { AppContext } from "../../context/AppContext";
 
 type HomeCard = {
   label: string;
@@ -27,6 +28,7 @@ type HomePageProps = {
 
 const HomePage = ({ womensDayMode = false }: HomePageProps) => {
   const navigate = useNavigate();
+  const { setSessionAuthenticated } = useContext(AppContext);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
@@ -41,6 +43,7 @@ const HomePage = ({ womensDayMode = false }: HomePageProps) => {
       setIsLoggingOut(false);
     }
 
+    setSessionAuthenticated(false);
     navigate("/login", { replace: true });
   };
 

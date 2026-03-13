@@ -22,7 +22,7 @@ import { AppContext } from "../../context/AppContext";
 
 const GalleryPage = () => {
   const navigate = useNavigate();
-  const { memoriesVersion } = useContext(AppContext);
+  const { memoriesChangeToken } = useContext(AppContext);
   const scrollRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(true);
   const noFocusRef = useRef<HTMLDivElement>(null);
@@ -110,7 +110,7 @@ const GalleryPage = () => {
     };
 
     void loadInitial();
-  }, [memoriesVersion]);
+  }, [memoriesChangeToken]);
 
   const loadOlderMemories = async () => {
     if (!canLoadMore) return;

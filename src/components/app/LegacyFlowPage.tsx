@@ -15,8 +15,10 @@ const LegacyFlowPage = () => {
   const {
     fixedHeightEnabled,
     setFixedHeightEnabled,
-    memoriesVersion,
-    invalidateMemories,
+    memoriesChangeToken,
+    notifyMemoriesChanged,
+    sessionAuthenticated,
+    setSessionAuthenticated,
   } = useContext(AppContext);
 
   useEffect(() => {
@@ -40,8 +42,10 @@ const LegacyFlowPage = () => {
           setPage((currentPage) =>
             typeof newPage === "number" ? newPage : currentPage + 1,
           ),
-        memoriesVersion,
-        invalidateMemories,
+        memoriesChangeToken,
+        notifyMemoriesChanged,
+        sessionAuthenticated,
+        setSessionAuthenticated,
       }}
     >
       <Box mb={page === 4 ? 4 : 0}>

@@ -1,6 +1,6 @@
-import { Flex, Spinner, VStack } from "@chakra-ui/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
 
 const SESSION_REFRESH_INTERVAL_MS = 4 * 60 * 1000;
 const MIN_ACTIVITY_REFRESH_GAP_MS = 60 * 1000;
@@ -11,24 +11,25 @@ async function checkSessionRequest() {
 }
 
 function ProtectedRoute() {
-  const [isChecking, setIsChecking] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { sessionAuthenticated, setSessionAuthenticated } =
+    useContext(AppContext);
+  const [isAuthenticated, setIsAuthenticated] = useState(sessionAuthenticated);
   const lastRefreshRef = useRef(0);
 
   const refreshSession = useCallback(async () => {
     try {
       const ok = await checkSessionRequest();
       setIsAuthenticated(ok);
+      setSessionAuthenticated(ok);
     } catch {
       setIsAuthenticated(false);
-    } finally {
-      setIsChecking(false);
+      setSessionAuthenticated(false);
     }
-  }, []);
+  }, [setSessionAuthenticated]);
 
   useEffect(() => {
-    void refreshSession();
-  }, [refreshSession]);
+    setIsAuthenticated(sessionAuthenticated);
+  }, [sessionAuthenticated]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -58,16 +59,6 @@ function ProtectedRoute() {
       window.removeEventListener("scroll", refreshOnActivity);
     };
   }, [isAuthenticated, refreshSession]);
-
-  if (isChecking) {
-    return (
-      <Flex bg="pink.100" minH="100vh" justifyContent="center" overflow="hidden">
-        <VStack gap={3} pt="28vh">
-          <Spinner color="pink.500" size="lg" />
-        </VStack>
-      </Flex>
-    );
-  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
