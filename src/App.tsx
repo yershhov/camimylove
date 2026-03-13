@@ -1,5 +1,12 @@
 import { Flex, Spinner, VStack } from "@chakra-ui/react";
-import { useContext, useEffect, useState, type ReactNode } from "react";
+import {
+  Suspense,
+  lazy,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import {
   Navigate,
   Outlet,
@@ -11,18 +18,20 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import AuthPage from "./components/app/AuthPage";
-import MemoriesPage from "./components/app/MemoriesPage/MemoriesPage";
-import UploadPage from "./components/app/UploadPage";
 import HomePage from "./components/app/HomePage";
 import GalleryPage from "./components/app/GalleryPage";
-import SettingsPage from "./components/app/SettingsPage";
-import QuizPage from "./components/app/QuizPage/QuizPage";
-import LegacyFlowPage from "./components/app/LegacyFlowPage";
 import MaintenanceGatePage from "./components/app/MaintenanceGatePage";
 import ProtectedRoute from "./router/ProtectedRoute";
 import { AppContext } from "./context/AppContext";
 
 const MAINTENANCE_UNLOCK_STORAGE_KEY = "camimylove_maintenance_unlocked";
+const MemoriesPage = lazy(
+  () => import("./components/app/MemoriesPage/MemoriesPage"),
+);
+const UploadPage = lazy(() => import("./components/app/UploadPage"));
+const SettingsPage = lazy(() => import("./components/app/SettingsPage"));
+const QuizPage = lazy(() => import("./components/app/QuizPage/QuizPage"));
+const LegacyFlowPage = lazy(() => import("./components/app/LegacyFlowPage"));
 
 type FeatureFlagsResponse = {
   womensDayWelcomeEnabled: boolean;
@@ -153,16 +162,58 @@ function App() {
                 />
               }
             />
-            <Route path="/upload" element={<StandaloneUploadRoute />} />
-            <Route path="/memories/edit/:id" element={<EditMemoryRoute />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/quiz" element={<StandaloneQuizRoute />} />
-            <Route path="/random-memories" element={<RandomMemoriesRoute />} />
+            <Route
+              path="/upload"
+              element={
+                <RouteSuspense>
+                  <StandaloneUploadRoute />
+                </RouteSuspense>
+              }
+            />
+            <Route
+              path="/memories/edit/:id"
+              element={
+                <RouteSuspense>
+                  <EditMemoryRoute />
+                </RouteSuspense>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <RouteSuspense>
+                  <SettingsPage />
+                </RouteSuspense>
+              }
+            />
+            <Route
+              path="/quiz"
+              element={
+                <RouteSuspense>
+                  <StandaloneQuizRoute />
+                </RouteSuspense>
+              }
+            />
+            <Route
+              path="/random-memories"
+              element={
+                <RouteSuspense>
+                  <RandomMemoriesRoute />
+                </RouteSuspense>
+              }
+            />
           </Route>
 
           <Route element={<AppFrameLayout fixedHeight />}>
             <Route path="/gallery" element={<GalleryPage />} />
-            <Route path="/legacy" element={<LegacyFlowPage />} />
+            <Route
+              path="/legacy"
+              element={
+                <RouteSuspense>
+                  <LegacyFlowPage />
+                </RouteSuspense>
+              }
+            />
           </Route>
         </Route>
 
@@ -276,6 +327,14 @@ function FullScreenSpinner() {
         <Spinner color="pink.500" size="lg" />
       </VStack>
     </Flex>
+  );
+}
+
+function RouteSuspense({ children }: { children: ReactNode }) {
+  return (
+    <Suspense fallback={<FullScreenSpinner />}>
+      {children}
+    </Suspense>
   );
 }
 

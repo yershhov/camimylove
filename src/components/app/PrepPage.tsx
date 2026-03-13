@@ -5,6 +5,8 @@ import { AppContext } from "../../context/AppContext";
 import { TypeAnimation } from "react-type-animation";
 import PageContainer from "../ui/PageContainer";
 
+const prepGifSrc = `${import.meta.env.BASE_URL}christmas-excitement.gif`;
+
 const PrepPage = () => {
   const { handlePage } = useContext(AppContext);
 
@@ -80,7 +82,7 @@ const PrepPage = () => {
       <Spacer />
 
       <VStack mb={12} h="400px" justifyContent={"start"} w="100%">
-        {finishedTyping && <Image src="/christmas-excitement.gif" />}
+        {finishedTyping && <Image src={prepGifSrc} alt="Christmas excitement" />}
 
         <Spacer />
 

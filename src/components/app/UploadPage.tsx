@@ -10,8 +10,6 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import exifr from "exifr";
-import heic2any from "heic2any";
 import { IoArrowBack } from "react-icons/io5";
 import PageContainer from "../ui/PageContainer";
 import Loader from "../ui/Loader";
@@ -65,6 +63,22 @@ async function fileToBase64(file: Blob) {
   }
 
   return btoa(binary);
+}
+
+async function loadExifParser() {
+  const module = await import("exifr");
+  return module.default;
+}
+
+async function convertHeicToJpeg(file: File) {
+  const module = await import("heic2any");
+  const heic2any = module.default;
+
+  return heic2any({
+    blob: file,
+    toType: "image/jpeg",
+    quality: 0.92,
+  });
 }
 
 type UploadPageProps = {
@@ -201,6 +215,7 @@ const UploadPage = ({
 
   const extractExif = async (file: File) => {
     try {
+      const exifr = await loadExifParser();
       const exifData = await exifr.parse(file, { gps: true });
       if (!exifData) return;
 
@@ -247,11 +262,7 @@ const UploadPage = ({
     let targetName = file.name;
 
     if (isHeicFile(file)) {
-      const converted = await heic2any({
-        blob: file,
-        toType: "image/jpeg",
-        quality: 0.92,
-      });
+      const converted = await convertHeicToJpeg(file);
       blobForUpload = Array.isArray(converted) ? converted[0] : converted;
       targetMime = "image/jpeg";
       targetName = file.name.replace(/\.(heic|heif)$/i, ".jpg");

@@ -72,6 +72,7 @@ Do not answer codebase questions from memory when the code can be inspected dire
 - Public access is effectively limited to `/login`; application routes are guarded by `ProtectedRoute`
 - `src/App.tsx` owns top-level routing, feature-flag fetch, and maintenance gate logic
 - Be careful with fixed-height layout behavior driven by `AppContext`
+- `src/components/app/MemoriesPage/MemoriesPage.tsx` includes intentional artificial loading/transition delays used for emotional pacing; do not remove or “optimize away” those waits unless the task explicitly changes that product behavior
 - Preserve route intent when editing:
   - `/home` main landing flow
   - `/upload` create memory

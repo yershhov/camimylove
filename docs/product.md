@@ -87,6 +87,8 @@ Requirements:
 - The flow should stay fast and low-friction
 - Delete and edit actions should remain available where supported
 - Mutation results should be reflected immediately in subsequent views
+- Some loader and transition delays in the memories flow are intentionally longer than the minimum technically required in order to create more anticipation and emotional polish
+- These waits are deliberate product behavior, not accidental inefficiency, though the exact timing values may be tuned in the future
 
 ### 7. Legacy Flow
 The legacy flow preserves a more guided, narrative, anniversary-style experience.

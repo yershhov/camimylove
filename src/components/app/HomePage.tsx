@@ -1,5 +1,5 @@
 import { Box, HStack, Text, VStack } from "@chakra-ui/react";
-import { useContext, useState, type ReactNode } from "react";
+import { Suspense, lazy, useContext, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FiCamera,
@@ -11,8 +11,9 @@ import {
 } from "react-icons/fi";
 import { IoShuffle } from "react-icons/io5";
 import PageContainer from "../ui/PageContainer";
-import AppleStyleConfetti from "../ui/AppleStyleConfetti";
 import { AppContext } from "../../context/AppContext";
+
+const AppleStyleConfetti = lazy(() => import("../ui/AppleStyleConfetti"));
 
 type HomeCard = {
   label: string;
@@ -87,7 +88,11 @@ const HomePage = ({ womensDayMode = false }: HomePageProps) => {
 
   return (
     <PageContainer alignItems="stretch" gap={5}>
-      {womensDayMode && <AppleStyleConfetti />}
+      {womensDayMode && (
+        <Suspense fallback={null}>
+          <AppleStyleConfetti />
+        </Suspense>
+      )}
 
       <Box>
         <Text
