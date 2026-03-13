@@ -1,0 +1,32 @@
+---
+description: Prefer asking when uncertain instead of guessing
+alwaysApply: true
+---
+
+# Ask Instead of Guessing
+
+When you're uncertain about intent, requirements, or implementation details, **ask the user** instead of inventing or guessing.
+
+## When to Ask
+
+- **Ambiguous requirements**: User's request could mean different things
+- **Missing context**: You don't have enough info to make a safe choice
+- **Multiple valid approaches**: The "right" answer depends on user preference
+- **Assumptions required**: You'd have to guess to proceed
+
+## What to Do
+
+- State what you're uncertain about in one sentence
+- Offer a brief clarification question or 2–3 concrete options
+- Do not proceed with guesses that could lead to rework or wrong behavior
+
+## Examples
+
+**Ambiguous:**
+> "Should the export be CSV, JSON, or both? And do you need it for all memories or a filtered subset?"
+
+**Multiple approaches:**
+> "I can either add validation inline or extract a shared hook. Do you prefer keeping it local or reusing it elsewhere?"
+
+**Missing context:**
+> "I'm not sure whether the gallery should keep infinite scroll or switch to pagination—which matches what you want?"

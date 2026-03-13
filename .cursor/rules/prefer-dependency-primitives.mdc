@@ -1,0 +1,20 @@
+---
+description: Prefer built-in types and utilities from installed dependencies over local shims
+alwaysApply: true
+---
+
+# Prefer Dependency Primitives
+
+Before adding new local types, helpers, wrappers, or utilities, check whether an already-installed dependency provides the same thing.
+
+## Prefer Existing Dependency Support
+
+- Use dependency-provided types when they match the runtime cleanly
+- Use built-in helpers or utilities from installed libraries before inventing local shims
+- Avoid adding project-local wrappers just to recreate a capability that already exists in a dependency
+
+## Add Local Code Only When Needed
+
+- Add a local helper only when dependency support is missing, awkward, or would create worse coupling
+- Keep local wrappers thin and intentional when they are actually justified
+- If a dependency already ships the correct primitive, prefer using it rather than maintaining a parallel version in the repo

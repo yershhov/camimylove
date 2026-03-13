@@ -1,0 +1,31 @@
+---
+description: Keep product and agent documentation aligned as requirements and features evolve
+alwaysApply: true
+---
+
+# Documentation Maintenance
+
+When major requirements, product behavior, or engineering conventions change, update the durable repo documentation instead of leaving the change only in chat.
+
+## Keep In Sync
+
+- `docs/product.md` for product goals, flows, and non-goals
+- `AGENTS.md` for repo workflow, engineering conventions, and maintenance rules
+- `.cursor/rules/*.mdc` for durable Cursor-facing rules that should mirror the same logic
+
+## Update These Docs When Major Changes Land In
+
+- product requirements
+- core flows
+- UX principles
+- architecture or storage behavior
+- auth/session behavior
+- deployment/runtime assumptions
+- repo conventions or workflow expectations
+
+## Avoid Drift
+
+- Do not duplicate the same long guidance in multiple places unless the file has a distinct purpose
+- Keep product truth in `docs/product.md`
+- Keep workflow and coding rules in `AGENTS.md`
+- Keep Cursor rules concise and aligned with the same durable decisions

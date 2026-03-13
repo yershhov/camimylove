@@ -1,0 +1,25 @@
+---
+description: Keep component file placement and naming consistent
+alwaysApply: true
+---
+
+# Structure Consistency
+
+Keep the repo structure simple and consistent when adding or refactoring files.
+
+## App Components
+
+- In `src/components/app/`, keep single-file pages directly under `app/`
+- Only create a page subfolder when the page has supporting components or related files that belong beside it
+- If a formerly single-file page grows support files later, it is fine to introduce a dedicated folder then
+
+## UI Components
+
+- In `src/components/ui/`, files whose main export is a React component should use `PascalCase.tsx`
+- Use lowercase-style naming only for non-component helper modules
+
+## Imports And Cleanup
+
+- Prefer local imports without explicit `.ts` or `.tsx` extensions
+- Remove empty folders, stale paths, and stray system files such as `.DS_Store` when making structural changes
+- Before adding local helpers, wrappers, or type shims, check whether an installed dependency already provides the needed primitive and prefer that when it fits

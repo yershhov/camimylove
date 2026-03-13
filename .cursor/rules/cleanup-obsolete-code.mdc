@@ -1,0 +1,22 @@
+---
+description: Clean up obsolete code and files after major feature work or refactors
+alwaysApply: true
+---
+
+# Cleanup Obsolete Code
+
+After implementing or refactoring a major feature, feel free to remove code and files that are clearly obsolete and no longer used.
+
+## What To Clean Up
+
+- Dead components, helpers, routes, and utilities
+- Stale imports, types, and unreachable branches
+- Old files replaced by the new implementation
+- Outdated paths and references left behind by refactors
+
+## Safety Rules
+
+- Verify references before deleting anything
+- Prefer removing clearly unused code in the same change rather than leaving drift behind
+- Do not delete files when ownership or current usage is uncertain
+- Do not remove user changes that are unrelated to the task

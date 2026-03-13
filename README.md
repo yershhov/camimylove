@@ -32,6 +32,6 @@
 Memories use a split storage model:
 
 - **Images** → Vercel Blob (`images/{memoryId}.{ext}`)
-- **Metadata** → Neon Postgres `memories` table (date, location, image_url, image_key, etc.)
+- **Metadata** → Neon Postgres `memories` table (date, location, image_url, etc.)
 
 Both stay in sync when creating or deleting memories, for random memory pick query is performed on memories table in Neon Postgres.

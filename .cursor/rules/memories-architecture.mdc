@@ -1,0 +1,23 @@
+---
+description: Memories data architecture — images in Vercel Blob, metadata in Neon Postgres
+alwaysApply: true
+---
+
+# Memories Architecture
+
+In this project, **memories** use a split storage model:
+
+## Image Storage (Vercel Blob)
+- Images live in **Vercel Blob storage** under the `images` folder
+- Blob key format: `images/{memoryId}.{extension}` (e.g. `images/123.jpg`)
+- `@vercel/blob` `put()` is used for uploads; `del()` for deletion
+- `BLOB_READ_WRITE_TOKEN` env var is required for blob operations
+
+## Metadata Storage (Neon Postgres)
+- Metadata is stored in the **`memories`** table in Neon Postgres
+- Runtime metadata fields in active use: `id`, `date`, `location`, `image_url`
+- `image_url` — public URL of the image in Blob storage
+
+## Relationship
+- A memory is the combination of one row in `memories` + one corresponding blob object in `images/`
+- When creating or deleting memories, both blob and DB operations must stay in sync
