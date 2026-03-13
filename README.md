@@ -24,6 +24,9 @@
 - **Backend:** Vercel serverless API routes
 - **Storage:** Vercel Blob (images) + Neon Postgres (metadata)
 - **Auth:** Session-based authentication
+- **Testing:** Jest + React Testing Library for unit coverage of core flow behavior, including legacy/standalone variants
+
+Unit tests are part of the normal repo workflow and run in pre-commit checks together with linting.
 
 ---
 

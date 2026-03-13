@@ -1,0 +1,28 @@
+---
+description: Keep unit tests meaningful and maintained as product behavior evolves
+alwaysApply: true
+---
+
+# Testing Maintenance
+
+This repo now treats Jest + React Testing Library as part of the normal engineering baseline.
+
+## Core Rules
+
+- When changing code that already has unit coverage, keep those tests passing or update them to reflect the new intended behavior
+- Do not rewrite, weaken, or delete tests just to force a green run
+- When behavior changes intentionally, update assertions so the tests clearly describe the new requirement
+- Prefer adding coverage for branching behavior, flow logic, and legacy/standalone mode differences when touching those areas
+
+## Important Focus Areas
+
+- `src/components/app/MemoriesPage/MemoriesPage.tsx`
+- `src/components/app/QuizPage/QuizPage.tsx`
+- `src/components/app/UploadPage.tsx`
+- `src/components/app/LegacyFlowPage.tsx`
+- route wrappers and mode-specific flow behavior in `src/App.tsx`
+
+## Validation
+
+- Run `npm run test` after touching tested behavior
+- Keep the Husky pre-commit hook (`npm run lint && npm test`) working

@@ -5,7 +5,7 @@ import { AppContext } from "../../context/AppContext";
 import { TypeAnimation } from "react-type-animation";
 import PageContainer from "../ui/PageContainer";
 
-const prepGifSrc = `${import.meta.env.BASE_URL}christmas-excitement.gif`;
+const prepGifSrc = "/christmas-excitement.gif";
 
 const PrepPage = () => {
   const { handlePage } = useContext(AppContext);

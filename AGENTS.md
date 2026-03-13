@@ -49,10 +49,15 @@ Use these sources in this order:
 For any non-trivial task:
 1. Read the relevant implementation first
 2. Make the smallest correct change that fits current patterns
-3. Validate the changed area with the smallest useful checks
+3. Validate the changed area with the smallest useful checks and keep existing automated tests passing
 4. Update documentation when product behavior, architecture, or workflow meaningfully changes
 5. After major feature implementation or refactors, proactively clean up obsolete files, dead code, stale helpers, and outdated paths when they are no longer used and removal is safe
 6. Before creating local types, helpers, wrappers, or utilities, check whether an existing project dependency already provides a suitable built-in version and prefer that when it fits cleanly
+
+When changing code that already has unit tests:
+- Update the tests when requirements or behavior change
+- Keep the assertions honest to the intended behavior; do not weaken or rewrite tests only to make them pass
+- If a behavior change is intentional, make the tests describe the new requirement clearly
 
 Do not answer codebase questions from memory when the code can be inspected directly.
 
@@ -130,9 +135,20 @@ When making changes:
 ## Validation
 Use the smallest relevant checks available in this repo:
 - `npm run lint`
+- `npm run test`
 - `npm run build`
 
-There is currently no dedicated test suite in the repo. If a change would benefit from tests, note that gap clearly.
+Jest + React Testing Library are now part of the normal engineering baseline for this repo.
+
+Testing expectations:
+- Keep existing unit tests passing when changing tested code
+- Add or update tests alongside behavior changes, especially for legacy/standalone mode differences
+- Do not edit tests merely to silence failures; align them with the real product requirement
+- Prefer thorough unit coverage for flow logic, branching behavior, and route/component mode differences when touching those areas
+
+Pre-commit enforcement:
+- A Husky pre-commit hook runs `npm run lint && npm test`
+- Keep the hook working when changing scripts or test tooling
 
 ## Documentation Maintenance
 Keep these files updated when major changes land in:

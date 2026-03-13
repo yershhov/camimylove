@@ -148,6 +148,8 @@ Operational rules:
 - Changes should avoid stale data after mutations
 - The app should remain responsive and emotionally polished on mobile
 - Auth gating and maintenance gating must stay reliable
+- Important UI and flow behavior should be protected by unit tests, with particular attention to differences between legacy and standalone variants of shared flows
+- When intended behavior changes, the corresponding tests should be updated to match the new requirement rather than being loosened only to restore a passing suite
 
 ## Open Product Edges
 These are product areas that may evolve but are not yet defined as broad requirements:
