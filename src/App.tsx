@@ -189,8 +189,8 @@ function AppFrameLayout({
       fontWeight="bold"
       justifyContent={"center"}
       overflow="auto"
-      minH="100vh"
-      h={effectiveFixedHeight ? "100vh" : undefined}
+      minH="100dvh"
+      h={effectiveFixedHeight ? "100dvh" : undefined}
       position="relative"
     >
       <Flex
