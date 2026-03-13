@@ -1,10 +1,10 @@
 import { VStack, Center, Button, Text, Box, HStack } from "@chakra-ui/react";
-import { useState, useEffect, useContext, useMemo } from "react";
+import { useState, useEffect, useContext, useMemo, useCallback } from "react";
 import { FaHeart } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Memory, RandomMemoryResponse } from "../../../types";
 import MemoryCard from "./MemoryCard";
-import { createAppToast } from "../../ui/Toaster";
+import { createAppToast } from "../../ui/appToaster";
 import Loader from "../../ui/Loader";
 import { AppContext } from "../../../context/AppContext";
 import BackHomeButton from "../../ui/BackHomeButton";
@@ -46,7 +46,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
     );
   };
 
-  const fetchRandomMemory = async () => {
+  const fetchRandomMemory = useCallback(async () => {
     const query = new URLSearchParams();
     if (requestedMemoryId !== null) {
       query.set("id", String(requestedMemoryId));
@@ -66,7 +66,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
     }
 
     return payload.memory as Memory;
-  };
+  }, [requestedMemoryId]);
 
   const loadNewMemory = async () => {
     try {
@@ -78,7 +78,10 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
     }
   };
 
-  const handleDeleteMemory = async (_memory: Memory) => {
+  const handleDeleteMemory = async (deletedMemory: Memory) => {
+    if (memory?.id === deletedMemory.id) {
+      setMemory(null);
+    }
     await loadNewMemory();
   };
 
@@ -113,7 +116,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
     };
 
     if (!skipIntroLoader && isFirstLoad) fetchInitialData();
-  }, [isFirstLoad, skipIntroLoader, requestedMemoryId]);
+  }, [fetchRandomMemory, isFirstLoad, skipIntroLoader]);
 
   useEffect(() => {
     if (!firstLoadDone) return;
@@ -135,7 +138,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
     };
 
     void refreshCurrentMemory();
-  }, [firstLoadDone, requestedMemoryId, memoriesChangeToken]);
+  }, [fetchRandomMemory, firstLoadDone, memoriesChangeToken]);
 
   useEffect(() => {
     if (!isFirstLoad && firstLoadDone) {

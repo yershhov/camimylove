@@ -67,7 +67,7 @@ export default async function handler(
       hasMore: page.hasMore,
       nextBeforeId: page.nextBeforeId,
     });
-  } catch (error) {
+  } catch {
     return res.status(500).json({
       ok: false,
       error: "Failed to fetch gallery memories",

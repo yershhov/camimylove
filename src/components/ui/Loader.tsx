@@ -23,7 +23,7 @@ const loaders = [
   "https://media1.tenor.com/m/FfkBxAXCo1cAAAAC/bubu.gif",
 ];
 
-let recentLoaders: number[] = [];
+const recentLoaders: number[] = [];
 
 const LIMIT = 6;
 

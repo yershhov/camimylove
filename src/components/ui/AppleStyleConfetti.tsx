@@ -53,7 +53,7 @@ const AppleStyleConfetti = () => {
     return () => {
       myConfetti.reset();
     };
-  }, []);
+  }, [blue, green, red, yellow]);
 
   return (
     <canvas

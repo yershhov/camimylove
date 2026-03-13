@@ -154,7 +154,7 @@ export default async function handler(
       ok: true,
       memory: memoryRecord,
     });
-  } catch (error) {
+  } catch {
     return res.status(500).json({
       ok: false,
       error: "Failed to upload memory",

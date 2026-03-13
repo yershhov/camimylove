@@ -77,7 +77,7 @@ export default async function handler(
     }
 
     return res.status(200).json({ ok: true, memory });
-  } catch (error) {
+  } catch {
     return res.status(500).json({
       ok: false,
       error: "Failed to fetch random memory",

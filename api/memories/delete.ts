@@ -78,7 +78,7 @@ export default async function handler(
       ok: true,
       id,
     });
-  } catch (error) {
+  } catch {
     return res.status(500).json({
       ok: false,
       error: "Failed to delete memory",

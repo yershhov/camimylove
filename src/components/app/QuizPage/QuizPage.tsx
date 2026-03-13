@@ -3,7 +3,7 @@ import { useContext, useRef, useState, type ChangeEvent, type FormEvent } from "
 import { AppContext } from "../../../context/AppContext";
 import { MdDone } from "react-icons/md";
 import PageContainer from "../../ui/PageContainer";
-import { createAppToast, toaster } from "../../ui/Toaster";
+import { createAppToast, toaster } from "../../ui/appToaster";
 import PinField from "./PinField";
 import AppleStyleConfetti from "../../ui/AppleStyleConfetti";
 import QuizPageTypeWriter from "./QuizPageTypeWriter";

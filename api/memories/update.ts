@@ -103,7 +103,7 @@ export default async function handler(
       ok: true,
       memory: updatedMemory,
     });
-  } catch (error) {
+  } catch {
     return res.status(500).json({
       ok: false,
       error: "Failed to update memory",

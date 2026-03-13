@@ -15,7 +15,7 @@ import heic2any from "heic2any";
 import { IoArrowBack } from "react-icons/io5";
 import PageContainer from "../ui/PageContainer";
 import Loader from "../ui/Loader";
-import { createAppToast } from "../ui/Toaster";
+import { createAppToast } from "../ui/appToaster";
 import { AppContext } from "../../context/AppContext";
 import { getPlaceName } from "../../utils";
 import type {
