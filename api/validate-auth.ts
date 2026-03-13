@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createAuthCookie, clearAuthCookie } from "./_lib/auth.js";
 
 dotenv.config();
@@ -10,7 +11,10 @@ type ValidateAuthBody = {
 
 const normalize = (value: string) => value.toLowerCase();
 
-export default async function handler(req: any, res: any) {
+export default async function handler(
+  req: VercelRequest & { body: ValidateAuthBody },
+  res: VercelResponse,
+) {
   if (req.method !== "POST") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }

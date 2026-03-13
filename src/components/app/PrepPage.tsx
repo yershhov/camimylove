@@ -1,9 +1,9 @@
 import { Button, VStack, Image, Spacer, Box } from "@chakra-ui/react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { FiArrowRight } from "react-icons/fi";
-import { AppContext } from "../../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
 import { TypeAnimation } from "react-type-animation";
-import PageContainer from "../../ui/PageContainer";
+import PageContainer from "../ui/PageContainer";
 
 const PrepPage = () => {
   const { handlePage } = useContext(AppContext);

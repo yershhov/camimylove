@@ -1,6 +1,19 @@
-import { PinInput, Text } from "@chakra-ui/react";
+import { PinInput, Text, type PinInputRootProps } from "@chakra-ui/react";
+import type { ChangeEvent, ReactNode } from "react";
 
-const PinField = ({
+type PinFieldProps = Omit<PinInputRootProps, "value"> & {
+  label?: string;
+  name: string;
+  value?: string;
+  error?: boolean;
+  handleChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  numCells?: number;
+  disabledCells?: number[];
+  isSubmitted: boolean;
+  emoji?: ReactNode;
+};
+
+function PinField({
   label,
   name,
   value,
@@ -11,7 +24,8 @@ const PinField = ({
   isSubmitted,
   emoji,
   ...rootProps
-}: any) => (
+}: PinFieldProps) {
+  return (
   <>
     {label && (
       <Text textAlign="start" w="100%">
@@ -53,6 +67,7 @@ const PinField = ({
       </PinInput.Control>
     </PinInput.Root>
   </>
-);
+  );
+}
 
 export default PinField;

@@ -13,16 +13,16 @@ import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import exifr from "exifr";
 import heic2any from "heic2any";
 import { IoArrowBack } from "react-icons/io5";
-import PageContainer from "../../ui/PageContainer";
-import Loader from "../../ui/Loader";
-import { createAppToast } from "../../ui/toaster";
-import { AppContext } from "../../../context/AppContext";
-import { getPlaceName } from "../../../utils";
+import PageContainer from "../ui/PageContainer";
+import Loader from "../ui/Loader";
+import { createAppToast } from "../ui/Toaster";
+import { AppContext } from "../../context/AppContext";
+import { getPlaceName } from "../../utils";
 import type {
   Memory,
   RandomMemoryResponse,
   UpdateMemoryResponse,
-} from "../../../types";
+} from "../../types";
 
 const ACCEPTED_FILE_TYPES =
   ".heic,.heif,.jpg,.jpeg,.png,image/heic,image/heif,image/jpeg,image/png";
@@ -162,17 +162,8 @@ const UploadPage = ({
         setIsLoadingEditMemory(true);
         const query = new URLSearchParams({
           id: String(memoryId),
-          t: String(Date.now()),
         });
-        const response = await fetch(
-          `/api/memories/random?${query.toString()}`,
-          {
-            cache: "no-store",
-            headers: {
-              "Cache-Control": "no-cache",
-            },
-          },
-        );
+        const response = await fetch(`/api/memories/random?${query.toString()}`);
         if (!response.ok) {
           throw new Error("Impossibile caricare il ricordo");
         }

@@ -10,8 +10,8 @@ import {
   // FiSettings,
 } from "react-icons/fi";
 import { IoShuffle } from "react-icons/io5";
-import PageContainer from "../../ui/PageContainer";
-import AppleStyleConfetti from "../../ui/AppleStyleConfetti";
+import PageContainer from "../ui/PageContainer";
+import AppleStyleConfetti from "../ui/AppleStyleConfetti";
 
 type HomeCard = {
   label: string;

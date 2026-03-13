@@ -1,8 +1,16 @@
 import { VStack } from "@chakra-ui/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type Dispatch, type SetStateAction } from "react";
 import { TypeAnimation } from "react-type-animation";
 
-const QuizPageTypeWriter = ({ finishedRows, setFinishedRows }: any) => {
+type QuizPageTypeWriterProps = {
+  finishedRows: number;
+  setFinishedRows: Dispatch<SetStateAction<number>>;
+};
+
+function QuizPageTypeWriter({
+  finishedRows,
+  setFinishedRows,
+}: QuizPageTypeWriterProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -49,6 +57,6 @@ const QuizPageTypeWriter = ({ finishedRows, setFinishedRows }: any) => {
       />
     </VStack>
   );
-};
+}
 
 export default QuizPageTypeWriter;

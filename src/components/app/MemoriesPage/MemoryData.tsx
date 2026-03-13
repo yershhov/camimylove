@@ -1,8 +1,13 @@
 import { VStack, Text, SkeletonText, Box } from "@chakra-ui/react";
 import { format } from "date-fns";
+import type { Memory } from "../../../types";
 
-const MemoryData = (props: any) => {
-  const { memory, isLoading } = props;
+type MemoryDataProps = {
+  memory: Memory | null;
+  isLoading: boolean;
+};
+
+function MemoryData({ memory, isLoading }: MemoryDataProps) {
 
   const hasData = memory?.date || memory?.location;
 
@@ -19,9 +24,7 @@ const MemoryData = (props: any) => {
       {hasData && (
         <VStack w="100%" alignItems={"start"} fontSize={"xl"} lineHeight={1.5}>
           <>
-            {memory?.date && (
-              <Text>📅 {format(memory?.date, "dd/MM/yyyy, HH:mm")}</Text>
-            )}
+            {memory?.date && <Text>📅 {format(memory.date, "dd/MM/yyyy, HH:mm")}</Text>}
 
             {memory?.location && <Text>📍 {memory.location}</Text>}
           </>
@@ -29,6 +32,6 @@ const MemoryData = (props: any) => {
       )}
     </Box>
   );
-};
+}
 
 export default MemoryData;

@@ -1,8 +1,16 @@
 import { VStack } from "@chakra-ui/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type Dispatch, type SetStateAction } from "react";
 import { TypeAnimation } from "react-type-animation";
 
-const WelcomePageTypeWriter = ({ finishedRows, setFinishedRows }: any) => {
+type WelcomePageTypeWriterProps = {
+  finishedRows: number;
+  setFinishedRows: Dispatch<SetStateAction<number>>;
+};
+
+function WelcomePageTypeWriter({
+  finishedRows,
+  setFinishedRows,
+}: WelcomePageTypeWriterProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -76,6 +84,6 @@ const WelcomePageTypeWriter = ({ finishedRows, setFinishedRows }: any) => {
       )}
     </VStack>
   );
-};
+}
 
 export default WelcomePageTypeWriter;

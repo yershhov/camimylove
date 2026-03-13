@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { IoClose, IoCreateOutline, IoTrashOutline } from "react-icons/io5";
-import { createAppToast } from "../../ui/toaster";
+import { createAppToast } from "../../ui/Toaster";
 import type { DeleteMemoryResponse, Memory } from "../../../types";
 import ImageContainer from "./ImageContainer";
 import MemoryData from "./MemoryData";

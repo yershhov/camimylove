@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 const AUTH_COOKIE_NAME = "camimylove_auth";
 const SESSION_TTL_SECONDS = 60 * 15; // 15 minutes
@@ -20,7 +21,10 @@ function signPayload(payload: string) {
     .digest("base64url");
 }
 
-function getCookieValue(req: any, cookieName: string) {
+function getCookieValue(
+  req: Pick<VercelRequest, "headers">,
+  cookieName: string,
+) {
   const rawCookie = String(req?.headers?.cookie ?? "");
   if (!rawCookie) return null;
 
@@ -44,7 +48,7 @@ export function clearAuthCookie() {
   return `${AUTH_COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0; Secure`;
 }
 
-function appendSetCookie(res: any, cookie: string) {
+function appendSetCookie(res: VercelResponse, cookie: string) {
   const currentHeader = res.getHeader("Set-Cookie");
   if (!currentHeader) {
     res.setHeader("Set-Cookie", cookie);
@@ -59,7 +63,10 @@ function appendSetCookie(res: any, cookie: string) {
   res.setHeader("Set-Cookie", [String(currentHeader), cookie]);
 }
 
-export function isAuthenticatedRequest(req: any, res?: any) {
+export function isAuthenticatedRequest(
+  req: Pick<VercelRequest, "headers">,
+  res?: VercelResponse,
+) {
   const token = getCookieValue(req, AUTH_COOKIE_NAME);
   if (!token) return false;
 

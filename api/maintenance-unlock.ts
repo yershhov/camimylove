@@ -1,10 +1,14 @@
 import dotenv from "dotenv";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 dotenv.config();
 
 type Body = { password?: string };
 
-export default async function handler(req: any, res: any) {
+export default async function handler(
+  req: VercelRequest & { body: Body },
+  res: VercelResponse,
+) {
   if (req.method !== "POST") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }

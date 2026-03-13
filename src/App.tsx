@@ -10,14 +10,14 @@ import {
   useParams,
 } from "react-router-dom";
 import "./App.css";
-import AuthPage from "./components/app/AuthPage/AuthPage";
+import AuthPage from "./components/app/AuthPage";
 import MemoriesPage from "./components/app/MemoriesPage/MemoriesPage";
-import UploadPage from "./components/app/UploadPage/UploadPage";
-import HomePage from "./components/app/HomePage/HomePage";
-import GalleryPage from "./components/app/GalleryPage.tsx";
-import SettingsPage from "./components/app/SettingsPage.tsx";
+import UploadPage from "./components/app/UploadPage";
+import HomePage from "./components/app/HomePage";
+import GalleryPage from "./components/app/GalleryPage";
+import SettingsPage from "./components/app/SettingsPage";
 import QuizPage from "./components/app/QuizPage/QuizPage";
-import LegacyFlowPage from "./components/app/LegacyFlowPage.tsx";
+import LegacyFlowPage from "./components/app/LegacyFlowPage";
 import MaintenanceGatePage from "./components/app/MaintenanceGatePage";
 import ProtectedRoute from "./router/ProtectedRoute";
 import { AppContext } from "./context/AppContext";

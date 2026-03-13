@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import BackHomeButton from "../ui/BackHomeButton";
 import MemoriesPage from "./MemoriesPage/MemoriesPage";
-import PrepPage from "./PrepPage/PrepPage";
+import PrepPage from "./PrepPage";
 import QuizPage from "./QuizPage/QuizPage";
-import UploadPage from "./UploadPage/UploadPage";
+import UploadPage from "./UploadPage";
 import WelcomePage from "./WelcomePage/WelcomePage";
 
 const LegacyFlowPage = () => {

@@ -1,7 +1,7 @@
 import { Button, Input, Text, VStack } from "@chakra-ui/react";
 import { useContext, useState } from "react";
-import { AppContext } from "../../../context/AppContext";
-import PageContainer from "../../ui/PageContainer";
+import { AppContext } from "../../context/AppContext";
+import PageContainer from "../ui/PageContainer";
 
 type AuthPageProps = {
   onAuthSuccess?: () => void;

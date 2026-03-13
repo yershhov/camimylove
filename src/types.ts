@@ -3,7 +3,6 @@ export type Memory = {
   date: string | null; // ISO date string
   location: string | null;
   url: string;
-  imageKey?: string;
 };
 
 export type RandomMemoryResponse = {

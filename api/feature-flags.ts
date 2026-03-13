@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 dotenv.config();
 
@@ -23,7 +24,10 @@ function isFeatureEnabledUntil(isoDate: string | undefined) {
   return Date.now() < timestamp;
 }
 
-export default async function handler(_req: any, res: any) {
+export default async function handler(
+  _req: VercelRequest,
+  res: VercelResponse,
+) {
   const womensDayOverride = parseBooleanOverride(process.env.FF_WOMENS_DAY_FORCE);
   const maintenanceOverride = parseBooleanOverride(
     process.env.FF_MAINTENANCE_FORCE,

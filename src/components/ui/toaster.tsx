@@ -14,7 +14,9 @@ export const toaster = createToaster({
   pauseOnPageIdle: true,
 });
 
-export const createAppToast = (options: any) => {
+type AppToastOptions = Parameters<typeof toaster.create>[0];
+
+export const createAppToast = (options: AppToastOptions) => {
   return toaster.create({
     ...options,
     duration: 2000,

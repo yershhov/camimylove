@@ -42,6 +42,7 @@ export function getSqlClient() {
     idle_timeout: 20,
     connect_timeout: 10,
     prepare: false,
+    onnotice: () => undefined,
   });
   return sqlClient;
 }
@@ -52,4 +53,3 @@ export async function ensurePostgresMemoriesReady() {
   }
   await schemaReadyPromise;
 }
-

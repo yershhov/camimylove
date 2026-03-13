@@ -65,17 +65,11 @@ const GalleryPage = () => {
   }) => {
     const query = new URLSearchParams();
     query.set("limit", String(params?.limit ?? 40));
-    query.set("t", String(Date.now()));
     if (params?.beforeId) {
       query.set("beforeId", String(params.beforeId));
     }
 
-    const response = await fetch(`/api/memories/gallery?${query.toString()}`, {
-      cache: "no-store",
-      headers: {
-        "Cache-Control": "no-cache",
-      },
-    });
+    const response = await fetch(`/api/memories/gallery?${query.toString()}`);
     if (!response.ok) {
       throw new Error("Failed to load gallery memories");
     }

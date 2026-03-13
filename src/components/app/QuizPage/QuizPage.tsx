@@ -1,9 +1,9 @@
 import { Button, VStack, Text, Flex, HStack, Box } from "@chakra-ui/react";
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { AppContext } from "../../../context/AppContext";
 import { MdDone } from "react-icons/md";
 import PageContainer from "../../ui/PageContainer";
-import { createAppToast, toaster } from "../../ui/toaster";
+import { createAppToast, toaster } from "../../ui/Toaster";
 import PinField from "./PinField";
 import AppleStyleConfetti from "../../ui/AppleStyleConfetti";
 import QuizPageTypeWriter from "./QuizPageTypeWriter";
@@ -21,6 +21,10 @@ const responses = {
   miau: "BAUR",
   switzerland: "SVIZZERA",
 };
+
+type ResponseKey = keyof typeof responses;
+type QuizFormData = Partial<Record<ResponseKey, string>>;
+type QuizFormErrors = Partial<Record<ResponseKey, boolean>>;
 
 const randomErrorToasters = [
   {
@@ -54,8 +58,8 @@ const QuizPage = ({ mode = "legacy", onComplete, onSkip }: QuizPageProps) => {
     mode === "standalone" ? 1 : 0,
   );
 
-  const [formData, setFormData] = useState<any>({});
-  const [formErrors, setFormErrors] = useState<any>({});
+  const [formData, setFormData] = useState<QuizFormData>({});
+  const [formErrors, setFormErrors] = useState<QuizFormErrors>({});
   const [quizEnd, setQuizEnd] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
@@ -63,7 +67,7 @@ const QuizPage = ({ mode = "legacy", onComplete, onSkip }: QuizPageProps) => {
   const lastToastId = useRef<string>("");
   const firstTimeError = useRef(false);
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value.toUpperCase() });
   };
 
@@ -85,20 +89,19 @@ const QuizPage = ({ mode = "legacy", onComplete, onSkip }: QuizPageProps) => {
     }, 2000);
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     isSubmitted.current = true;
     e.preventDefault();
 
     if (/iPhone/.test(navigator.userAgent)) window.scrollBy(0, 1);
 
-    const newErrors = {};
+    const newErrors: QuizFormErrors = {};
 
     for (const [key, expected] of Object.entries(responses)) {
-      //@ts-ignore
-      const actual = formData[key] || "";
+      const responseKey = key as ResponseKey;
+      const actual = formData[responseKey] ?? "";
       if (actual.trim() !== expected) {
-        //@ts-ignore
-        newErrors[key] = true;
+        newErrors[responseKey] = true;
       }
     }
 
@@ -205,10 +208,13 @@ const QuizForm = ({
   onSkip,
   handlePage,
 }: {
-  handleSubmit: (e: any) => void;
-  formErrors: any;
-  formData: any;
-  sharedProps: any;
+  handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
+  formErrors: QuizFormErrors;
+  formData: QuizFormData;
+  sharedProps: {
+    isSubmitted: boolean;
+    handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  };
   showConfetti: boolean;
   mode: "legacy" | "standalone";
   onSkip?: () => void;

@@ -1,9 +1,14 @@
 import { Center, Image } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import type { Memory } from "../../../types";
 import Loader from "../../ui/Loader";
 
-const ImageContainer = (props: any) => {
-  const { memory, isLoading } = props;
+type ImageContainerProps = {
+  memory: Memory | null;
+  isLoading: boolean;
+};
+
+function ImageContainer({ memory, isLoading }: ImageContainerProps) {
 
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -46,6 +51,6 @@ const ImageContainer = (props: any) => {
       />
     </Center>
   );
-};
+}
 
 export default ImageContainer;

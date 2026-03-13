@@ -4,7 +4,7 @@ import { FaHeart } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Memory, RandomMemoryResponse } from "../../../types";
 import MemoryCard from "./MemoryCard";
-import { createAppToast } from "../../ui/toaster";
+import { createAppToast } from "../../ui/Toaster";
 import Loader from "../../ui/Loader";
 import { AppContext } from "../../../context/AppContext";
 import BackHomeButton from "../../ui/BackHomeButton";
@@ -48,17 +48,11 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
 
   const fetchRandomMemory = async () => {
     const query = new URLSearchParams();
-    query.set("t", String(Date.now()));
     if (requestedMemoryId !== null) {
       query.set("id", String(requestedMemoryId));
     }
 
-    const response = await fetch(`/api/memories/random?${query.toString()}`, {
-      cache: "no-store",
-      headers: {
-        "Cache-Control": "no-cache",
-      },
-    });
+    const response = await fetch(`/api/memories/random?${query.toString()}`);
     if (!response.ok) {
       throw new Error("Failed to fetch random memory");
     }
@@ -104,7 +98,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
       try {
         const initialMemory = await fetchRandomMemory();
         setMemory(initialMemory);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error(error);
         createAppToast({
           title: "Errore, oopsie :(",
@@ -126,7 +120,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
         setIsLoadingMemory(true);
         const currentMemory = await fetchRandomMemory();
         setMemory(currentMemory);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error(error);
         createAppToast({
           title: "Errore, oopsie :(",
