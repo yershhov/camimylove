@@ -6,10 +6,10 @@ import Loader from "../../ui/Loader";
 type ImageContainerProps = {
   memory: Memory | null;
   isLoading: boolean;
+  loaderIndex: number;
 };
 
-function ImageContainer({ memory, isLoading }: ImageContainerProps) {
-
+function ImageContainer({ memory, isLoading, loaderIndex }: ImageContainerProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ function ImageContainer({ memory, isLoading }: ImageContainerProps) {
           top={0}
           left={0}
         >
-          <Loader />
+          <Loader loaderIndex={loaderIndex} />
         </Center>
       )}
 

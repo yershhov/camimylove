@@ -16,7 +16,6 @@ const transparentBackgroundLoaders = [
   "https://media.tenor.com/4bV9ylEOWpgAAAAi/bubu-dudu-sseeyall.gif",
   "https://media.tenor.com/DBImicQnTG0AAAAi/bubu-dudu-eat.gif",
 ];
-
 const loaders = [
   ...transparentBackgroundLoaders,
   "https://media1.tenor.com/m/ZgEwD09MywgAAAAC/dudu-kissing-bubu-hearts.gif",
@@ -49,10 +48,22 @@ function getRandomIndex(animate?: boolean) {
 type LoaderProps = {
   animate?: boolean;
   fitContainer?: boolean;
+  loaderIndex?: number;
 };
 
-const Loader = memo(({ animate, fitContainer }: LoaderProps) => {
-  const [src] = useState(() => loaders[getRandomIndex(animate)]);
+const Loader = memo(({ animate, fitContainer, loaderIndex }: LoaderProps) => {
+  const [src] = useState(() => {
+    const availableLoaders = animate ? transparentBackgroundLoaders : loaders;
+
+    if (typeof loaderIndex === "number") {
+      const normalizedIndex =
+        ((loaderIndex % availableLoaders.length) + availableLoaders.length) %
+        availableLoaders.length;
+      return availableLoaders[normalizedIndex];
+    }
+
+    return availableLoaders[getRandomIndex(animate)];
+  });
 
   const [animateFinished, setAnimateFinished] = useState(false);
 

@@ -17,6 +17,7 @@ import MemoryData from "./MemoryData";
 type MemoryCardProps = {
   memory: Memory | null;
   isLoading: boolean;
+  loaderIndex?: number;
   isDialog?: boolean;
   onDelete?: (memory: Memory) => Promise<void> | void;
   onEdit?: (memory: Memory) => void;
@@ -27,6 +28,7 @@ type MemoryCardProps = {
 const MemoryCard = ({
   memory,
   isLoading,
+  loaderIndex = 0,
   isDialog = false,
   onDelete,
   onEdit,
@@ -87,7 +89,7 @@ const MemoryCard = ({
       boxShadow="4px 7px 15px rgba(213, 63, 140, 0.3)"
       gap={4}
     >
-      <ImageContainer memory={memory} isLoading={isLoading} />
+      <ImageContainer memory={memory} isLoading={isLoading} loaderIndex={loaderIndex} />
       <MemoryData memory={memory} isLoading={isLoading} />
 
       <HStack w="100%" justifyContent="space-between" gap={2}>

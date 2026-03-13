@@ -1,5 +1,12 @@
 import { VStack, Center, Button, Text, Box, HStack } from "@chakra-ui/react";
-import { useState, useEffect, useContext, useMemo, useCallback } from "react";
+import {
+  useState,
+  useEffect,
+  useContext,
+  useMemo,
+  useCallback,
+  useRef,
+} from "react";
 import { FaHeart } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Memory, RandomMemoryResponse } from "../../../types";
@@ -8,6 +15,7 @@ import { createAppToast } from "../../ui/appToaster";
 import Loader from "../../ui/Loader";
 import { AppContext } from "../../../context/AppContext";
 import BackHomeButton from "../../ui/BackHomeButton";
+import { getRandomLoaderIndex } from "../../ui/loader-options";
 
 type MemoriesPageProps = {
   mode?: "legacy" | "standalone";
@@ -19,6 +27,10 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
   const { memoriesChangeToken } = useContext(AppContext);
   const isStandaloneMode = mode === "standalone";
   const [memory, setMemory] = useState<Memory | null>(null);
+  const [memoryLoaderIndex, setMemoryLoaderIndex] = useState(() =>
+    getRandomLoaderIndex(),
+  );
+  const skipNextRefreshRef = useRef(!isStandaloneMode);
 
   const [isLoadingMemory, setIsLoadingMemory] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(false);
@@ -32,7 +44,17 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
     return parsed;
   }, [location.search]);
 
-  const handleDelayedLoadingEnd = (first?: boolean) => {
+  const handleDelayedLoadingEnd = useCallback((first?: boolean) => {
+    if (isStandaloneMode) {
+      if (first) {
+        setIsFirstLoad(false);
+        setFirstLoadDone(true);
+      } else {
+        setIsLoadingMemory(false);
+      }
+      return;
+    }
+
     setTimeout(
       () => {
         if (first) {
@@ -44,7 +66,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
       },
       first ? 5000 : 2000,
     );
-  };
+  }, [isStandaloneMode]);
 
   const fetchRandomMemory = useCallback(async () => {
     const query = new URLSearchParams();
@@ -70,6 +92,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
 
   const loadNewMemory = async () => {
     try {
+      setMemoryLoaderIndex((currentIndex) => getRandomLoaderIndex(currentIndex));
       setIsLoadingMemory(true);
       const newMemory = await fetchRandomMemory();
       setMemory(newMemory);
@@ -102,6 +125,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
+        setMemoryLoaderIndex((currentIndex) => getRandomLoaderIndex(currentIndex));
         const initialMemory = await fetchRandomMemory();
         setMemory(initialMemory);
       } catch (error: unknown) {
@@ -116,13 +140,19 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
     };
 
     if (!skipIntroLoader && isFirstLoad) fetchInitialData();
-  }, [fetchRandomMemory, isFirstLoad, skipIntroLoader]);
+  }, [fetchRandomMemory, handleDelayedLoadingEnd, isFirstLoad, skipIntroLoader]);
 
   useEffect(() => {
     if (!firstLoadDone) return;
 
+    if (skipNextRefreshRef.current) {
+      skipNextRefreshRef.current = false;
+      return;
+    }
+
     const refreshCurrentMemory = async () => {
       try {
+        setMemoryLoaderIndex((currentIndex) => getRandomLoaderIndex(currentIndex));
         setIsLoadingMemory(true);
         const currentMemory = await fetchRandomMemory();
         setMemory(currentMemory);
@@ -138,14 +168,16 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
     };
 
     void refreshCurrentMemory();
-  }, [fetchRandomMemory, firstLoadDone, memoriesChangeToken]);
+  }, [fetchRandomMemory, firstLoadDone, handleDelayedLoadingEnd, memoriesChangeToken]);
 
   useEffect(() => {
+    if (isStandaloneMode) return;
+
     if (!isFirstLoad && firstLoadDone) {
       setIsLoadingMemory(true);
       handleDelayedLoadingEnd();
     }
-  }, [isFirstLoad, firstLoadDone]);
+  }, [firstLoadDone, handleDelayedLoadingEnd, isFirstLoad, isStandaloneMode]);
 
   return (
     <Center h="100%" w="100%" flex={1}>
@@ -180,6 +212,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
             <MemoryCard
               memory={memory}
               isLoading={isLoadingMemory}
+              loaderIndex={memoryLoaderIndex}
               onDelete={handleDeleteMemory}
               onEdit={handleEditMemory}
             />
