@@ -1,10 +1,7 @@
 import dotenv from "dotenv";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { del } from "@vercel/blob";
 import { isAuthenticatedRequest } from "../_lib/auth.js";
-import {
-  findImageBlobByKey,
-  findImageBlobByMemoryId,
-} from "../_lib/memory.js";
 import { deleteMemory, getMemoryById } from "../_lib/memory-repository.js";
 import {
   ensurePostgresMemoriesReady,
@@ -21,7 +18,10 @@ function parseMemoryId(body: unknown) {
   return Math.floor(parsed);
 }
 
-export default async function handler(req: any, res: any) {
+export default async function handler(
+  req: VercelRequest & { body: { id?: unknown } },
+  res: VercelResponse,
+) {
   res.setHeader("Cache-Control", "no-store, max-age=0");
   res.setHeader("CDN-Cache-Control", "no-store");
   res.setHeader("Vercel-CDN-Cache-Control", "no-store");
@@ -70,24 +70,8 @@ export default async function handler(req: any, res: any) {
 
     await deleteMemory(getSqlClient(), id);
 
-    const imageBlobFromKey = memory.imageKey
-      ? await findImageBlobByKey(token, memory.imageKey)
-      : null;
-    const imageBlobById = imageBlobFromKey
-      ? null
-      : await findImageBlobByMemoryId(token, id);
-
-    const urlsToDelete: string[] = [];
-    if (imageBlobFromKey?.url) {
-      urlsToDelete.push(imageBlobFromKey.url);
-    } else if (imageBlobById?.url) {
-      urlsToDelete.push(imageBlobById.url);
-    } else if (memory.url) {
-      urlsToDelete.push(memory.url);
-    }
-
-    if (urlsToDelete.length > 0) {
-      await del(urlsToDelete, { token });
+    if (memory.url) {
+      await del(memory.url, { token });
     }
 
     return res.status(200).json({

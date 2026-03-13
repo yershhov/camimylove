@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { isAuthenticatedRequest } from "../_lib/auth.js";
 import { normalizeMemoryRecord } from "../_lib/memory.js";
 import { getMemoryById, upsertMemory } from "../_lib/memory-repository.js";
@@ -16,12 +17,12 @@ type UpdateBody = {
   location?: string | null;
 };
 
-function parseBody(req: any): UpdateBody {
-  const body = req?.body;
+function parseBody(req: VercelRequest & { body: UpdateBody | string | undefined }) {
+  const body = req.body;
   if (!body) return {};
   if (typeof body === "string") {
     try {
-      return JSON.parse(body);
+      return JSON.parse(body) as Partial<UpdateBody>;
     } catch {
       return {};
     }
@@ -37,7 +38,10 @@ function parseMemoryId(rawId: unknown) {
   return parsed;
 }
 
-export default async function handler(req: any, res: any) {
+export default async function handler(
+  req: VercelRequest & { body: UpdateBody | string | undefined },
+  res: VercelResponse,
+) {
   res.setHeader("Cache-Control", "no-store, max-age=0");
   res.setHeader("CDN-Cache-Control", "no-store");
   res.setHeader("Vercel-CDN-Cache-Control", "no-store");
@@ -50,14 +54,6 @@ export default async function handler(req: any, res: any) {
 
   if (!isAuthenticatedRequest(req, res)) {
     return res.status(401).json({ ok: false, error: "Unauthorized" });
-  }
-
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
-  if (!token) {
-    return res.status(500).json({
-      ok: false,
-      error: "Blob token is not configured",
-    });
   }
 
   if (!isPostgresConfigured()) {
@@ -90,7 +86,6 @@ export default async function handler(req: any, res: any) {
     const updatedMemory = normalizeMemoryRecord({
       id: existingMemory.id,
       url: existingMemory.url,
-      imageKey: existingMemory.imageKey,
       date: body.date ? String(body.date) : null,
       location: body.location ? String(body.location).trim() : null,
     });

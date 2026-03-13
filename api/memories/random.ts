@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { isAuthenticatedRequest } from "../_lib/auth.js";
 import { getMemoryById, getRandomMemory } from "../_lib/memory-repository.js";
 import {
@@ -9,7 +10,14 @@ import {
 
 dotenv.config();
 
-export default async function handler(req: any, res: any) {
+type RandomQuery = {
+  id?: string | string[];
+};
+
+export default async function handler(
+  req: VercelRequest & { query: RandomQuery },
+  res: VercelResponse,
+) {
   res.setHeader("Cache-Control", "no-store");
   res.setHeader("CDN-Cache-Control", "no-store");
   res.setHeader("Vercel-CDN-Cache-Control", "no-store");

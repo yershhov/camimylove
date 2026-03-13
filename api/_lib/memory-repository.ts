@@ -1,13 +1,13 @@
+import type postgres from "postgres";
 import type { MemoryRecord } from "./memory.js";
 
-export type SqlClient = ReturnType<typeof import("postgres").default>;
+export type SqlClient = ReturnType<typeof postgres>;
 
 type MemoryRow = {
   id: string | number;
   date: string | null;
   location: string | null;
   image_url: string;
-  image_key: string | null;
 };
 
 function mapRowToMemory(row: MemoryRow): MemoryRecord {
@@ -16,7 +16,6 @@ function mapRowToMemory(row: MemoryRow): MemoryRecord {
     date: row.date ?? null,
     location: row.location ?? null,
     url: row.image_url,
-    imageKey: row.image_key ?? undefined,
   };
 }
 
@@ -27,10 +26,8 @@ export async function ensureMemoriesTable(sql: SqlClient) {
       date text null,
       location text null,
       image_url text not null,
-      image_key text null,
       created_at timestamptz not null default now(),
-      updated_at timestamptz not null default now(),
-      deleted_at timestamptz null
+      updated_at timestamptz not null default now()
     )
   `;
 
@@ -38,34 +35,24 @@ export async function ensureMemoriesTable(sql: SqlClient) {
     create index if not exists memories_created_at_desc_idx
       on memories (created_at desc)
   `;
-
-  await sql`
-    create index if not exists memories_active_id_desc_idx
-      on memories (id desc)
-      where deleted_at is null
-  `;
 }
 
 export async function upsertMemory(sql: SqlClient, memory: MemoryRecord) {
   await sql`
-    insert into memories (id, date, location, image_url, image_key, created_at, updated_at, deleted_at)
+    insert into memories (id, date, location, image_url, created_at, updated_at)
     values (
       ${memory.id},
       ${memory.date},
       ${memory.location},
       ${memory.url},
-      ${memory.imageKey ?? null},
       now(),
-      now(),
-      null
+      now()
     )
     on conflict (id) do update set
       date = excluded.date,
       location = excluded.location,
       image_url = excluded.image_url,
-      image_key = excluded.image_key,
-      updated_at = now(),
-      deleted_at = null
+      updated_at = now()
   `;
 }
 
@@ -73,7 +60,7 @@ export async function deleteMemory(sql: SqlClient, id: number) {
   const result = await sql`
     delete from memories
     where id = ${id}
-    returning id, date, location, image_url, image_key
+    returning id, date, location, image_url
   `;
 
   return result.length > 0 ? mapRowToMemory(result[0] as MemoryRow) : null;
@@ -81,9 +68,9 @@ export async function deleteMemory(sql: SqlClient, id: number) {
 
 export async function getMemoryById(sql: SqlClient, id: number) {
   const result = await sql`
-    select id, date, location, image_url, image_key
+    select id, date, location, image_url
     from memories
-    where id = ${id} and deleted_at is null
+    where id = ${id}
     limit 1
   `;
 
@@ -95,7 +82,6 @@ export async function getMemoryCount(sql: SqlClient) {
   const result = await sql`
     select count(*)::bigint as count
     from memories
-    where deleted_at is null
   `;
   const countRaw = Number((result[0] as { count: string }).count);
   return Number.isFinite(countRaw) ? countRaw : 0;
@@ -107,9 +93,8 @@ export async function getRandomMemory(sql: SqlClient) {
 
   const offset = Math.floor(Math.random() * count);
   const result = await sql`
-    select id, date, location, image_url, image_key
+    select id, date, location, image_url
     from memories
-    where deleted_at is null
     order by id desc
     offset ${offset}
     limit 1
@@ -127,16 +112,15 @@ export async function listMemoriesPage(
   const rows =
     beforeId === null
       ? await sql`
-          select id, date, location, image_url, image_key
+          select id, date, location, image_url
           from memories
-          where deleted_at is null
           order by id desc
           limit ${limit + 1}
         `
       : await sql`
-          select id, date, location, image_url, image_key
+          select id, date, location, image_url
           from memories
-          where deleted_at is null and id < ${beforeId}
+          where id < ${beforeId}
           order by id desc
           limit ${limit + 1}
         `;
@@ -153,4 +137,3 @@ export async function listMemoriesPage(
     nextBeforeId,
   };
 }
-

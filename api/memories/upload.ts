@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import { randomInt } from "node:crypto";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { put } from "@vercel/blob";
 import { isAuthenticatedRequest } from "../_lib/auth.js";
 import { normalizeMemoryRecord } from "../_lib/memory.js";
@@ -37,12 +38,12 @@ type UploadBody = {
   location?: string | null;
 };
 
-function parseBody(req: any): UploadBody {
-  const body = req?.body;
+function parseBody(req: VercelRequest & { body: UploadBody | string | undefined }) {
+  const body = req.body;
   if (!body) return {};
   if (typeof body === "string") {
     try {
-      return JSON.parse(body);
+      return JSON.parse(body) as Partial<UploadBody>;
     } catch {
       return {};
     }
@@ -62,7 +63,10 @@ async function generateMemoryId() {
   throw new Error("Failed to allocate a unique memory id");
 }
 
-export default async function handler(req: any, res: any) {
+export default async function handler(
+  req: VercelRequest & { body: UploadBody | string | undefined },
+  res: VercelResponse,
+) {
   res.setHeader("Cache-Control", "no-store, max-age=0");
   res.setHeader("CDN-Cache-Control", "no-store");
   res.setHeader("Vercel-CDN-Cache-Control", "no-store");
@@ -135,7 +139,6 @@ export default async function handler(req: any, res: any) {
       date: body.date ? String(body.date) : null,
       location: body.location ? String(body.location).trim() : null,
       url: imageUpload.url,
-      imageKey,
     });
 
     if (!memoryRecord) {
