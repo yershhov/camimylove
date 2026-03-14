@@ -1,6 +1,8 @@
-import { Button, Input, Text, VStack } from "@chakra-ui/react";
+import { Button, Text, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import FieldWrapper from "../ui/FieldWrapper";
+import FormInput from "../ui/FormInput";
 import PageContainer from "../ui/PageContainer";
 
 type MaintenanceGatePageProps = {
@@ -44,16 +46,14 @@ const MaintenanceGatePage = ({ onUnlock }: MaintenanceGatePageProps) => {
 
       <form onSubmit={handleSubmit} style={{ width: "100%" }}>
         <VStack gap={5} w="100%">
-          <VStack alignItems="start" gap={2} w="100%">
-            <Input
+          <FieldWrapper label={t("maintenance.placeholder")}>
+            <FormInput
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               placeholder={t("maintenance.placeholder")}
-              bg="white"
-              fontSize="16px"
             />
-          </VStack>
+          </FieldWrapper>
 
           {errorMessage && (
             <Text fontSize="sm" color="red.500" textAlign="center">

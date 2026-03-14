@@ -4,7 +4,6 @@ import {
   Center,
   HStack,
   Image,
-  Input,
   Spinner,
   Text,
   VStack,
@@ -12,11 +11,17 @@ import {
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IoArrowBack } from "react-icons/io5";
+import FieldWrapper from "../ui/FieldWrapper";
+import FormInput from "../ui/FormInput";
 import PageContainer from "../ui/PageContainer";
 import Loader from "../ui/Loader";
 import { createAppToast } from "../ui/appToaster";
 import { AppContext } from "../../context/AppContext";
 import { getPlaceName } from "../../utils";
+import {
+  SURFACE_BORDER_ACTIVE_COLOR,
+  SURFACE_BORDER_COLOR,
+} from "../ui/form-field-styles";
 import type {
   Memory,
   RandomMemoryResponse,
@@ -412,7 +417,9 @@ const UploadPage = ({
             position="relative"
             borderWidth="2px"
             borderStyle="dashed"
-            borderColor={isDragging ? "pink.500" : "pink.300"}
+            borderColor={
+              isDragging ? SURFACE_BORDER_ACTIVE_COLOR : SURFACE_BORDER_COLOR
+            }
             rounded="16px"
             p={6}
             bg={isDragging ? "pink.50" : "white"}
@@ -440,12 +447,12 @@ const UploadPage = ({
               void onFileSelected(file);
             }}
           >
-            <Input
+            <input
               ref={inputRef}
               type="file"
-              display="none"
               accept={ACCEPTED_FILE_TYPES}
               disabled={isProcessingFile}
+              style={{ display: "none" }}
               onChange={(event) => {
                 const file = event.target.files?.[0];
                 void onFileSelected(file);
@@ -496,28 +503,22 @@ const UploadPage = ({
           : Boolean(previewUrl)) && (
           <>
             <VStack gap={5} w="100%">
-              <VStack alignItems="start" gap={2} w="100%">
-                <Text fontSize="sm">{t("upload.dateOptional")}</Text>
-                <Input
+              <FieldWrapper label={t("upload.dateOptional")}>
+                <FormInput
                   key={dateInputKey}
                   type="datetime-local"
-                  bg="white"
-                  fontSize="16px"
                   value={dateValue}
                   onChange={(event) => setDateValue(event.target.value)}
                 />
-              </VStack>
+              </FieldWrapper>
 
-              <VStack alignItems="start" gap={2} w="100%">
-                <Text fontSize="sm">{t("upload.locationOptional")}</Text>
-                <Input
+              <FieldWrapper label={t("upload.locationOptional")}>
+                <FormInput
                   placeholder={t("upload.locationPlaceholder")}
-                  bg="white"
-                  fontSize="16px"
                   value={locationValue}
                   onChange={(event) => setLocationValue(event.target.value)}
                 />
-              </VStack>
+              </FieldWrapper>
             </VStack>
 
             <Button

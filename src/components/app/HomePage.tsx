@@ -14,6 +14,10 @@ import { IoShuffle } from "react-icons/io5";
 import PageContainer from "../ui/PageContainer";
 import { AppContext } from "../../context/AppContext";
 import { APP_NAME } from "../../i18n/metadata";
+import {
+  SURFACE_BORDER_COLOR,
+  SURFACE_BORDER_HOVER_COLOR,
+} from "../ui/form-field-styles";
 
 const AppleStyleConfetti = lazy(() => import("../ui/AppleStyleConfetti"));
 
@@ -125,7 +129,7 @@ const HomePage = ({ womensDayMode = false }: HomePageProps) => {
             key={card.route ?? card.id}
             bg="white"
             borderWidth="1px"
-            borderColor="pink.200"
+            borderColor={SURFACE_BORDER_COLOR}
             rounded="2xl"
             px={4}
             py={5}
@@ -136,7 +140,9 @@ const HomePage = ({ womensDayMode = false }: HomePageProps) => {
             _hover={{
               transform: card.disabled ? "none" : "translateY(-2px)",
               shadow: card.disabled ? "sm" : "md",
-              borderColor: card.disabled ? "pink.200" : "pink.300",
+              borderColor: card.disabled
+                ? SURFACE_BORDER_COLOR
+                : SURFACE_BORDER_HOVER_COLOR,
             }}
             onClick={() => {
               handleCardClick(card);

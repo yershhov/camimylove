@@ -1,7 +1,9 @@
-import { Button, Input, Text, VStack } from "@chakra-ui/react";
+import { Button, Text, VStack } from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AppContext } from "../../context/AppContext";
+import FieldWrapper from "../ui/FieldWrapper";
+import FormInput from "../ui/FormInput";
 import PageContainer from "../ui/PageContainer";
 
 type AuthPageProps = {
@@ -59,26 +61,20 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
 
       <form onSubmit={handleSubmit} style={{ width: "100%" }}>
         <VStack gap={5} w="100%">
-          <VStack alignItems="start" gap={2} w="100%">
-            <Text fontSize="sm">{t("auth.promptDate")}</Text>
-            <Input
+          <FieldWrapper label={t("auth.promptDate")}>
+            <FormInput
               type="date"
               value={dateInput}
               onChange={(e) => setDateInput(e.target.value)}
-              bg="white"
-              fontSize="16px"
             />
-          </VStack>
+          </FieldWrapper>
 
-          <VStack alignItems="start" gap={2} w="100%">
-            <Text fontSize="sm">{t("auth.promptPetName")}</Text>
-            <Input
+          <FieldWrapper label={t("auth.promptPetName")}>
+            <FormInput
               value={petNameInput}
               onChange={(e) => setPetNameInput(e.target.value)}
-              bg="white"
-              fontSize="16px"
             />
-          </VStack>
+          </FieldWrapper>
 
           {errorMessage && (
             <Text fontSize="sm" color="red.500" textAlign="center">
