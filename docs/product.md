@@ -117,7 +117,7 @@ Requirements:
 - Quiz flow
 - Maintenance gate
 - Feature-flag-driven seasonal welcome behavior
-- Localization for the main app shell and core non-legacy, non-quiz flows in English, Italian, Spanish, Ukrainian, German, French, and Dutch
+- Localization for the main app shell and core non-legacy, non-quiz flows in English, Italian, Spanish, Ukrainian, Russian, German, French, and Dutch
 
 ## Data Model
 Each memory consists of:
@@ -141,7 +141,7 @@ Operational rules:
 - App is deployed on Vercel
 - Frontend is React-based and mobile-first
 - Authentication is session-cookie-based
-- The app supports English, Italian, Spanish, Ukrainian, German, French, and Dutch in the main non-legacy, non-quiz flows
+- The app supports English, Italian, Spanish, Ukrainian, Russian, German, French, and Dutch in the main non-legacy, non-quiz flows
 - Initial language should default from the browser language when there is no saved user preference: use the supported browser locale when available, otherwise English
 - The user should be able to change language from settings, and that explicit choice should persist on the client
 - Legacy flow pages and quiz pages intentionally remain Italian-only for a tiny pre-selected user group and are outside the localization scope

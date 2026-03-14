@@ -15,7 +15,7 @@
 - **Gallery** — browse memories in a gallery-like grid, see detailed preview on click
 - **Random memories** — randomly shuffle through memories
 - **Upload, edit, delete** — add new photos with date and location, edit them and delete if you don't like them anymore
-- **Localization** — English, Italian, Spanish, Ukrainian, German, French, and Dutch support. Language is auto-detected, but can be changed in settings.
+- **Localization** — English, Italian, Spanish, Ukrainian, Russian, German, French, and Dutch support. Language is auto-detected, but can be changed in settings.
 
 ---
 

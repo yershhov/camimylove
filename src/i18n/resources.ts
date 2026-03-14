@@ -11,6 +11,8 @@ export async function loadLocale(language: AppLanguage) {
       return (await import("./locales/es")).default;
     case "uk":
       return (await import("./locales/uk")).default;
+    case "ru":
+      return (await import("./locales/ru")).default;
     case "de":
       return (await import("./locales/de")).default;
     case "fr":

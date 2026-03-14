@@ -5,6 +5,7 @@ export const languages = [
   { code: "it", label: "Italiano" },
   { code: "es", label: "Español" },
   { code: "uk", label: "Українська" },
+  { code: "ru", label: "Русский" },
   { code: "de", label: "Deutsch" },
   { code: "fr", label: "Français" },
   { code: "nl", label: "Nederlands" },
