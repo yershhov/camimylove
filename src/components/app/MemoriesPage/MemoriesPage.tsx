@@ -7,6 +7,7 @@ import {
   useCallback,
   useRef,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { FaHeart } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Memory, RandomMemoryResponse } from "../../../types";
@@ -24,6 +25,7 @@ type MemoriesPageProps = {
 const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { memoriesChangeToken } = useContext(AppContext);
   const isStandaloneMode = mode === "standalone";
   const [memory, setMemory] = useState<Memory | null>(null);
@@ -131,7 +133,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
       } catch (error: unknown) {
         console.error(error);
         createAppToast({
-          title: "Errore, oopsie :(",
+          title: t("memories.loadError"),
           type: "error",
         });
       } finally {
@@ -140,7 +142,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
     };
 
     if (!skipIntroLoader && isFirstLoad) fetchInitialData();
-  }, [fetchRandomMemory, handleDelayedLoadingEnd, isFirstLoad, skipIntroLoader]);
+  }, [fetchRandomMemory, handleDelayedLoadingEnd, isFirstLoad, skipIntroLoader, t]);
 
   useEffect(() => {
     if (!firstLoadDone) return;
@@ -159,7 +161,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
       } catch (error: unknown) {
         console.error(error);
         createAppToast({
-          title: "Errore, oopsie :(",
+          title: t("memories.loadError"),
           type: "error",
         });
       } finally {
@@ -168,7 +170,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
     };
 
     void refreshCurrentMemory();
-  }, [fetchRandomMemory, firstLoadDone, handleDelayedLoadingEnd, memoriesChangeToken]);
+  }, [fetchRandomMemory, firstLoadDone, handleDelayedLoadingEnd, memoriesChangeToken, t]);
 
   useEffect(() => {
     if (isStandaloneMode) return;
@@ -206,7 +208,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
             )}
 
             <Text fontFamily="'Dancing Script', cursive" fontSize={"4xl"}>
-              Nostri ricordi
+              {t("memories.title")}
             </Text>
 
             <MemoryCard
@@ -227,7 +229,7 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
               mt={6}
             >
               <FaHeart />
-              Vedi un altro ricordo
+              {t("memories.next")}
             </Button>
           </VStack>
         </Box>

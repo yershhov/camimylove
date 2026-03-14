@@ -10,6 +10,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { IoArrowBack } from "react-icons/io5";
 import PageContainer from "../ui/PageContainer";
 import Loader from "../ui/Loader";
@@ -110,6 +111,7 @@ const UploadPage = ({
   memoryId,
 }: UploadPageProps) => {
   const { handlePage, notifyMemoriesChanged } = useContext(AppContext);
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const goBackToMemories = () => {
@@ -165,8 +167,8 @@ const UploadPage = ({
     if (!Number.isInteger(memoryId) || (memoryId ?? -1) < 0) {
       createAppToast({
         type: "error",
-        title: "Ricordo non valido",
-        description: "Id ricordo non valido per la modifica.",
+        title: t("upload.invalidMemoryTitle"),
+        description: t("upload.invalidMemoryDescription"),
       });
       return;
     }
@@ -179,12 +181,12 @@ const UploadPage = ({
         });
         const response = await fetch(`/api/memories/random?${query.toString()}`);
         if (!response.ok) {
-          throw new Error("Impossibile caricare il ricordo");
+          throw new Error(t("upload.loadMemoryError"));
         }
 
         const payload = (await response.json()) as RandomMemoryResponse;
         if (!payload.ok || !payload.memory) {
-          throw new Error(payload.error ?? "Ricordo non trovato");
+          throw new Error(payload.error ?? t("upload.memoryNotFound"));
         }
 
         if (previewUrl && previewUrl.startsWith("blob:")) {
@@ -198,11 +200,11 @@ const UploadPage = ({
       } catch (error) {
         createAppToast({
           type: "error",
-          title: "Errore caricamento",
+          title: t("upload.loadErrorTitle"),
           description:
             error instanceof Error
               ? error.message
-              : "Riprova tra qualche secondo.",
+              : t("common.retrySoon"),
         });
       } finally {
         setIsLoadingEditMemory(false);
@@ -288,10 +290,12 @@ const UploadPage = ({
       const isHeic = isHeicFile(file);
       createAppToast({
         type: "error",
-        title: isHeic ? "Errore conversione HEIC" : "Formato non supportato",
+        title: isHeic
+          ? t("upload.heicErrorTitle")
+          : t("upload.unsupportedFileTitle"),
         description: isHeic
-          ? "Non sono riuscito a convertire questo file HEIC :( Prova a esportarlo come JPG o PNG e caricarlo di nuovo."
-          : "Carica un file HEIC, JPG, JPEG o PNG.",
+          ? t("upload.heicErrorDescription")
+          : t("upload.unsupportedFileDescription"),
       });
     } finally {
       setIsProcessingFile(false);
@@ -325,14 +329,14 @@ const UploadPage = ({
         notifyMemoriesChanged();
         createAppToast({
           type: "success",
-          title: "Ricordo aggiornato",
-          description: "Le modifiche sono state salvate.",
+          title: t("upload.updateSuccessTitle"),
+          description: t("upload.updateSuccessDescription"),
         });
       } catch {
         createAppToast({
           type: "error",
-          title: "Aggiornamento fallito",
-          description: "Riprova tra qualche secondo.",
+          title: t("upload.updateErrorTitle"),
+          description: t("common.retrySoon"),
         });
       } finally {
         setIsSubmitting(false);
@@ -363,7 +367,7 @@ const UploadPage = ({
 
       createAppToast({
         type: "success",
-        title: "Ricordo salvato",
+        title: t("upload.saveSuccessTitle"),
       });
       notifyMemoriesChanged();
       resetForm();
@@ -371,8 +375,8 @@ const UploadPage = ({
     } catch {
       createAppToast({
         type: "error",
-        title: "Upload fallito",
-        description: "Riprova tra qualche secondo.",
+        title: t("upload.saveErrorTitle"),
+        description: t("common.retrySoon"),
       });
     } finally {
       setIsSubmitting(false);
@@ -388,7 +392,7 @@ const UploadPage = ({
           onClick={goBackToMemories}
         >
           <IoArrowBack />
-          Indietro
+          {t("common.back")}
         </Button>
       </HStack>
 
@@ -398,8 +402,8 @@ const UploadPage = ({
         textAlign="center"
       >
         {variant === "edit"
-          ? "Modifica questo ricordo"
-          : "Aggiungi un nuovo ricordo"}
+          ? t("upload.editTitle")
+          : t("upload.createTitle")}
       </Text>
 
       <VStack gap={4} w="100%" alignItems="stretch">
@@ -448,10 +452,10 @@ const UploadPage = ({
               }}
             />
             <Text fontWeight="bold">
-              Trascina qui la foto o clicca per selezionare
+              {t("upload.dragAndDrop")}
             </Text>
             <Text mt={2} color="pink.700" fontSize="sm">
-              Formati supportati: HEIC, JPG, JPEG, PNG
+              {t("upload.supportedFormats")}
             </Text>
 
             {isProcessingFile && (
@@ -479,7 +483,7 @@ const UploadPage = ({
           <Box rounded="16px" overflow="hidden">
             <Image
               src={previewUrl}
-              alt="Preview"
+              alt={t("upload.previewAlt")}
               w="100%"
               maxH="440px"
               objectFit="contain"
@@ -493,7 +497,7 @@ const UploadPage = ({
           <>
             <VStack gap={5} w="100%">
               <VStack alignItems="start" gap={2} w="100%">
-                <Text fontSize="sm">Data (opzionale)</Text>
+                <Text fontSize="sm">{t("upload.dateOptional")}</Text>
                 <Input
                   key={dateInputKey}
                   type="datetime-local"
@@ -505,9 +509,9 @@ const UploadPage = ({
               </VStack>
 
               <VStack alignItems="start" gap={2} w="100%">
-                <Text fontSize="sm">Posizione (opzionale)</Text>
+                <Text fontSize="sm">{t("upload.locationOptional")}</Text>
                 <Input
-                  placeholder="Es. Jesolo, Via Dante Alighieri"
+                  placeholder={t("upload.locationPlaceholder")}
                   bg="white"
                   fontSize="16px"
                   value={locationValue}
@@ -524,11 +528,11 @@ const UploadPage = ({
             >
               {isSubmitting
                 ? variant === "edit"
-                  ? "Salvataggio..."
-                  : "Caricamento..."
+                  ? t("common.actions.saving")
+                  : t("common.actions.saving")
                 : variant === "edit"
-                  ? "Salva modifiche"
-                  : "Salva ricordo"}
+                  ? t("common.actions.save")
+                  : t("common.actions.save")}
             </Button>
           </>
         )}

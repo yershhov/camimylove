@@ -8,6 +8,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { IoClose, IoCreateOutline, IoTrashOutline } from "react-icons/io5";
 import { createAppToast } from "../../ui/appToaster";
 import type { DeleteMemoryResponse, Memory } from "../../../types";
@@ -35,6 +36,7 @@ const MemoryCard = ({
   onClose,
   onDeleteDialogOpenChange,
 }: MemoryCardProps) => {
+  const { t } = useTranslation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteConfirmed, setDeleteConfirmed] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -65,11 +67,11 @@ const MemoryCard = ({
       onDeleteDialogOpenChange?.(false);
     } catch (error) {
       createAppToast({
-        title: "Impossibile eliminare il ricordo",
+        title: t("memories.deleteDialog.errorTitle"),
         description:
           error instanceof Error
             ? error.message
-            : "Riprova tra qualche istante.",
+            : t("memories.deleteDialog.errorFallback"),
         type: "error",
       });
     } finally {
@@ -94,7 +96,7 @@ const MemoryCard = ({
 
       <HStack w="100%" justifyContent="space-between" gap={2}>
         <IconButton
-          aria-label="Elimina ricordo"
+          aria-label={t("common.actions.delete")}
           colorPalette="red"
           variant="subtle"
           disabled={isLoading || !memory}
@@ -109,7 +111,7 @@ const MemoryCard = ({
         </IconButton>
 
         <IconButton
-          aria-label="Modifica ricordo"
+          aria-label={t("common.actions.edit")}
           variant="subtle"
           flex={1}
           disabled={isLoading || !memory || !onEdit}
@@ -125,7 +127,7 @@ const MemoryCard = ({
 
         {isDialog && onClose && (
           <IconButton
-            aria-label="Chiudi anteprima"
+            aria-label={t("common.actions.close")}
             variant="subtle"
             flex={1}
             onClick={onClose}
@@ -152,13 +154,12 @@ const MemoryCard = ({
           <Dialog.Positioner zIndex={2001}>
             <Dialog.Content>
               <Dialog.Header>
-                <Dialog.Title>Eliminare questo ricordo?</Dialog.Title>
+                <Dialog.Title>{t("memories.deleteDialog.title")}</Dialog.Title>
               </Dialog.Header>
               <Dialog.Body>
                 <VStack alignItems="flex-start" gap={3}>
                   <Text color="fg.muted">
-                    Questo ricordo verra' eliminato definitivamente e non potra'
-                    essere recuperato.
+                    {t("memories.deleteDialog.body")}
                   </Text>
                   <HStack
                     as="label"
@@ -175,8 +176,7 @@ const MemoryCard = ({
                       }}
                     />
                     <Text>
-                      Confermo di voler eliminare definitivamente questo
-                      ricordo.
+                      {t("memories.deleteDialog.confirm")}
                     </Text>
                   </HStack>
                 </VStack>
@@ -191,7 +191,7 @@ const MemoryCard = ({
                     onDeleteDialogOpenChange?.(false);
                   }}
                 >
-                  Annulla
+                  {t("common.actions.cancel")}
                 </Button>
                 <Button
                   colorPalette="red"
@@ -200,7 +200,9 @@ const MemoryCard = ({
                     void handleDeleteMemory();
                   }}
                 >
-                  {isDeleting ? "Eliminazione..." : "Elimina"}
+                  {isDeleting
+                    ? t("common.actions.deleting")
+                    : t("common.actions.delete")}
                 </Button>
               </Dialog.Footer>
             </Dialog.Content>

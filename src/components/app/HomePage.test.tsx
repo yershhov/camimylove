@@ -38,7 +38,7 @@ describe("HomePage", () => {
 
     renderWithProviders(<HomePage />);
 
-    await user.click(screen.getByText(/Aggiungi ricordi/i));
+    await user.click(screen.getByText(/Add memories/i));
 
     expect(navigateMock).toHaveBeenCalledWith("/upload", {
       state: { from: "/home" },

@@ -20,7 +20,7 @@ describe("MaintenanceGatePage", () => {
     renderWithProviders(<MaintenanceGatePage onUnlock={onUnlock} />);
 
     await user.type(screen.getByPlaceholderText(/Admin password/i), "secret");
-    await user.click(screen.getByRole("button", { name: /Accedi/i }));
+    await user.click(screen.getByRole("button", { name: /Unlock/i }));
 
     await waitFor(() => expect(onUnlock).toHaveBeenCalledTimes(1));
   });
@@ -35,9 +35,9 @@ describe("MaintenanceGatePage", () => {
     renderWithProviders(<MaintenanceGatePage onUnlock={jest.fn()} />);
 
     await user.type(screen.getByPlaceholderText(/Admin password/i), "wrong");
-    await user.click(screen.getByRole("button", { name: /Accedi/i }));
+    await user.click(screen.getByRole("button", { name: /Unlock/i }));
 
-    expect(await screen.findByText(/Password non valida/i)).toBeTruthy();
+    expect(await screen.findByText(/Password non valida|Invalid password/i)).toBeTruthy();
   });
 
   it("shows the connection error when the request fails", async () => {
@@ -49,8 +49,8 @@ describe("MaintenanceGatePage", () => {
     renderWithProviders(<MaintenanceGatePage onUnlock={jest.fn()} />);
 
     await user.type(screen.getByPlaceholderText(/Admin password/i), "wrong");
-    await user.click(screen.getByRole("button", { name: /Accedi/i }));
+    await user.click(screen.getByRole("button", { name: /Unlock/i }));
 
-    expect(await screen.findByText(/Errore di connessione/i)).toBeTruthy();
+    expect(await screen.findByText(/Connection error/i)).toBeTruthy();
   });
 });

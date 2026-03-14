@@ -21,7 +21,7 @@ describe("AuthPage", () => {
 
     await user.type(inputs[0] as HTMLInputElement, "2024-01-01");
     await user.type(inputs[1] as HTMLInputElement, "gattina");
-    await user.click(screen.getByRole("button", { name: /Entra/i }));
+    await user.click(screen.getByRole("button", { name: /Enter/i }));
 
     await waitFor(() => expect(onAuthSuccess).toHaveBeenCalledTimes(1));
     expect(global.fetch).toHaveBeenCalledWith(
@@ -44,7 +44,7 @@ describe("AuthPage", () => {
 
     await user.type(inputs[0] as HTMLInputElement, "2024-01-01");
     await user.type(inputs[1] as HTMLInputElement, "gattina");
-    await user.click(screen.getByRole("button", { name: /Entra/i }));
+    await user.click(screen.getByRole("button", { name: /Enter/i }));
 
     await waitFor(() => expect(handlePage).toHaveBeenCalledTimes(1));
   });
@@ -57,8 +57,8 @@ describe("AuthPage", () => {
 
     renderWithProviders(<AuthPage />);
 
-    await user.click(screen.getByRole("button", { name: /Entra/i }));
+    await user.click(screen.getByRole("button", { name: /Enter/i }));
 
-    expect(await screen.findByText(/Le risposte non sono corrette/i)).toBeTruthy();
+    expect(await screen.findByText(/Those answers are not correct/i)).toBeTruthy();
   });
 });

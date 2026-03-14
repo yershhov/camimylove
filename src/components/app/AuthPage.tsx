@@ -1,5 +1,6 @@
 import { Button, Input, Text, VStack } from "@chakra-ui/react";
 import { useContext, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AppContext } from "../../context/AppContext";
 import PageContainer from "../ui/PageContainer";
 
@@ -9,6 +10,7 @@ type AuthPageProps = {
 
 const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
   const { handlePage } = useContext(AppContext);
+  const { t } = useTranslation();
   const [dateInput, setDateInput] = useState("");
   const [petNameInput, setPetNameInput] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -40,7 +42,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
         handlePage();
       })
       .catch(() => {
-        setErrorMessage("Le risposte non sono corrette. Riprova.");
+        setErrorMessage(t("auth.invalidAnswers"));
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -58,7 +60,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
       <form onSubmit={handleSubmit} style={{ width: "100%" }}>
         <VStack gap={5} w="100%">
           <VStack alignItems="start" gap={2} w="100%">
-            <Text fontSize="sm">Quando ci siamo messi insieme?</Text>
+            <Text fontSize="sm">{t("auth.promptDate")}</Text>
             <Input
               type="date"
               value={dateInput}
@@ -69,7 +71,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
           </VStack>
 
           <VStack alignItems="start" gap={2} w="100%">
-            <Text fontSize="sm">Il primo "pet name" che abbiamo usato?</Text>
+            <Text fontSize="sm">{t("auth.promptPetName")}</Text>
             <Input
               value={petNameInput}
               onChange={(e) => setPetNameInput(e.target.value)}
@@ -92,7 +94,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
             mt={2}
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Verifica..." : "Entra"}
+            {isSubmitting ? t("auth.submitting") : t("auth.submit")}
           </Button>
         </VStack>
       </form>

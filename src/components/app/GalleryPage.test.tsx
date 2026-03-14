@@ -93,11 +93,11 @@ describe("GalleryPage", () => {
 
     const { container } = renderWithProviders(<GalleryPage />);
 
-    expect(await screen.findByAltText("Ricordo 3")).toBeTruthy();
-    expect(screen.getByAltText("Ricordo 2")).toBeTruthy();
+    expect(await screen.findByAltText("Memory 3")).toBeTruthy();
+    expect(screen.getByAltText("Memory 2")).toBeTruthy();
 
     const scrollArea = container.querySelector('[style*="overflow-y: auto"], [style*="overflowY: auto"]') as HTMLDivElement | null;
-    const target = scrollArea ?? screen.getByText("Galleria").parentElement?.parentElement?.nextElementSibling as HTMLDivElement;
+    const target = scrollArea ?? screen.getByText("Gallery").parentElement?.parentElement?.nextElementSibling as HTMLDivElement;
     Object.defineProperty(target, "scrollTop", { value: 900, configurable: true });
     Object.defineProperty(target, "clientHeight", { value: 400, configurable: true });
     Object.defineProperty(target, "scrollHeight", { value: 1100, configurable: true });
@@ -105,7 +105,7 @@ describe("GalleryPage", () => {
     fireEvent.scroll(target);
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
-    expect(await screen.findByAltText("Ricordo 1")).toBeTruthy();
+    expect(await screen.findByAltText("Memory 1")).toBeTruthy();
   });
 
   it("opens a memory dialog and routes edit actions back to the gallery", async () => {
@@ -122,7 +122,7 @@ describe("GalleryPage", () => {
 
     renderWithProviders(<GalleryPage />);
 
-    await user.click(await screen.findByAltText("Ricordo 5"));
+    await user.click(await screen.findByAltText("Memory 5"));
     expect(screen.getByText("dialog-memory-5")).toBeTruthy();
 
     await user.click(screen.getByText("edit-memory"));

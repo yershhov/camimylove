@@ -1,5 +1,6 @@
 import { Box, HStack, Text, VStack } from "@chakra-ui/react";
 import { Suspense, lazy, useContext, useState, type ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
   FiCamera,
@@ -7,16 +8,24 @@ import {
   FiHelpCircle,
   FiLogOut,
   FiMap,
-  // FiSettings,
+  FiSettings,
 } from "react-icons/fi";
 import { IoShuffle } from "react-icons/io5";
 import PageContainer from "../ui/PageContainer";
 import { AppContext } from "../../context/AppContext";
+import { APP_NAME } from "../../i18n/metadata";
 
 const AppleStyleConfetti = lazy(() => import("../ui/AppleStyleConfetti"));
 
 type HomeCard = {
-  label: string;
+  id:
+    | "gallery"
+    | "randomMemories"
+    | "upload"
+    | "quiz"
+    | "legacy"
+    | "settings"
+    | "logout";
   route?: string;
   icon: ReactNode;
   disabled?: boolean;
@@ -29,6 +38,7 @@ type HomePageProps = {
 
 const HomePage = ({ womensDayMode = false }: HomePageProps) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { setSessionAuthenticated } = useContext(AppContext);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -63,23 +73,18 @@ const HomePage = ({ womensDayMode = false }: HomePageProps) => {
   };
 
   const cards: HomeCard[] = [
-    { label: "Galleria", route: "/gallery", icon: <FiGrid /> },
+    { id: "gallery", route: "/gallery", icon: <FiGrid /> },
     {
-      label: "Ricordi casuali",
+      id: "randomMemories",
       route: "/random-memories",
       icon: <IoShuffle />,
     },
-    { label: "Aggiungi ricordi", route: "/upload", icon: <FiCamera /> },
-    { label: "Quiz 1# anniversario", route: "/quiz", icon: <FiHelpCircle /> },
-    { label: "Ricordati com'era", route: "/legacy", icon: <FiMap /> },
-    // {
-    //   label: "Impostazioni",
-    //   route: "/settings",
-    //   icon: <FiSettings />,
-    //   disabled: true,
-    // },
+    { id: "upload", route: "/upload", icon: <FiCamera /> },
+    { id: "quiz", route: "/quiz", icon: <FiHelpCircle /> },
+    { id: "legacy", route: "/legacy", icon: <FiMap /> },
+    { id: "settings", route: "/settings", icon: <FiSettings /> },
     {
-      label: "Logout",
+      id: "logout",
       icon: <FiLogOut />,
       onClick: handleLogout,
       disabled: isLoggingOut,
@@ -100,7 +105,7 @@ const HomePage = ({ womensDayMode = false }: HomePageProps) => {
           fontSize={womensDayMode ? "4xl" : "5xl"}
           textAlign="center"
         >
-          {womensDayMode ? "Happy Women's Day, Baby!" : "Camimylove"}
+          {womensDayMode ? t("home.womensDayTitle") : APP_NAME}
         </Text>
 
         {womensDayMode && (
@@ -109,7 +114,7 @@ const HomePage = ({ womensDayMode = false }: HomePageProps) => {
             fontSize={"3xl"}
             textAlign="center"
           >
-            {"And Happy Monthiversary <3"}
+            {t("home.womensDaySubtitle")}
           </Text>
         )}
       </Box>
@@ -117,7 +122,7 @@ const HomePage = ({ womensDayMode = false }: HomePageProps) => {
       <VStack alignItems="stretch" gap={4} w="100%">
         {cards.map((card) => (
           <Box
-            key={card.route ?? card.label}
+            key={card.route ?? card.id}
             bg="white"
             borderWidth="1px"
             borderColor="pink.200"
@@ -141,14 +146,14 @@ const HomePage = ({ womensDayMode = false }: HomePageProps) => {
               <Box
                 color="pink.600"
                 fontSize="xl"
-                transform={card.label === "Logout" ? "rotate(180deg)" : "none"}
+                transform={card.id === "logout" ? "rotate(180deg)" : "none"}
               >
                 {card.icon}
               </Box>
               <Text fontWeight="semibold">
-                {card.label === "Logout" && isLoggingOut
-                  ? "Logging out..."
-                  : card.label}
+                {card.id === "logout" && isLoggingOut
+                  ? t("home.loggingOut")
+                  : t(`home.cards.${card.id}`)}
               </Text>
             </HStack>
           </Box>

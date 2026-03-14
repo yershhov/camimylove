@@ -1,5 +1,5 @@
 import { VStack, Text, SkeletonText, Box } from "@chakra-ui/react";
-import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 import type { Memory } from "../../../types";
 
 type MemoryDataProps = {
@@ -8,8 +8,17 @@ type MemoryDataProps = {
 };
 
 function MemoryData({ memory, isLoading }: MemoryDataProps) {
-
+  const { i18n } = useTranslation();
   const hasData = memory?.date || memory?.location;
+  const formattedDate = memory?.date
+    ? new Intl.DateTimeFormat(i18n.resolvedLanguage ?? "en", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(new Date(memory.date))
+    : null;
 
   if (isLoading) {
     return (
@@ -24,7 +33,7 @@ function MemoryData({ memory, isLoading }: MemoryDataProps) {
       {hasData && (
         <VStack w="100%" alignItems={"start"} fontSize={"xl"} lineHeight={1.5}>
           <>
-            {memory?.date && <Text>📅 {format(memory.date, "dd/MM/yyyy, HH:mm")}</Text>}
+            {formattedDate && <Text>📅 {formattedDate}</Text>}
 
             {memory?.location && <Text>📍 {memory.location}</Text>}
           </>

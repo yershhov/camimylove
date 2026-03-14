@@ -1,14 +1,16 @@
 import { Button, IconButton } from "@chakra-ui/react";
 import { IoArrowBack } from "react-icons/io5";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 const BackHomeButton = ({ iconOnly = false }: { iconOnly?: boolean }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   if (iconOnly) {
     return (
       <IconButton
-        aria-label="Torna alla pagina home"
+        aria-label={t("common.backHome")}
         colorPalette="pink"
         variant={"plain"}
         onClick={() => navigate("/home")}
@@ -25,7 +27,7 @@ const BackHomeButton = ({ iconOnly = false }: { iconOnly?: boolean }) => {
       onClick={() => navigate("/home")}
     >
       <IoArrowBack />
-      {"Torna alla home"}
+      {t("common.backHome")}
     </Button>
   );
 };

@@ -1,5 +1,6 @@
 import { Button, Input, Text, VStack } from "@chakra-ui/react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import PageContainer from "../ui/PageContainer";
 
 type MaintenanceGatePageProps = {
@@ -7,6 +8,7 @@ type MaintenanceGatePageProps = {
 };
 
 const MaintenanceGatePage = ({ onUnlock }: MaintenanceGatePageProps) => {
+  const { t } = useTranslation();
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,10 +29,10 @@ const MaintenanceGatePage = ({ onUnlock }: MaintenanceGatePageProps) => {
       if (res.ok && data.ok) {
         onUnlock();
       } else {
-        setErrorMessage(data.error ?? "Password non valida.");
+        setErrorMessage(data.error ?? t("maintenance.invalidPassword"));
       }
     } catch {
-      setErrorMessage("Errore di connessione. Riprova.");
+      setErrorMessage(t("maintenance.connectionError"));
     } finally {
       setIsSubmitting(false);
     }
@@ -38,7 +40,7 @@ const MaintenanceGatePage = ({ onUnlock }: MaintenanceGatePageProps) => {
 
   return (
     <PageContainer justifyContent="center" gap={8}>
-      <Text textAlign="center">Sito temporaneamente in manutenzione.</Text>
+      <Text textAlign="center">{t("maintenance.title")}</Text>
 
       <form onSubmit={handleSubmit} style={{ width: "100%" }}>
         <VStack gap={5} w="100%">
@@ -47,7 +49,7 @@ const MaintenanceGatePage = ({ onUnlock }: MaintenanceGatePageProps) => {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              placeholder="Admin password"
+              placeholder={t("maintenance.placeholder")}
               bg="white"
               fontSize="16px"
             />
@@ -67,7 +69,7 @@ const MaintenanceGatePage = ({ onUnlock }: MaintenanceGatePageProps) => {
             mt={2}
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Verifica..." : "Accedi"}
+            {isSubmitting ? t("common.verify") : t("maintenance.submit")}
           </Button>
         </VStack>
       </form>

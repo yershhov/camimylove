@@ -12,6 +12,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { IoAdd } from "react-icons/io5";
 import PageContainer from "../ui/PageContainer";
@@ -22,6 +23,7 @@ import { AppContext } from "../../context/AppContext";
 
 const GalleryPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { memoriesChangeToken } = useContext(AppContext);
   const scrollRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(true);
@@ -166,10 +168,10 @@ const GalleryPage = () => {
             fontSize="4xl"
             textAlign="center"
           >
-            Galleria
+            {t("gallery.title")}
           </Text>
           <IconButton
-            aria-label="Apri pagina upload"
+            aria-label={t("gallery.openUpload")}
             colorPalette="pink"
             rounded="full"
             onClick={() => navigate("/upload", { state: { from: "/gallery" } })}
@@ -216,7 +218,7 @@ const GalleryPage = () => {
                   >
                     <Image
                       src={memory.url}
-                      alt={`Ricordo ${memory.id}`}
+                      alt={t("gallery.memoryAlt", { id: memory.id })}
                       w="100%"
                       h="100%"
                       objectFit="cover"

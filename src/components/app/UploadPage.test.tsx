@@ -30,7 +30,7 @@ describe("UploadPage", () => {
       appContext: { handlePage },
     });
 
-    await user.click(screen.getByRole("button", { name: /Indietro/i }));
+    await user.click(screen.getByRole("button", { name: /Back/i }));
 
     expect(onBack).toHaveBeenCalledTimes(1);
     expect(handlePage).not.toHaveBeenCalled();
@@ -45,7 +45,7 @@ describe("UploadPage", () => {
       appContext: { handlePage },
     });
 
-    await user.click(screen.getByRole("button", { name: /Indietro/i }));
+    await user.click(screen.getByRole("button", { name: /Back/i }));
 
     expect(handlePage).toHaveBeenCalledWith(4);
     expect(sessionStorage.getItem("skip_memories_intro_loader")).toBe("true");
