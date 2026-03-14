@@ -34,7 +34,7 @@ const MaintenanceGatePage = ({ onUnlock }: MaintenanceGatePageProps) => {
         setErrorMessage(data.error ?? t("maintenance.invalidPassword"));
       }
     } catch {
-      setErrorMessage(t("maintenance.connectionError"));
+      setErrorMessage(t("common.errors.connection"));
     } finally {
       setIsSubmitting(false);
     }

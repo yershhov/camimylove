@@ -13,6 +13,17 @@ const frTranslation = {
     backHome: "Retour à l'accueil",
     retrySoon: "Réessaie dans quelques secondes.",
     verify: "Vérification...",
+    errors: {
+      connection: "Erreur de connexion. Réessaie.",
+      loadingTitle: "Erreur de chargement",
+    },
+    feedback: {
+      changesSaved: "Tes modifications ont été enregistrées.",
+      memorySaved: "Souvenir enregistré",
+      memoryUpdated: "Souvenir mis à jour",
+      saveFailed: "Échec du téléversement",
+      updateFailed: "Échec de la mise à jour",
+    },
     actions: {
       cancel: "Annuler",
       close: "Fermer",
@@ -46,7 +57,6 @@ const frTranslation = {
     title: "Site temporairement en maintenance.",
     placeholder: "Mot de passe administrateur",
     invalidPassword: "Mot de passe invalide.",
-    connectionError: "Erreur de connexion. Réessaie.",
     submit: "Déverrouiller",
   },
   memories: {
@@ -65,11 +75,6 @@ const frTranslation = {
   settings: {
     title: "Paramètres",
     languageLabel: "Langue",
-    languageHelp:
-      "L'app utilise la langue du navigateur la première fois, puis conserve ton choix explicite.",
-    languageSaved: "Langue mise à jour",
-    exclusions:
-      "Les pages legacy et quiz restent volontairement uniquement en italien car elles sont réservées à un très petit groupe d'utilisateurs présélectionnés.",
   },
   upload: {
     createTitle: "Ajouter un nouveau souvenir",
@@ -82,7 +87,6 @@ const frTranslation = {
     locationPlaceholder: "Ex. Jesolo, Via Dante Alighieri",
     invalidMemoryTitle: "Souvenir invalide",
     invalidMemoryDescription: "ID de souvenir invalide pour la modification.",
-    loadErrorTitle: "Erreur de chargement",
     loadMemoryError: "Impossible de charger le souvenir",
     memoryNotFound: "Souvenir introuvable",
     heicErrorTitle: "Erreur de conversion HEIC",
@@ -91,11 +95,6 @@ const frTranslation = {
       "Je n'ai pas réussi à convertir ce fichier HEIC :( Essaie de l'exporter en JPG ou PNG et téléverse-le à nouveau.",
     unsupportedFileDescription:
       "Téléverse un fichier HEIC, JPG, JPEG ou PNG.",
-    updateSuccessTitle: "Souvenir mis à jour",
-    updateSuccessDescription: "Tes modifications ont été enregistrées.",
-    updateErrorTitle: "Échec de la mise à jour",
-    saveErrorTitle: "Échec du téléversement",
-    saveSuccessTitle: "Souvenir enregistré",
   },
 } satisfies TranslationSchema;
 

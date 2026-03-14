@@ -13,6 +13,17 @@ const esTranslation = {
     backHome: "Volver al inicio",
     retrySoon: "Vuelve a intentarlo en unos segundos.",
     verify: "Comprobando...",
+    errors: {
+      connection: "Error de conexión. Inténtalo de nuevo.",
+      loadingTitle: "Error de carga",
+    },
+    feedback: {
+      changesSaved: "Tus cambios se han guardado.",
+      memorySaved: "Recuerdo guardado",
+      memoryUpdated: "Recuerdo actualizado",
+      saveFailed: "Subida fallida",
+      updateFailed: "Actualización fallida",
+    },
     actions: {
       cancel: "Cancelar",
       close: "Cerrar",
@@ -46,7 +57,6 @@ const esTranslation = {
     title: "Sitio temporalmente en mantenimiento.",
     placeholder: "Contraseña de administrador",
     invalidPassword: "Contraseña no válida.",
-    connectionError: "Error de conexión. Inténtalo de nuevo.",
     submit: "Desbloquear",
   },
   memories: {
@@ -65,11 +75,6 @@ const esTranslation = {
   settings: {
     title: "Configuración",
     languageLabel: "Idioma",
-    languageHelp:
-      "La app usa el idioma del navegador la primera vez y luego conserva tu elección explícita.",
-    languageSaved: "Idioma actualizado",
-    exclusions:
-      "Las páginas legacy y quiz siguen intencionalmente solo en italiano porque están reservadas para un grupo muy pequeño de usuarios preseleccionados.",
   },
   upload: {
     createTitle: "Añadir un nuevo recuerdo",
@@ -82,7 +87,6 @@ const esTranslation = {
     locationPlaceholder: "P. ej. Jesolo, Via Dante Alighieri",
     invalidMemoryTitle: "Recuerdo no válido",
     invalidMemoryDescription: "ID de recuerdo no válido para editar.",
-    loadErrorTitle: "Error de carga",
     loadMemoryError: "No se puede cargar el recuerdo",
     memoryNotFound: "Recuerdo no encontrado",
     heicErrorTitle: "Error de conversión HEIC",
@@ -91,11 +95,6 @@ const esTranslation = {
       "No he podido convertir este archivo HEIC :( Intenta exportarlo como JPG o PNG y súbelo de nuevo.",
     unsupportedFileDescription:
       "Sube un archivo HEIC, JPG, JPEG o PNG.",
-    updateSuccessTitle: "Recuerdo actualizado",
-    updateSuccessDescription: "Tus cambios se han guardado.",
-    updateErrorTitle: "Actualización fallida",
-    saveErrorTitle: "Subida fallida",
-    saveSuccessTitle: "Recuerdo guardado",
   },
 } satisfies TranslationSchema;
 

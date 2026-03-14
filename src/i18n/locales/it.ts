@@ -13,6 +13,17 @@ const itTranslation = {
     backHome: "Torna alla home",
     retrySoon: "Riprova tra qualche secondo.",
     verify: "Verifica...",
+    errors: {
+      connection: "Errore di connessione. Riprova.",
+      loadingTitle: "Errore caricamento",
+    },
+    feedback: {
+      changesSaved: "Le modifiche sono state salvate.",
+      memorySaved: "Ricordo salvato",
+      memoryUpdated: "Ricordo aggiornato",
+      saveFailed: "Upload fallito",
+      updateFailed: "Aggiornamento fallito",
+    },
     actions: {
       cancel: "Annulla",
       close: "Chiudi",
@@ -46,7 +57,6 @@ const itTranslation = {
     title: "Sito temporaneamente in manutenzione.",
     placeholder: "Admin password",
     invalidPassword: "Password non valida.",
-    connectionError: "Errore di connessione. Riprova.",
     submit: "Accedi",
   },
   memories: {
@@ -65,11 +75,6 @@ const itTranslation = {
   settings: {
     title: "Impostazioni",
     languageLabel: "Lingua",
-    languageHelp:
-      "L'app usa la lingua del browser al primo accesso, poi conserva la scelta esplicita.",
-    languageSaved: "Lingua aggiornata",
-    exclusions:
-      "Le pagine legacy e quiz restano intenzionalmente solo in italiano per un gruppo molto ristretto di utenti preselezionati.",
   },
   upload: {
     createTitle: "Aggiungi un nuovo ricordo",
@@ -82,7 +87,6 @@ const itTranslation = {
     locationPlaceholder: "Es. Jesolo, Via Dante Alighieri",
     invalidMemoryTitle: "Ricordo non valido",
     invalidMemoryDescription: "Id ricordo non valido per la modifica.",
-    loadErrorTitle: "Errore caricamento",
     loadMemoryError: "Impossibile caricare il ricordo",
     memoryNotFound: "Ricordo non trovato",
     heicErrorTitle: "Errore conversione HEIC",
@@ -90,11 +94,6 @@ const itTranslation = {
     heicErrorDescription:
       "Non sono riuscito a convertire questo file HEIC :( Prova a esportarlo come JPG o PNG e caricarlo di nuovo.",
     unsupportedFileDescription: "Carica un file HEIC, JPG, JPEG o PNG.",
-    updateSuccessTitle: "Ricordo aggiornato",
-    updateSuccessDescription: "Le modifiche sono state salvate.",
-    updateErrorTitle: "Aggiornamento fallito",
-    saveErrorTitle: "Upload fallito",
-    saveSuccessTitle: "Ricordo salvato",
   },
 } satisfies TranslationSchema;
 

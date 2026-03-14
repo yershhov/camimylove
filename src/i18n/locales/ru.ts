@@ -13,6 +13,17 @@ const ruTranslation = {
     backHome: "Назад на главную",
     retrySoon: "Попробуй снова через несколько секунд.",
     verify: "Проверка...",
+    errors: {
+      connection: "Ошибка соединения. Попробуй ещё раз.",
+      loadingTitle: "Ошибка загрузки",
+    },
+    feedback: {
+      changesSaved: "Твои изменения сохранены.",
+      memorySaved: "Воспоминание сохранено",
+      memoryUpdated: "Воспоминание обновлено",
+      saveFailed: "Не удалось загрузить",
+      updateFailed: "Не удалось обновить",
+    },
     actions: {
       cancel: "Отмена",
       close: "Закрыть",
@@ -46,7 +57,6 @@ const ruTranslation = {
     title: "Сайт временно на техническом обслуживании.",
     placeholder: "Пароль администратора",
     invalidPassword: "Неверный пароль.",
-    connectionError: "Ошибка соединения. Попробуй ещё раз.",
     submit: "Разблокировать",
   },
   memories: {
@@ -65,11 +75,6 @@ const ruTranslation = {
   settings: {
     title: "Настройки",
     languageLabel: "Язык",
-    languageHelp:
-      "При первом открытии приложение использует язык браузера, а затем сохраняет твой явный выбор.",
-    languageSaved: "Язык обновлён",
-    exclusions:
-      "Страницы legacy и quiz намеренно остаются только на итальянском, потому что они предназначены для очень маленькой заранее выбранной группы пользователей.",
   },
   upload: {
     createTitle: "Добавить новое воспоминание",
@@ -82,7 +87,6 @@ const ruTranslation = {
     locationPlaceholder: "Например, Jesolo, Via Dante Alighieri",
     invalidMemoryTitle: "Недопустимое воспоминание",
     invalidMemoryDescription: "Недопустимый ID воспоминания для редактирования.",
-    loadErrorTitle: "Ошибка загрузки",
     loadMemoryError: "Не удалось загрузить воспоминание",
     memoryNotFound: "Воспоминание не найдено",
     heicErrorTitle: "Ошибка преобразования HEIC",
@@ -91,11 +95,6 @@ const ruTranslation = {
       "Не удалось преобразовать этот файл HEIC :( Попробуй экспортировать его как JPG или PNG и загрузить снова.",
     unsupportedFileDescription:
       "Загрузи файл HEIC, JPG, JPEG или PNG.",
-    updateSuccessTitle: "Воспоминание обновлено",
-    updateSuccessDescription: "Твои изменения сохранены.",
-    updateErrorTitle: "Не удалось обновить",
-    saveErrorTitle: "Не удалось загрузить",
-    saveSuccessTitle: "Воспоминание сохранено",
   },
 } satisfies TranslationSchema;
 

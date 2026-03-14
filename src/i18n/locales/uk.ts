@@ -13,6 +13,17 @@ const ukTranslation = {
     backHome: "Назад на головну",
     retrySoon: "Спробуй ще раз за кілька секунд.",
     verify: "Перевірка...",
+    errors: {
+      connection: "Помилка з'єднання. Спробуй ще раз.",
+      loadingTitle: "Помилка завантаження",
+    },
+    feedback: {
+      changesSaved: "Твої зміни збережено.",
+      memorySaved: "Спогад збережено",
+      memoryUpdated: "Спогад оновлено",
+      saveFailed: "Не вдалося завантажити",
+      updateFailed: "Не вдалося оновити",
+    },
     actions: {
       cancel: "Скасувати",
       close: "Закрити",
@@ -46,7 +57,6 @@ const ukTranslation = {
     title: "Сайт тимчасово на технічному обслуговуванні.",
     placeholder: "Пароль адміністратора",
     invalidPassword: "Неправильний пароль.",
-    connectionError: "Помилка з'єднання. Спробуй ще раз.",
     submit: "Розблокувати",
   },
   memories: {
@@ -64,11 +74,6 @@ const ukTranslation = {
   settings: {
     title: "Налаштування",
     languageLabel: "Мова",
-    languageHelp:
-      "Уперше застосунок використовує мову браузера, а потім зберігає твій явний вибір.",
-    languageSaved: "Мову оновлено",
-    exclusions:
-      "Сторінки legacy і quiz навмисно залишаються лише італійською, бо вони призначені для дуже маленької попередньо відібраної групи користувачів.",
   },
   upload: {
     createTitle: "Додати новий спогад",
@@ -81,7 +86,6 @@ const ukTranslation = {
     locationPlaceholder: "Наприклад, Jesolo, Via Dante Alighieri",
     invalidMemoryTitle: "Некоректний спогад",
     invalidMemoryDescription: "Некоректний ID спогаду для редагування.",
-    loadErrorTitle: "Помилка завантаження",
     loadMemoryError: "Не вдалося завантажити спогад",
     memoryNotFound: "Спогад не знайдено",
     heicErrorTitle: "Помилка перетворення HEIC",
@@ -90,11 +94,6 @@ const ukTranslation = {
       "Не вдалося перетворити цей файл HEIC :( Спробуй експортувати його як JPG або PNG і завантажити знову.",
     unsupportedFileDescription:
       "Завантаж файл HEIC, JPG, JPEG або PNG.",
-    updateSuccessTitle: "Спогад оновлено",
-    updateSuccessDescription: "Твої зміни збережено.",
-    updateErrorTitle: "Не вдалося оновити",
-    saveErrorTitle: "Не вдалося завантажити",
-    saveSuccessTitle: "Спогад збережено",
   },
 } satisfies TranslationSchema;
 

@@ -205,7 +205,7 @@ const UploadPage = ({
       } catch (error) {
         createAppToast({
           type: "error",
-          title: t("upload.loadErrorTitle"),
+          title: t("common.errors.loadingTitle"),
           description:
             error instanceof Error
               ? error.message
@@ -324,7 +324,7 @@ const UploadPage = ({
         });
         const payload = (await response.json()) as UpdateMemoryResponse;
         if (!response.ok || !payload.ok || !payload.memory) {
-          throw new Error(payload.error ?? "Salvataggio fallito");
+          throw new Error(payload.error ?? t("common.feedback.updateFailed"));
         }
 
         setEditingMemory(payload.memory);
@@ -334,13 +334,13 @@ const UploadPage = ({
         notifyMemoriesChanged();
         createAppToast({
           type: "success",
-          title: t("upload.updateSuccessTitle"),
-          description: t("upload.updateSuccessDescription"),
+          title: t("common.feedback.memoryUpdated"),
+          description: t("common.feedback.changesSaved"),
         });
       } catch {
         createAppToast({
           type: "error",
-          title: t("upload.updateErrorTitle"),
+          title: t("common.feedback.updateFailed"),
           description: t("common.retrySoon"),
         });
       } finally {
@@ -367,12 +367,12 @@ const UploadPage = ({
       });
 
       if (!response.ok) {
-        throw new Error("Upload failed");
+        throw new Error(t("common.feedback.saveFailed"));
       }
 
       createAppToast({
         type: "success",
-        title: t("upload.saveSuccessTitle"),
+        title: t("common.feedback.memorySaved"),
       });
       notifyMemoriesChanged();
       resetForm();
@@ -380,7 +380,7 @@ const UploadPage = ({
     } catch {
       createAppToast({
         type: "error",
-        title: t("upload.saveErrorTitle"),
+        title: t("common.feedback.saveFailed"),
         description: t("common.retrySoon"),
       });
     } finally {

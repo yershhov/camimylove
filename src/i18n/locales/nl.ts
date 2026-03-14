@@ -13,6 +13,17 @@ const nlTranslation = {
     backHome: "Terug naar home",
     retrySoon: "Probeer het over een paar seconden opnieuw.",
     verify: "Controleren...",
+    errors: {
+      connection: "Verbindingsfout. Probeer het opnieuw.",
+      loadingTitle: "Laadfout",
+    },
+    feedback: {
+      changesSaved: "Je wijzigingen zijn opgeslagen.",
+      memorySaved: "Herinnering opgeslagen",
+      memoryUpdated: "Herinnering bijgewerkt",
+      saveFailed: "Upload mislukt",
+      updateFailed: "Bijwerken mislukt",
+    },
     actions: {
       cancel: "Annuleren",
       close: "Sluiten",
@@ -46,7 +57,6 @@ const nlTranslation = {
     title: "Site tijdelijk in onderhoud.",
     placeholder: "Beheerderswachtwoord",
     invalidPassword: "Ongeldig wachtwoord.",
-    connectionError: "Verbindingsfout. Probeer het opnieuw.",
     submit: "Ontgrendelen",
   },
   memories: {
@@ -66,11 +76,6 @@ const nlTranslation = {
   settings: {
     title: "Instellingen",
     languageLabel: "Taal",
-    languageHelp:
-      "De app gebruikt de eerste keer de taal van je browser en bewaart daarna je expliciete keuze.",
-    languageSaved: "Taal bijgewerkt",
-    exclusions:
-      "Legacy- en quizpagina's blijven bewust alleen Italiaans, omdat ze bedoeld zijn voor een heel kleine vooraf geselecteerde gebruikersgroep.",
   },
   upload: {
     createTitle: "Een nieuwe herinnering toevoegen",
@@ -83,7 +88,6 @@ const nlTranslation = {
     locationPlaceholder: "Bijv. Jesolo, Via Dante Alighieri",
     invalidMemoryTitle: "Ongeldige herinnering",
     invalidMemoryDescription: "Ongeldige herinnerings-id voor bewerken.",
-    loadErrorTitle: "Laadfout",
     loadMemoryError: "Kan de herinnering niet laden",
     memoryNotFound: "Herinnering niet gevonden",
     heicErrorTitle: "HEIC-conversiefout",
@@ -92,11 +96,6 @@ const nlTranslation = {
       "Ik kon dit HEIC-bestand niet converteren :( Probeer het als JPG of PNG te exporteren en upload het opnieuw.",
     unsupportedFileDescription:
       "Upload een HEIC-, JPG-, JPEG- of PNG-bestand.",
-    updateSuccessTitle: "Herinnering bijgewerkt",
-    updateSuccessDescription: "Je wijzigingen zijn opgeslagen.",
-    updateErrorTitle: "Bijwerken mislukt",
-    saveErrorTitle: "Upload mislukt",
-    saveSuccessTitle: "Herinnering opgeslagen",
   },
 } satisfies TranslationSchema;
 

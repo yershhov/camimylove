@@ -13,3 +13,4 @@ alwaysApply: true
 - Prefer split per-locale modules with lazy loading as supported languages grow
 - Keep common software actions and statuses in shared translation keys; keep page namespaces for contextual copy only
 - When changing user-facing copy in localized areas, update every supported locale in the same change
+- When UI copy, toasts, or feature branches are removed, remove the corresponding dead translation keys from every supported locale in the same change

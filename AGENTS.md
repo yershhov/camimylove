@@ -73,6 +73,7 @@ Do not answer codebase questions from memory when the code can be inspected dire
 - Keep translation resources in-repo, structured by locale, and loaded through a single app-wide localization layer rather than ad hoc per-page string maps
 - Prefer split per-locale modules with lazy loading as the number of supported languages grows
 - When adding or changing user-facing copy in localized areas, update every supported locale in the same change
+- When removing UI copy, toasts, or feature branches, remove the corresponding dead translation keys from every supported locale in the same change
 - Respect the existing route/layout split in `src/App.tsx`
 - Prefer composition over adding more boolean props when component APIs start branching
 - Do not add memoization hooks by default unless there is a demonstrated need

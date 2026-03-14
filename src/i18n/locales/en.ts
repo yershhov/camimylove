@@ -11,6 +11,17 @@ const enTranslation = {
     backHome: "Back home",
     retrySoon: "Try again in a few seconds.",
     verify: "Checking...",
+    errors: {
+      connection: "Connection error. Try again.",
+      loadingTitle: "Loading error",
+    },
+    feedback: {
+      changesSaved: "Your changes have been saved.",
+      memorySaved: "Memory saved",
+      memoryUpdated: "Memory updated",
+      saveFailed: "Upload failed",
+      updateFailed: "Update failed",
+    },
     actions: {
       cancel: "Cancel",
       close: "Close",
@@ -44,7 +55,6 @@ const enTranslation = {
     title: "Site temporarily under maintenance.",
     placeholder: "Admin password",
     invalidPassword: "Invalid password.",
-    connectionError: "Connection error. Try again.",
     submit: "Unlock",
   },
   memories: {
@@ -62,11 +72,6 @@ const enTranslation = {
   settings: {
     title: "Settings",
     languageLabel: "Language",
-    languageHelp:
-      "The app uses your browser language the first time, then keeps your explicit choice.",
-    languageSaved: "Language updated",
-    exclusions:
-      "Legacy and quiz pages intentionally remain Italian-only because they are reserved for a very small pre-selected user group.",
   },
   upload: {
     createTitle: "Add a new memory",
@@ -79,7 +84,6 @@ const enTranslation = {
     locationPlaceholder: "E.g. Jesolo, Via Dante Alighieri",
     invalidMemoryTitle: "Invalid memory",
     invalidMemoryDescription: "Invalid memory id for editing.",
-    loadErrorTitle: "Loading error",
     loadMemoryError: "Unable to load memory",
     memoryNotFound: "Memory not found",
     heicErrorTitle: "HEIC conversion error",
@@ -87,11 +91,6 @@ const enTranslation = {
     heicErrorDescription:
       "I couldn't convert this HEIC file :( Try exporting it as JPG or PNG and upload it again.",
     unsupportedFileDescription: "Upload a HEIC, JPG, JPEG, or PNG file.",
-    updateSuccessTitle: "Memory updated",
-    updateSuccessDescription: "Your changes have been saved.",
-    updateErrorTitle: "Update failed",
-    saveErrorTitle: "Upload failed",
-    saveSuccessTitle: "Memory saved",
   },
 } as const;
 

@@ -13,6 +13,17 @@ const deTranslation = {
     backHome: "Zur Startseite",
     retrySoon: "Versuch es in ein paar Sekunden erneut.",
     verify: "Prüfen...",
+    errors: {
+      connection: "Verbindungsfehler. Versuch es erneut.",
+      loadingTitle: "Ladefehler",
+    },
+    feedback: {
+      changesSaved: "Deine Änderungen wurden gespeichert.",
+      memorySaved: "Erinnerung gespeichert",
+      memoryUpdated: "Erinnerung aktualisiert",
+      saveFailed: "Upload fehlgeschlagen",
+      updateFailed: "Aktualisierung fehlgeschlagen",
+    },
     actions: {
       cancel: "Abbrechen",
       close: "Schließen",
@@ -46,7 +57,6 @@ const deTranslation = {
     title: "Die Website wird vorübergehend gewartet.",
     placeholder: "Admin-Passwort",
     invalidPassword: "Ungültiges Passwort.",
-    connectionError: "Verbindungsfehler. Versuch es erneut.",
     submit: "Entsperren",
   },
   memories: {
@@ -66,11 +76,6 @@ const deTranslation = {
   settings: {
     title: "Einstellungen",
     languageLabel: "Sprache",
-    languageHelp:
-      "Die App verwendet beim ersten Mal die Browsersprache und behält danach deine explizite Auswahl.",
-    languageSaved: "Sprache aktualisiert",
-    exclusions:
-      "Legacy- und Quiz-Seiten bleiben absichtlich nur auf Italienisch, da sie für eine sehr kleine, vorab ausgewählte Benutzergruppe reserviert sind.",
   },
   upload: {
     createTitle: "Eine neue Erinnerung hinzufügen",
@@ -83,7 +88,6 @@ const deTranslation = {
     locationPlaceholder: "Z. B. Jesolo, Via Dante Alighieri",
     invalidMemoryTitle: "Ungültige Erinnerung",
     invalidMemoryDescription: "Ungültige Erinnerungs-ID zum Bearbeiten.",
-    loadErrorTitle: "Ladefehler",
     loadMemoryError: "Erinnerung konnte nicht geladen werden",
     memoryNotFound: "Erinnerung nicht gefunden",
     heicErrorTitle: "HEIC-Konvertierungsfehler",
@@ -92,11 +96,6 @@ const deTranslation = {
       "Diese HEIC-Datei konnte ich nicht konvertieren :( Versuche, sie als JPG oder PNG zu exportieren und erneut hochzuladen.",
     unsupportedFileDescription:
       "Lade eine HEIC-, JPG-, JPEG- oder PNG-Datei hoch.",
-    updateSuccessTitle: "Erinnerung aktualisiert",
-    updateSuccessDescription: "Deine Änderungen wurden gespeichert.",
-    updateErrorTitle: "Aktualisierung fehlgeschlagen",
-    saveErrorTitle: "Upload fehlgeschlagen",
-    saveSuccessTitle: "Erinnerung gespeichert",
   },
 } satisfies TranslationSchema;
 
