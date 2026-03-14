@@ -53,6 +53,7 @@ For any non-trivial task:
 4. Update documentation when product behavior, architecture, or workflow meaningfully changes
 5. After major feature implementation or refactors, proactively clean up obsolete files, dead code, stale helpers, and outdated paths when they are no longer used and removal is safe
 6. Before creating local types, helpers, wrappers, or utilities, check whether an existing project dependency already provides a suitable built-in version and prefer that when it fits cleanly
+7. When creating commits, prefer conventional commit messages by default, such as `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, or `chore:`
 
 When changing code that already has unit tests:
 - Update the tests when requirements or behavior change
