@@ -4,7 +4,9 @@
 
 **Want to try it out yourself?** Please contact me for access credentials.
 
-> English localization coming soon. The app is currently in Italian.
+> The app now supports English, Italian, Spanish, Ukrainian, German, French, and Dutch in the main app flows. It defaults to a supported browser language when available and otherwise falls back to English. The language can be changed later from settings.
+
+> A few special pages are intentionally not localized. They are only meant for a tiny pre-selected user group and are not part of the general experience.
 
 > The app is mobile-first — using a phone is recommended for the best experience, though desktop or tablet works well too.
 
@@ -15,6 +17,7 @@
 - **Gallery** — browse memories in a gallery-like grid, see detailed preview on click
 - **Random memories** — randomly shuffle through memories
 - **Upload, edit, delete** — add new photos with date and location, edit them and delete if you don't like them anymore
+- **Localization** — English, Italian, Spanish, Ukrainian, German, French, and Dutch support for the main app shell and core non-legacy, non-quiz flows, with browser-based defaulting, manual language switching in settings, and lazy-loaded locale bundles
 
 ---
 

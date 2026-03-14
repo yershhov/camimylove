@@ -66,6 +66,13 @@ Do not answer codebase questions from memory when the code can be inspected dire
 - Preserve the current Chakra-first styling approach unless the task explicitly changes it
 - Keep mobile behavior in scope for every UI change
 - Maintain the current pink-themed visual language unless directed otherwise
+- For app localization, keep all supported app languages in sync for non-legacy, non-quiz user-facing flows unless a task explicitly narrows scope
+- Legacy flow pages and quiz pages are intentionally not localized for the main app audience; treat them as a small pre-selected-user exception unless a task explicitly changes that product scope
+- Default app language should be chosen from the browser language when no explicit user preference has been saved: use the supported browser locale when available and otherwise default to English
+- Persist an explicit user language choice in client storage and expose language switching from settings
+- Keep translation resources in-repo, structured by locale, and loaded through a single app-wide localization layer rather than ad hoc per-page string maps
+- Prefer split per-locale modules with lazy loading as the number of supported languages grows
+- When adding or changing user-facing copy in localized areas, update every supported locale in the same change
 - Respect the existing route/layout split in `src/App.tsx`
 - Prefer composition over adding more boolean props when component APIs start branching
 - Do not add memoization hooks by default unless there is a demonstrated need

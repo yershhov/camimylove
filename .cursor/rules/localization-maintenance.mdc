@@ -1,0 +1,15 @@
+---
+description: Keep app localization scoped, consistent, and up to date
+alwaysApply: true
+---
+
+# Localization Maintenance
+
+- Keep all supported app languages in sync for non-legacy, non-quiz user-facing flows
+- Legacy flow pages and quiz pages are intentionally excluded from localization for the small pre-selected-user group
+- Default language from the browser language when no explicit saved preference exists: use the supported browser locale when available, otherwise English
+- Persist explicit language changes from settings on the client
+- Store translation resources in-repo behind one shared localization layer
+- Prefer split per-locale modules with lazy loading as supported languages grow
+- Keep common software actions and statuses in shared translation keys; keep page namespaces for contextual copy only
+- When changing user-facing copy in localized areas, update every supported locale in the same change

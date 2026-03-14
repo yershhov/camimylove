@@ -117,6 +117,7 @@ Requirements:
 - Quiz flow
 - Maintenance gate
 - Feature-flag-driven seasonal welcome behavior
+- Localization for the main app shell and core non-legacy, non-quiz flows in English, Italian, Spanish, Ukrainian, German, French, and Dutch
 
 ## Data Model
 Each memory consists of:
@@ -140,7 +141,10 @@ Operational rules:
 - App is deployed on Vercel
 - Frontend is React-based and mobile-first
 - Authentication is session-cookie-based
-- The current app language is Italian
+- The app supports English, Italian, Spanish, Ukrainian, German, French, and Dutch in the main non-legacy, non-quiz flows
+- Initial language should default from the browser language when there is no saved user preference: use the supported browser locale when available, otherwise English
+- The user should be able to change language from settings, and that explicit choice should persist on the client
+- Legacy flow pages and quiz pages intentionally remain Italian-only for a tiny pre-selected user group and are outside the localization scope
 - The app should remain functional on desktop/tablet, but phone UX is the priority
 
 ## Quality Requirements
@@ -153,7 +157,6 @@ Operational rules:
 
 ## Open Product Edges
 These are product areas that may evolve but are not yet defined as broad requirements:
-- English localization
 - Richer organization/search for memories
 - Broader settings functionality
 - Replacing existing memory images during edit
