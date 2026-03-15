@@ -36,6 +36,6 @@ Unit tests are part of the normal repo workflow and run in pre-commit checks tog
 Memories use a split storage model:
 
 - **Images** → Vercel Blob (`images/{memoryId}.{ext}`)
-- **Metadata** → Neon Postgres `memories` table (date, location, image_url, etc.)
+- **Data** → Neon Postgres `memories` table (date, location, image_url, etc.)
 
 Both stay in sync when creating or deleting memories, for random memory pick query is performed on memories table in Neon Postgres.
