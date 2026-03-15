@@ -21,7 +21,7 @@
 
 ## Tech Stack
 
-- **Frontend:** React 19, TypeScript, Vite, Chakra UI, React Router
+- **Frontend:** React 19, TypeScript, Vite, Chakra UI, React Router, i18next
 - **Backend:** Vercel serverless API routes
 - **Storage:** Vercel Blob (images) + Neon Postgres (metadata)
 - **Auth:** Session-based authentication
