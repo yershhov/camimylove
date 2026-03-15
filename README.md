@@ -4,7 +4,7 @@
 
 **Want to try it out yourself?** Please contact me for access credentials.
 
-> You may notice this app supports multi-language localization, but there a few special pages are intentionally not localized. They are only meant for a tiny pre-selected user group and are not part of the general experience.
+> You may notice this app supports multi-language localization, but there a few special pages that are intentionally not localized. They are only meant for a tiny pre-selected user group and are not part of the general experience.
 
 > The app is mobile-first — using a phone is recommended for the best experience, though desktop or tablet works well too.
 
