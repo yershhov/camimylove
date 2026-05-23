@@ -62,7 +62,9 @@ describe("MemoriesPage", () => {
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers();
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
     jest.useRealTimers();
   });
 
@@ -92,18 +94,50 @@ describe("MemoriesPage", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
-  it("loads immediately in standalone mode without the legacy intro delay", async () => {
+  it("fetches immediately in standalone mode but keeps the memory reveal delay", async () => {
     const fetchMock = global.fetch as jest.MockedFunction<typeof fetch>;
-    fetchMock.mockImplementation(() => createRandomMemoryResponse(7));
+    const response = await createRandomMemoryResponse(7);
+    let resolveFetch: (value: Response) => void = () => undefined;
+    const fetchPromise = new Promise<Response>((resolve) => {
+      resolveFetch = resolve;
+    });
+    fetchMock.mockReturnValue(fetchPromise);
 
     renderWithProviders(<MemoriesPage mode="standalone" />);
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
-    await waitFor(() =>
-      expect(screen.getByTestId("memory-card").textContent).toContain("memory-7"),
-    );
+    await act(async () => {});
 
+    expect(fetchMock).toHaveBeenCalled();
     expect(screen.queryByTestId("intro-loader")).toBeNull();
     expect(screen.getByTestId("back-home-button")).toBeTruthy();
+    expect(screen.getByTestId("memory-card").getAttribute("data-loading")).toBe(
+      "true",
+    );
+
+    await act(async () => {
+      resolveFetch(response);
+      await fetchPromise;
+    });
+
+    expect(screen.getByTestId("memory-card").textContent).toContain("memory-7");
+    expect(screen.getByTestId("memory-card").getAttribute("data-loading")).toBe(
+      "true",
+    );
+
+    await act(async () => {
+      jest.advanceTimersByTime(1999);
+    });
+
+    expect(screen.getByTestId("memory-card").getAttribute("data-loading")).toBe(
+      "true",
+    );
+
+    await act(async () => {
+      jest.advanceTimersByTime(1);
+    });
+
+    expect(screen.getByTestId("memory-card").getAttribute("data-loading")).toBe(
+      "false",
+    );
   });
 });

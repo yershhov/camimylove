@@ -22,6 +22,9 @@ type MemoriesPageProps = {
   mode?: "legacy" | "standalone";
 };
 
+const LEGACY_INTRO_REVEAL_DELAY_MS = 5000;
+const MEMORY_REVEAL_DELAY_MS = 2000;
+
 const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -47,16 +50,6 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
   }, [location.search]);
 
   const handleDelayedLoadingEnd = useCallback((first?: boolean) => {
-    if (isStandaloneMode) {
-      if (first) {
-        setIsFirstLoad(false);
-        setFirstLoadDone(true);
-      } else {
-        setIsLoadingMemory(false);
-      }
-      return;
-    }
-
     setTimeout(
       () => {
         if (first) {
@@ -66,9 +59,9 @@ const MemoriesPage = ({ mode = "legacy" }: MemoriesPageProps) => {
           setIsLoadingMemory(false);
         }
       },
-      first ? 5000 : 2000,
+      first ? LEGACY_INTRO_REVEAL_DELAY_MS : MEMORY_REVEAL_DELAY_MS,
     );
-  }, [isStandaloneMode]);
+  }, []);
 
   const fetchRandomMemory = useCallback(async () => {
     const query = new URLSearchParams();
